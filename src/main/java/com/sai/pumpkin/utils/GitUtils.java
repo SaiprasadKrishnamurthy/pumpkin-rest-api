@@ -56,8 +56,9 @@ public class GitUtils {
         for (String rev : revisions) {
             try {
                 String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
-                LOGGER.info("{} --> {} ", artifactConfig, rev);
+
                 String[] gav = PomUtils.gidAidVersionArray(pom);
+                LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
                 if (!gav[2].contains("SNAPSHOT")) {
                     MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
                     MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();

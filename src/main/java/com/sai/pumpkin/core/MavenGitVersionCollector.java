@@ -57,6 +57,7 @@ public class MavenGitVersionCollector {
                         .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion());
                 mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
                 mongoTemplate.save(mapping);
+                LOGGER.info("Saved: "+mapping );
             };
             GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction);
         } catch (Exception ex) {
