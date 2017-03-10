@@ -51,11 +51,13 @@ public class GitUtils {
         gitClone(artifactConfig.getRepoUrl(), localRepo);
         LOGGER.info(" Before commit sha ");
         List<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
-        LOGGER.info(" After commit sha ");
+        LOGGER.info(" After commit sha "+revisions);
 
         for (String rev : revisions) {
             try {
                 String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
+                LOGGER.info("\t Pom retrieved successfully");
+
 
                 String[] gav = PomUtils.gidAidVersionArray(pom);
                 LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
