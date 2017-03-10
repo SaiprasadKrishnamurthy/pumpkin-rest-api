@@ -1,0 +1,21 @@
+{
+  "id": "Trigger_All_Component_MR5_Snapshot_Jobs_28",
+  "jobType": "REST",
+  "jobName": "Trigger_All_Component_MR5_Snapshot_Jobs",
+  "component": "",
+  "triggeredUserName": "Triggered by upstream job",
+  "jobUrl": "https://sjc-nmtgci-08.cisco.com:9081/job/Rest_Automation_Project/job/PI_Lanai/job/Lanai_MR5/job/Lanai_Fresh_Jobs/job/Trigger_All_Component_MR5_Snapshot_Jobs/28/",
+  "buildNumber": 28,
+  "startTime": "2017-01-02T19:45:16",
+  "startTimeStamp": 1483366516621,
+  "duration": 306526,
+  "totalCaseCount": 0,
+  "totalPassedCount": 0,
+  "totalFailedCount": 0,
+  "totalSkippedCount": 0,
+  "result": "FAILURE",
+  "building": false,
+  "endTimestamp": 1,
+  "lowerTimeWindow": 2,
+  "upperTimeWindow": 2
+}
