@@ -28,7 +28,6 @@ public class PomUtils {
             String version = (String) xPath.compile("//version").evaluate(doc, XPathConstants.STRING);
             return new String[]{gid, aid, version};
         } catch (Exception ex) {
-            ex.printStackTrace();
             return new String[]{"", "", ""};
         }
     }

@@ -3,6 +3,8 @@ package com.sai.pumpkin.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sai.pumpkin.domain.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.stream.LogOutputStream;
 
@@ -24,6 +26,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class GitUtils {
     private static final String WORKSPACE = System.getProperty("user.home") + File.separator + "pumpkin_ws";
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
 
     public static void mains(String[] args) throws Exception {
         String repoName = "wireless";
@@ -50,6 +53,7 @@ public class GitUtils {
         for (String rev : revisions) {
             try {
                 String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
+                LOGGER.info("{} --> {} " + rev);
                 String[] gav = PomUtils.gidAidVersionArray(pom);
                 if (!gav[2].contains("SNAPSHOT")) {
                     MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
@@ -60,6 +64,7 @@ public class GitUtils {
                     consumer.accept(mavenGitVersionMapping);
                 }
             } catch (Exception ignore) {
+                LOGGER.error("Error during collection for" + artifactConfig + " Git bersion: " + rev, ignore);
             }
         }
     }
