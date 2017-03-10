@@ -49,11 +49,14 @@ public class GitUtils {
         String localRepo = localGitWorkspace + File.separator + artifactConfig.getRepoName() + File.separator;
         new File(localRepo).mkdirs();
         gitClone(artifactConfig.getRepoUrl(), localRepo);
+        LOGGER.info(" Before commit sha ");
         List<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
+        LOGGER.info(" After commit sha ");
+
         for (String rev : revisions) {
             try {
                 String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
-                LOGGER.info("{} --> {} " + rev);
+                LOGGER.info("{} --> {} ", artifactConfig, rev);
                 String[] gav = PomUtils.gidAidVersionArray(pom);
                 if (!gav[2].contains("SNAPSHOT")) {
                     MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
