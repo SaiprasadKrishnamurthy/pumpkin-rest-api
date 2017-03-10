@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Created by saipkri on 08/03/17.
  */
 public class CacheDummy {
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
         ReleaseArtifact r1 = new ReleaseArtifact();
         r1.setName("Prime Infrastructure");
         r1.setVersion("2.0");
