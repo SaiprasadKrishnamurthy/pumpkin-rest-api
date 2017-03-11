@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -40,15 +42,17 @@ public class MavenGitVersionCollector {
     private final ChangeSetEntryRepository changeSetEntryRepository;
     private final GitLogResponseRepository gitLogResponseRepository;
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
+    private final Pattern defectIdRegexPattern;
 
 
     @Inject
-    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository) {
+    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository, @Value("${defectIdRegex}") final String defectIdRegex) {
         this.mongoTemplate = mongoTemplate;
         this.gitLogEntryRepository = gitLogEntryRepository;
         this.changeSetEntryRepository = changeSetEntryRepository;
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
+        this.defectIdRegexPattern = Pattern.compile(defectIdRegex.trim());
     }
 
     public void collect(ArtifactConfig config) {
@@ -159,9 +163,15 @@ public class MavenGitVersionCollector {
         GitLogSummaryResponse summaryResponse = new GitLogSummaryResponse();
         summaryResponse.setFrom(m1);
         summaryResponse.setTo(m2);
+        Set<String> defectids = new LinkedHashSet<>();
 
         gitLogResponse.getGitLogEntries().forEach(gle -> {
             String author = gle.getAuthor().trim();
+            Matcher matcher = defectIdRegexPattern.matcher(gle.getCommitMessage());
+
+            while (matcher.find()) {
+                defectids.add(matcher.group());
+            }
 
             gle.getChanges().forEach(cse -> {
                 summaryResponse.getAuthorsToChangeSet().compute(author, (k, v) -> {
@@ -190,6 +200,8 @@ public class MavenGitVersionCollector {
             summaryResponse.setNoOfFilesChanged(files);
             summaryResponse.setNoOfLinesInserted(linesInserted);
             summaryResponse.setNoOfLinesDeleted(linesDeleted);
+            summaryResponse.setDefectIds(defectids);
+
         } catch (Exception ex) {
             LOGGER.error("Error while getting git stat for  " + m1 + " and " + m2, ex);
         }

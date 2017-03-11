@@ -4,10 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by saipkri on 07/03/17.
@@ -21,5 +18,7 @@ public class GitLogSummaryResponse implements Serializable {
     private long noOfFilesChanged;
     private long noOfLinesInserted;
     private long noOfLinesDeleted;
+    private Set<String> defectIds;
+    private Set<String> featureIds;
     private Map<String, Set<ChangeSetEntry>> authorsToChangeSet = new HashMap<>();
 }
