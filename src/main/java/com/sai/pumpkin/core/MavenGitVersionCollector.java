@@ -20,7 +20,9 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by saipkri on 08/03/17.
@@ -57,7 +59,7 @@ public class MavenGitVersionCollector {
                         .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion());
                 mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
                 mongoTemplate.save(mapping);
-                LOGGER.info("Saved: "+mapping );
+                LOGGER.info("Saved: " + mapping);
             };
             GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction);
         } catch (Exception ex) {
@@ -88,7 +90,7 @@ public class MavenGitVersionCollector {
                         changeSetEntry.setUuid(uuid);
                         mongoTemplate.save(changeSetEntry);
                         return uuid;
-                    }).collect(Collectors.toList());
+                    }).collect(toList());
                     entry.setChangeUUIDs(changesUuids);
                     mongoTemplate.save(entry);
                 }
@@ -172,6 +174,26 @@ public class MavenGitVersionCollector {
                 });
             });
         });
+        String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
+
+        try {
+            String stat = GitUtils.linesStat(localRepo, m1.getGitRevision(), m2.getGitRevision());
+            String tokens[] = stat.split(",");
+            long files = 0;
+            long linesInserted = 0;
+            long linesDeleted = 0;
+
+            List<String> trimmed = IntStream.range(0, tokens.length).mapToObj(i -> tokens[i].trim()).collect(toList());
+            files = Long.parseLong(trimmed.get(0).split(" ")[0].trim());
+            linesInserted = Long.parseLong(trimmed.get(1).split(" ")[0].trim());
+            linesDeleted = Long.parseLong(trimmed.get(2).split(" ")[0].trim());
+            summaryResponse.setNoOfFilesChanged(files);
+            summaryResponse.setNoOfLinesInserted(linesInserted);
+            summaryResponse.setNoOfLinesDeleted(linesDeleted);
+        } catch (Exception ex) {
+            LOGGER.error("Error while getting git stat for  " + m1 + " and " + m2, ex);
+        }
+
         clock.stop();
         LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff SUMMARY between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
         return summaryResponse;

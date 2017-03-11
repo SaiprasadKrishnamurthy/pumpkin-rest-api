@@ -51,7 +51,7 @@ public class GitUtils {
         gitClone(artifactConfig.getRepoUrl(), localRepo);
         LOGGER.info(" Before commit sha ");
         List<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
-        LOGGER.info(" After commit sha "+revisions);
+        LOGGER.info(" After commit sha " + revisions);
 
         for (String rev : revisions) {
             try {
@@ -181,6 +181,13 @@ public class GitUtils {
         return new ProcessExecutor()
                 .directory(new File(localRepo))
                 .command("diff2html", "-o", "stdout", "-s", "line", "-f", "html", "-i", "command", "-o", "preview", "--", "-M", gitSha + "^", gitSha)
+                .readOutput(true)
+                .execute()
+                .outputString();
+    }
+
+    public static String linesStat(String localRepo, String gitRevision, String gitRevision1) throws Exception {
+        return new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "diff", "--shortstat", gitRevision, gitRevision1)
                 .readOutput(true)
                 .execute()
                 .outputString();

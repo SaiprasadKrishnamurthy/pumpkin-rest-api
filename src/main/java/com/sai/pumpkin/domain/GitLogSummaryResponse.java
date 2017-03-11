@@ -18,5 +18,8 @@ public class GitLogSummaryResponse implements Serializable {
     private String id;
     private MavenGitVersionMapping from;
     private MavenGitVersionMapping to;
+    private long noOfFilesChanged;
+    private long noOfLinesInserted;
+    private long noOfLinesDeleted;
     private Map<String, Set<ChangeSetEntry>> authorsToChangeSet = new HashMap<>();
 }
