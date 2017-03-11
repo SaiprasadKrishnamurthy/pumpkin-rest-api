@@ -112,8 +112,8 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/detailedcommits", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> detailedcommits(@ApiParam("releaseCoordinates1") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
-                                          @ApiParam("releaseCoordinates2") @RequestParam("releaseCoordinates2") String releaseCoordinates2,
-                                          @ApiParam("committersCsv") @RequestParam("committersCsv") String committersCsv) {
+                                             @ApiParam("releaseCoordinates2") @RequestParam("releaseCoordinates2") String releaseCoordinates2,
+                                             @ApiParam("committersCsv") @RequestParam("committersCsv") String committersCsv) {
         String[] c1 = releaseCoordinates1.split(":");
         String[] c2 = releaseCoordinates2.split(":");
         if (c1.length < 2 || c2.length < 2) {
@@ -149,10 +149,14 @@ public class DiffArtifactsResource {
         diffs.addAll(added);
         List<GitLogEntry> grand = new ArrayList<>();
         for (MavenCoordinates diff : diffs) {
-            MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
-            MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
-            GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), nw.getGroupId(), nw.getArtifactId(), nw.getVersion());
-            grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+            Optional<MavenCoordinates> first = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst();
+            Optional<MavenCoordinates> first1 = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst();
+            if (first.isPresent() && first1.isPresent()) {
+                MavenCoordinates old = first.get();
+                MavenCoordinates nw = first1.get();
+                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), nw.getGroupId(), nw.getArtifactId(), nw.getVersion());
+                grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+            }
         }
         return new ResponseEntity<>(grand, HttpStatus.OK);
     }
