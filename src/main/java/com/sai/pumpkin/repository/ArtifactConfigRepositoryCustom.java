@@ -22,7 +22,7 @@ public class ArtifactConfigRepositoryCustom {
     }
 
     public void save(ArtifactConfig artifactConfig) {
-        Criteria criteria = Criteria.where("repoUrl").is(artifactConfig.getRepoUrl()).and("branch").is(artifactConfig.getBranch());
+        Criteria criteria = Criteria.where("repoUrl").is(artifactConfig.getRepoUrl()).and("branch").is(artifactConfig.getBranch()).and("pomPath").is(artifactConfig.getPomPath());
         mongoTemplate.remove(Query.query(criteria), ArtifactConfig.class);
         mongoTemplate.save(artifactConfig);
     }
