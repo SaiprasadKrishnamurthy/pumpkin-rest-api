@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -105,6 +106,23 @@ public class DiffArtifactsResource {
         releaseDiffResponse.setDiffs(summaries);
         releaseDiffResponse.setNewlyAdded(added.stream().map(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion())).collect(Collectors.toList()));
         releaseDiffResponse.setRemoved(removed.stream().map(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion())).collect(Collectors.toList()));
+        return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
+    }
+
+    @ApiOperation("Gets a diff between artifact 1 and artifact 2")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/artifact-diff", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> artifactDiff(@ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates1") String mavenCoordinates1,
+                                          @ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates2") String mavenCoordinates2) {
+        String[] c1 = mavenCoordinates1.split(":");
+        String[] c2 = mavenCoordinates2.split(":");
+        if (c1.length < 2 || c2.length < 2) {
+            throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
+        }
+
+        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
+        ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
+        releaseDiffResponse.setDiffs(Arrays.asList(diffResponse));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
     }
 
