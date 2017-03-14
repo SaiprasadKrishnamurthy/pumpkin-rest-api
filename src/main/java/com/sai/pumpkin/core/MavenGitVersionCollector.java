@@ -178,12 +178,12 @@ public class MavenGitVersionCollector {
         mongoTemplate.remove(gitLogResponse);
     }
 
-    @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5)")
+    @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7)")
     public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
         GitLogSummaryResponse summaryResponse = null;
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
-        if (t1 != null && t2 != null) {
+        if (StringUtils.isNotBlank(t1) && StringUtils.isNotBlank(t2)) {
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1, Long.parseLong(t1));
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2, Long.parseLong(t2));
         } else {

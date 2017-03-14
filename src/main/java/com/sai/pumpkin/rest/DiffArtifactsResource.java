@@ -55,7 +55,7 @@ public class DiffArtifactsResource {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
         }
 
-        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], null, c2[0], c2[1], c2[2], null);
+        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "");
     }
 
     @ApiOperation("Gets a diff between release 1 and release 2")
@@ -99,7 +99,7 @@ public class DiffArtifactsResource {
         for (MavenCoordinates diff : diffs) {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
-            GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), null, nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), null);
+            GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), "");
             if (s != null) {
                 summaries.add(s);
             } else {
