@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,6 @@ public class GitLogResponse implements Serializable {
     private MavenCoordinates from;
     private MavenCoordinates to;
     @Transient
-    private List<GitLogEntry> gitLogEntries;
-    private List<String> gitLogUUIDs;
+    private List<GitLogEntry> gitLogEntries = new ArrayList<>();
+    private List<String> gitLogUUIDs = new ArrayList<>();
 }
