@@ -168,10 +168,17 @@ public class MavenGitVersionCollector {
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5)")
-    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String g2, final String a2, final String v2) {
+    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
         GitLogSummaryResponse summaryResponse = null;
-        List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
-        List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        List<MavenGitVersionMapping> m1List = null;
+        List<MavenGitVersionMapping> m2List = null;
+        if(t1 != null && t2 != null) {
+            m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1, Long.parseLong(t1));
+            m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2, Long.parseLong(t2));
+        } else {
+            m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
+            m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        }
         if (!m1List.isEmpty() && !m2List.isEmpty()) {
             summaryResponse = new GitLogSummaryResponse();
             MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);

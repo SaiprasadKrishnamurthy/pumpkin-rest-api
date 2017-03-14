@@ -55,7 +55,7 @@ public class DiffArtifactsResource {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
         }
 
-        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
+        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], null, c2[0], c2[1], c2[2], null);
     }
 
     @ApiOperation("Gets a diff between release 1 and release 2")
@@ -99,7 +99,7 @@ public class DiffArtifactsResource {
         for (MavenCoordinates diff : diffs) {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
-            GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), nw.getGroupId(), nw.getArtifactId(), nw.getVersion());
+            GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), null, nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), null);
             if (s != null) {
                 summaries.add(s);
             } else {
@@ -116,15 +116,15 @@ public class DiffArtifactsResource {
     @ApiOperation("Gets a diff between artifact 1 and artifact 2")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/artifact-diff", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> artifactDiff(@ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates1") String mavenCoordinates1,
-                                          @ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates2") String mavenCoordinates2) {
+    public ResponseEntity<?> artifactDiff(@ApiParam("groupId:artifactId:version:timestamp") @RequestParam("mavenCoordinates1") String mavenCoordinates1,
+                                          @ApiParam("groupId:artifactId:version:timestamp") @RequestParam("mavenCoordinates2") String mavenCoordinates2) {
         String[] c1 = mavenCoordinates1.split(":");
         String[] c2 = mavenCoordinates2.split(":");
         if (c1.length < 2 || c2.length < 2) {
-            throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
+            throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version:timestamp'");
         }
 
-        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
+        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c1[3], c2[0], c2[1], c2[2], c2[3]);
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(Arrays.asList(diffResponse));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);

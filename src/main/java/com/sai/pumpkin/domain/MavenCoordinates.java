@@ -18,6 +18,7 @@ public class MavenCoordinates implements Serializable {
     private String groupId;
     private String artifactId;
     private String version;
+    private long builtTimestamp = -1;
 
     @Override
     public String toString() {

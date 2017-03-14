@@ -18,6 +18,9 @@ public interface MavenGitVersionMappingRepository extends MongoRepository<MavenG
     @Query("{$and: [{'mavenCoordinates.groupId' : ?0} , {'mavenCoordinates.artifactId' : ?1} , {'mavenCoordinates.version' : ?2}]}")
     List<MavenGitVersionMapping> findByMavenCoordinates(String groupId, String artifactId, String version);
 
+    @Query("{$and: [{'mavenCoordinates.groupId' : ?0} , {'mavenCoordinates.artifactId' : ?1} , {'mavenCoordinates.version' : ?2}, {'timestamp': ?3}]}")
+    List<MavenGitVersionMapping> findByMavenCoordinates(String groupId, String artifactId, String version, long timestamp);
+
     @Query("{$and: [{'mavenCoordinates.groupId' : ?0} , {'mavenCoordinates.artifactId' : ?1}]}")
     List<MavenGitVersionMapping> findByMavenCoordinates(String groupId, String artifactId);
 }
