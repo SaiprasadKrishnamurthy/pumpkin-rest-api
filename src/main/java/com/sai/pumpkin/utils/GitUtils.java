@@ -144,7 +144,7 @@ public class GitUtils {
 
     private static List<String> gitLogCommitSHAs(String localRepo, String filePath, String branch) throws Exception {
         String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
-        return Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--date=iso", "--reverse", "--format=format:|%ad", branch, "--follow", "--", baseDir)
+        return Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--follow", "--", baseDir)
                 .readOutput(true)
                 .execute()
                 .outputString()
