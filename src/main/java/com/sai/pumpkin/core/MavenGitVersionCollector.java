@@ -6,6 +6,7 @@ import com.sai.pumpkin.repository.GitLogEntryRepository;
 import com.sai.pumpkin.repository.GitLogResponseRepository;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
 import com.sai.pumpkin.utils.GitUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,16 +74,16 @@ public class MavenGitVersionCollector {
         }
     }
 
-    @Cacheable(cacheNames = "detailedDiffCache", key = "#p0.concat('detailedDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5)")
+    @Cacheable(cacheNames = "detailedDiffCache", key = "#p0.concat('detailedDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7)")
     public GitLogResponse diffLog(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
-        if (t1 == null) {
+        if (StringUtils.isNotBlank(t1)) {
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
         } else {
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1, Long.parseLong(t1.trim()));
         }
-        if (t2 == null) {
+        if (StringUtils.isNotBlank(t2)) {
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
         } else {
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2, Long.parseLong(t2.trim()));
@@ -201,7 +202,7 @@ public class MavenGitVersionCollector {
 
             StopWatch clock = new StopWatch();
             clock.start();
-            GitLogResponse gitLogResponse = diffLog(g1, a1, v1, t1, g2, a2, v2, t2);
+            GitLogResponse gitLogResponse = diffLog(g1, a1, v1, t1 == null ? "" : t1, g2, a2, v2, t2 == null ? "" : t2);
             summaryResponse.setFrom(m1);
             summaryResponse.setTo(m2);
             Set<String> defectids = new LinkedHashSet<>();
