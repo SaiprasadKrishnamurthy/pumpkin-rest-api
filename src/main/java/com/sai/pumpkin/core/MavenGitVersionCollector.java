@@ -83,7 +83,7 @@ public class MavenGitVersionCollector {
         StopWatch clock = new StopWatch();
         GitLogResponse gitLogResponse = null;
         try {
-            if (!m1List.isEmpty() && m2List.isEmpty()) {
+            if (!m1List.isEmpty() && !m2List.isEmpty()) {
                 MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
                 MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
