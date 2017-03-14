@@ -176,7 +176,7 @@ public class DiffArtifactsResource {
             if (first.isPresent() && first1.isPresent()) {
                 MavenCoordinates old = first.get();
                 MavenCoordinates nw = first1.get();
-                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), null, nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), null);
+                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), "");
                 grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
             }
         }
