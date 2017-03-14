@@ -79,14 +79,14 @@ public class MavenGitVersionCollector {
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
         if (StringUtils.isNotBlank(t1)) {
-            m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
-        } else {
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1, Long.parseLong(t1.trim()));
+        } else {
+            m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
         }
         if (StringUtils.isNotBlank(t2)) {
-            m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
-        } else {
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2, Long.parseLong(t2.trim()));
+        } else {
+            m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
         }
         LOGGER.info("From coordinates: " + m1List);
         LOGGER.info("To coordinates: " + m2List);
