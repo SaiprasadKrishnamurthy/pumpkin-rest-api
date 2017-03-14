@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by saipkri on 07/03/17.
@@ -15,4 +16,5 @@ public class MavenGitVersionMapping implements Serializable {
     private ArtifactConfig artifactConfig;
     private MavenCoordinates mavenCoordinates;
     private String gitRevision;
+    private long timestamp;
 }

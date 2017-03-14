@@ -42,7 +42,7 @@ public class PumpkinApp {
     @Value("${amqBrokerUrl:#{null}}")
     private String amqBrokerUrl;
 
-    @Value("${redisServer:#{127.0.0.1}}")
+    @Value("${redisServer}")
     private String redisServer;
 
     private static final Logger LOGGER = Logger.getLogger(PumpkinApp.class);

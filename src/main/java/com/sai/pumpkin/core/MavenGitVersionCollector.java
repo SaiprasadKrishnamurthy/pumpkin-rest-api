@@ -58,10 +58,12 @@ public class MavenGitVersionCollector {
     public void collect(ArtifactConfig config) {
         try {
             Consumer<MavenGitVersionMapping> saveOrUpdateFunction = (mapping) -> {
-                Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
-                        .and("mavenCoordinates.artifactId").is(mapping.getMavenCoordinates().getArtifactId())
-                        .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion());
-                mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
+                if (!mapping.getMavenCoordinates().getVersion().contains("SNAPSHOT")) {
+                    Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
+                            .and("mavenCoordinates.artifactId").is(mapping.getMavenCoordinates().getArtifactId())
+                            .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion());
+                    mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
+                }
                 mongoTemplate.save(mapping);
                 LOGGER.info("Saved: " + mapping);
             };
@@ -73,39 +75,52 @@ public class MavenGitVersionCollector {
 
     @Cacheable(cacheNames = "detailedDiffCache", key = "#p0.concat('detailedDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5)")
     public GitLogResponse diffLog(final String g1, final String a1, final String v1, final String g2, final String a2, final String v2) {
-        MavenGitVersionMapping m1 = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
-        MavenGitVersionMapping m2 = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
+        List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        LOGGER.info("From coordinates: " + m1List);
+        LOGGER.info("To coordinates: " + m2List);
 
         StopWatch clock = new StopWatch();
         GitLogResponse gitLogResponse = null;
         try {
-            clock.start();
-            gitLogResponse = diffLogPreComputed(m1, m2);
-            if (gitLogResponse == null) {
-                gitLogResponse = GitUtils.gitLogResponse(localGitWorkspace, m1, m2);
-                List<String> gitLogEntryUuids = new ArrayList<>();
-                List<GitLogEntry> entries = gitLogResponse.getGitLogEntries();
+            if (!m1List.isEmpty() && m2List.isEmpty()) {
+                MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
+                MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
-                for (GitLogEntry entry : entries) {
-                    entry.setUuid(UUID.randomUUID().toString());
-                    gitLogEntryUuids.add(entry.getUuid());
-                    List<String> changesUuids = entry.getChanges().stream().map(changeSetEntry -> {
-                        String uuid = UUID.randomUUID().toString();
-                        changeSetEntry.setUuid(uuid);
-                        mongoTemplate.save(changeSetEntry);
-                        return uuid;
-                    }).collect(toList());
-                    entry.setChangeUUIDs(changesUuids);
-                    mongoTemplate.save(entry);
+                if (m1List.size() != m2List.size()) {
+                    m1 = m1List.get(0);
+                    m2 = m2List.get(m2List.size() - 1);
                 }
-                gitLogResponse.setGitLogUUIDs(gitLogEntryUuids);
-                mongoTemplate.save(gitLogResponse);
-                clock.stop();
-                LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
+
+                clock.start();
+                gitLogResponse = diffLogPreComputed(m1, m2);
+                if (gitLogResponse == null) {
+                    gitLogResponse = GitUtils.gitLogResponse(localGitWorkspace, m1, m2);
+                    List<String> gitLogEntryUuids = new ArrayList<>();
+                    List<GitLogEntry> entries = gitLogResponse.getGitLogEntries();
+
+                    for (GitLogEntry entry : entries) {
+                        entry.setUuid(UUID.randomUUID().toString());
+                        gitLogEntryUuids.add(entry.getUuid());
+                        List<String> changesUuids = entry.getChanges().stream().map(changeSetEntry -> {
+                            String uuid = UUID.randomUUID().toString();
+                            changeSetEntry.setUuid(uuid);
+                            mongoTemplate.save(changeSetEntry);
+                            return uuid;
+                        }).collect(toList());
+                        entry.setChangeUUIDs(changesUuids);
+                        mongoTemplate.save(entry);
+                    }
+                    gitLogResponse.setGitLogUUIDs(gitLogEntryUuids);
+                    mongoTemplate.save(gitLogResponse);
+                    clock.stop();
+                    LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return gitLogResponse;
     }
 
@@ -154,60 +169,71 @@ public class MavenGitVersionCollector {
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5)")
     public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String g2, final String a2, final String v2) {
-        MavenGitVersionMapping m1 = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
-        MavenGitVersionMapping m2 = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        GitLogSummaryResponse summaryResponse = null;
+        List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
+        List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
+        if (!m1List.isEmpty() && !m2List.isEmpty()) {
+            summaryResponse = new GitLogSummaryResponse();
+            MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
+            MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
-        StopWatch clock = new StopWatch();
-        clock.start();
-        GitLogResponse gitLogResponse = diffLog(g1, a1, v1, g2, a2, v2);
-        GitLogSummaryResponse summaryResponse = new GitLogSummaryResponse();
-        summaryResponse.setFrom(m1);
-        summaryResponse.setTo(m2);
-        Set<String> defectids = new LinkedHashSet<>();
-
-        gitLogResponse.getGitLogEntries().forEach(gle -> {
-            String author = gle.getAuthor().trim();
-            Matcher matcher = defectIdRegexPattern.matcher(gle.getCommitMessage());
-
-            while (matcher.find()) {
-                defectids.add(matcher.group());
+            if (m1List.size() != m2List.size()) {
+                m1 = m1List.get(0);
+                m2 = m2List.get(m2List.size() - 1);
             }
 
-            gle.getChanges().forEach(cse -> {
-                summaryResponse.getAuthorsToChangeSet().compute(author, (k, v) -> {
-                    if (v == null) {
-                        return new HashSet<>();
-                    } else {
-                        v.add(cse);
-                        return v;
-                    }
+            StopWatch clock = new StopWatch();
+            clock.start();
+            GitLogResponse gitLogResponse = diffLog(g1, a1, v1, g2, a2, v2);
+            summaryResponse.setFrom(m1);
+            summaryResponse.setTo(m2);
+            Set<String> defectids = new LinkedHashSet<>();
+            GitLogSummaryResponse _summaryResponse = summaryResponse;
+
+            gitLogResponse.getGitLogEntries().forEach(gle -> {
+                String author = gle.getAuthor().trim();
+                Matcher matcher = defectIdRegexPattern.matcher(gle.getCommitMessage());
+
+                while (matcher.find()) {
+                    defectids.add(matcher.group());
+                }
+
+                gle.getChanges().forEach(cse -> {
+                    _summaryResponse.getAuthorsToChangeSet().compute(author, (k, v) -> {
+                        if (v == null) {
+                            return new HashSet<>();
+                        } else {
+                            v.add(cse);
+                            return v;
+                        }
+                    });
                 });
             });
-        });
-        String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
+            String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
 
-        try {
-            String stat = GitUtils.linesStat(localRepo, m1.getGitRevision(), m2.getGitRevision());
-            String tokens[] = stat.split(",");
-            long files = 0;
-            long linesInserted = 0;
-            long linesDeleted = 0;
+            try {
+                String stat = GitUtils.linesStat(localRepo, m1.getGitRevision(), m2.getGitRevision());
+                String tokens[] = stat.split(",");
+                long files = 0;
+                long linesInserted = 0;
+                long linesDeleted = 0;
 
-            List<String> trimmed = IntStream.range(0, tokens.length).mapToObj(i -> tokens[i].trim()).collect(toList());
-            files = Long.parseLong(trimmed.get(0).split(" ")[0].trim());
-            linesInserted = Long.parseLong(trimmed.get(1).split(" ")[0].trim());
-            linesDeleted = Long.parseLong(trimmed.get(2).split(" ")[0].trim());
-            summaryResponse.setNoOfFilesChanged(files);
-            summaryResponse.setNoOfLinesInserted(linesInserted);
-            summaryResponse.setNoOfLinesDeleted(linesDeleted);
-            summaryResponse.setDefectIds(defectids);
+                List<String> trimmed = IntStream.range(0, tokens.length).mapToObj(i -> tokens[i].trim()).collect(toList());
+                files = Long.parseLong(trimmed.get(0).split(" ")[0].trim());
+                linesInserted = Long.parseLong(trimmed.get(1).split(" ")[0].trim());
+                linesDeleted = Long.parseLong(trimmed.get(2).split(" ")[0].trim());
+                summaryResponse.setNoOfFilesChanged(files);
+                summaryResponse.setNoOfLinesInserted(linesInserted);
+                summaryResponse.setNoOfLinesDeleted(linesDeleted);
+                summaryResponse.setDefectIds(defectids);
 
-        } catch (Exception ex) {
-            LOGGER.error("Error while getting git stat for  " + m1 + " and " + m2, ex);
+            } catch (Exception ex) {
+                LOGGER.error("Error while getting git stat for  " + m1 + " and " + m2, ex);
+            }
+
+            clock.stop();
+            LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff SUMMARY between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
         }
-
-        clock.stop();
-        LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff SUMMARY between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
         return summaryResponse;
     }
 

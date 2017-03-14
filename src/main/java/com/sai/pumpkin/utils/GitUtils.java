@@ -10,6 +10,7 @@ import org.zeroturnaround.exec.stream.LogOutputStream;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +47,7 @@ public class GitUtils {
     }
 
     public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer) throws Exception {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
         String localRepo = localGitWorkspace + File.separator + artifactConfig.getRepoName() + File.separator;
         new File(localRepo).mkdirs();
         gitClone(artifactConfig.getRepoUrl(), localRepo);
@@ -55,20 +57,24 @@ public class GitUtils {
 
         for (String rev : revisions) {
             try {
+                String tokens[] = rev.split("\\|");
+                rev = tokens[0].trim();
+                long commitDateTime = fmt.parse(tokens[1].trim()).getTime();
+
                 String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
                 LOGGER.info("\t Pom retrieved successfully");
 
-
                 String[] gav = PomUtils.gidAidVersionArray(pom);
                 LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
-                if (!gav[2].contains("SNAPSHOT")) {
-                    MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
-                    MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
-                    mavenGitVersionMapping.setArtifactConfig(artifactConfig);
-                    mavenGitVersionMapping.setGitRevision(rev);
-                    mavenGitVersionMapping.setMavenCoordinates(mavenCoordinates);
-                    consumer.accept(mavenGitVersionMapping);
-                }
+//                if (!gav[2].contains("SNAPSHOT")) {
+                MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
+                MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
+                mavenGitVersionMapping.setArtifactConfig(artifactConfig);
+                mavenGitVersionMapping.setGitRevision(rev);
+                mavenGitVersionMapping.setMavenCoordinates(mavenCoordinates);
+                mavenGitVersionMapping.setTimestamp(commitDateTime);
+                consumer.accept(mavenGitVersionMapping);
+//                }
             } catch (Exception ignore) {
                 LOGGER.error("Error during collection for" + artifactConfig + " Git bersion: " + rev, ignore);
             }
@@ -137,7 +143,8 @@ public class GitUtils {
     }
 
     private static List<String> gitLogCommitSHAs(String localRepo, String filePath, String branch) throws Exception {
-        return Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--reverse", "--format=format:%H", branch, "--follow", "--", filePath)
+        String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
+        return Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--date=iso", "--reverse", "--format='format:|%ad'", branch, "--follow", "--", baseDir)
                 .readOutput(true)
                 .execute()
                 .outputString()

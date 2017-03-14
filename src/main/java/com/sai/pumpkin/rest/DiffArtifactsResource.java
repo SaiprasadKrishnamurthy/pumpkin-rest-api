@@ -100,12 +100,16 @@ public class DiffArtifactsResource {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), nw.getGroupId(), nw.getArtifactId(), nw.getVersion());
-            summaries.add(s);
+            if (s != null) {
+                summaries.add(s);
+            } else {
+                LOGGER.warn("No Log Summary found for: {}, {}", old, nw);
+            }
         }
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(summaries);
-        releaseDiffResponse.setNewlyAdded(added.stream().map(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion())).collect(Collectors.toList()));
-        releaseDiffResponse.setRemoved(removed.stream().map(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion())).collect(Collectors.toList()));
+        releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
+        releaseDiffResponse.setRemoved(removed.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
     }
 
