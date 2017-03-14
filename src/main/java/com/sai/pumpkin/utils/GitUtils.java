@@ -67,7 +67,7 @@ public class GitUtils {
                 String[] gav = PomUtils.gidAidVersionArray(pom);
                 LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
 //                if (!gav[2].contains("SNAPSHOT")) {
-                MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2]);
+                MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2], commitDateTime);
                 MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
                 mavenGitVersionMapping.setArtifactConfig(artifactConfig);
                 mavenGitVersionMapping.setGitRevision(rev);
