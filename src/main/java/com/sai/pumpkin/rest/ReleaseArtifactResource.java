@@ -52,8 +52,8 @@ public class ReleaseArtifactResource {
     @ApiOperation("Lists all maven artifacts")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/artifacts", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> artifacts() {
-        List<MavenGitVersionMapping> artifacts = mavenGitVersionMappingRepository.findAll();
+    public ResponseEntity<?> artifacts(@RequestParam("artifactId") final String artifactId) {
+        List<MavenGitVersionMapping> artifacts = mavenGitVersionMappingRepository.findByMavenCoordinates(artifactId.trim());
         artifacts.sort((a, b) -> a.getMavenCoordinates().getArtifactId().compareTo(b.getMavenCoordinates().getArtifactId()));
         return new ResponseEntity<>(artifacts, HttpStatus.OK);
     }
