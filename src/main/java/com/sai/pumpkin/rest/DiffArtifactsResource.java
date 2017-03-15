@@ -136,8 +136,8 @@ public class DiffArtifactsResource {
         final Map<String, MavenGitVersionMapping> beforeMap = new HashMap<>();
         final Map<String, MavenGitVersionMapping> afterMap = new HashMap<>();
 
-        before.forEach(m -> beforeMap.put(m.toString(), m));
-        after.forEach(m -> afterMap.put(m.toString(), m));
+        before.forEach(m -> beforeMap.put(m.getMavenCoordinates().shortString(), m));
+        after.forEach(m -> afterMap.put(m.getMavenCoordinates().shortString(), m));
 
         for (Map.Entry<String, MavenGitVersionMapping> afterEntry : afterMap.entrySet()) {
             String mavenCoordinates = afterEntry.getKey();

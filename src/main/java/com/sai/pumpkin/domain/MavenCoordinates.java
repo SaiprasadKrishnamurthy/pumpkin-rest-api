@@ -20,6 +20,10 @@ public class MavenCoordinates implements Serializable {
     private String version;
     private long builtTimestamp = -1;
 
+    public String shortString() {
+        return groupId + ":" + artifactId;
+    }
+
     @Override
     public String toString() {
         return "[" + groupId + ":" + artifactId + ":" + version + "]";

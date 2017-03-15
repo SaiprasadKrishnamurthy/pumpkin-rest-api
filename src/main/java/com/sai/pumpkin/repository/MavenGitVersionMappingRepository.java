@@ -27,9 +27,9 @@ public interface MavenGitVersionMappingRepository extends MongoRepository<MavenG
     @Query("{$and: [{'mavenCoordinates.artifactId' : {'$regex': '?0'}}]}")
     List<MavenGitVersionMapping> findByMavenCoordinates(String artifactId);
 
-    @Query("{$and: [{'timestamp' : {'$gte': '?0'}}]}")
+    @Query("{$and: [{'timestamp' : {'$gte': ?0}}]}")
     List<MavenGitVersionMapping> findGreaterThanTimestamp(long timestamp);
 
-    @Query("{$and: [{'timestamp' : {'$lt': '?0'}}]}")
+    @Query("{$and: [{'timestamp' : {'$lt': ?0}}]}")
     List<MavenGitVersionMapping> findLesserThanTimestamp(long timestamp);
 }

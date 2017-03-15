@@ -17,4 +17,8 @@ public class MavenGitVersionMapping implements Serializable {
     private MavenCoordinates mavenCoordinates;
     private String gitRevision;
     private long timestamp;
+
+    public String getGitRevision() {
+        return gitRevision.trim().replace("\n","");
+    }
 }
