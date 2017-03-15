@@ -6,10 +6,6 @@ import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-/**
- * Created by saipkri on 07/03/17.
- */
-
 public interface MavenGitVersionMappingRepository extends MongoRepository<MavenGitVersionMapping, String> {
 
     @Query("{ 'artifactConfig.name' : ?0 }")
