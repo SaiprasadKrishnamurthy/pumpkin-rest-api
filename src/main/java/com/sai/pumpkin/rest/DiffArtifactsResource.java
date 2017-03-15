@@ -1,6 +1,5 @@
 package com.sai.pumpkin.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sai.pumpkin.core.MavenGitVersionCollector;
 import com.sai.pumpkin.domain.*;
 import com.sai.pumpkin.repository.GitLogResponseRepository;
@@ -16,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +30,6 @@ public class DiffArtifactsResource {
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
     private final MavenGitVersionCollector mavenGitVersionCollector;
     private final ReleaseArtifactRepository releaseArtifactRepository;
-    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Inject
     public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository) {
@@ -128,6 +123,34 @@ public class DiffArtifactsResource {
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(Arrays.asList(diffResponse));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
+    }
+
+    @ApiOperation("Gets detailed commits after a specified timestamp")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) {
+        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
+        List<MavenGitVersionMapping> before = mavenGitVersionMappingRepository.findLesserThanTimestamp(timestamp);
+        List<GitLogResponse> responses = new ArrayList<>();
+
+        final Map<String, MavenGitVersionMapping> beforeMap = new HashMap<>();
+        final Map<String, MavenGitVersionMapping> afterMap = new HashMap<>();
+
+        before.forEach(m -> beforeMap.put(m.toString(), m));
+        after.forEach(m -> afterMap.put(m.toString(), m));
+
+        for (Map.Entry<String, MavenGitVersionMapping> afterEntry : afterMap.entrySet()) {
+            String mavenCoordinates = afterEntry.getKey();
+            MavenGitVersionMapping nw = afterEntry.getValue();
+            MavenGitVersionMapping old = beforeMap.get(mavenCoordinates);
+
+            if (old != null && nw != null) {
+                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
+                responses.add(s);
+            }
+        }
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @ApiOperation("Gets a detailed commits between release 1 and release 2 filtered by a csv of committers")
