@@ -59,12 +59,11 @@ public class MavenGitVersionCollector {
     public void collect(ArtifactConfig config) {
         try {
             Consumer<MavenGitVersionMapping> saveOrUpdateFunction = (mapping) -> {
-                if (!mapping.getMavenCoordinates().getVersion().contains("SNAPSHOT")) {
-                    Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
-                            .and("mavenCoordinates.artifactId").is(mapping.getMavenCoordinates().getArtifactId())
-                            .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion());
-                    mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
-                }
+                Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
+                        .and("mavenCoordinates.artifactId").is(mapping.getMavenCoordinates().getArtifactId())
+                        .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion())
+                        .and("timestamp").is(mapping.getTimestamp());
+                mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
                 mongoTemplate.save(mapping);
                 LOGGER.info("Saved: " + mapping);
             };
