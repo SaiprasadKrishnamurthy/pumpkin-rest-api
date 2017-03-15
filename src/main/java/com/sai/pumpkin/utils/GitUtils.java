@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +47,7 @@ public class GitUtils {
 
     }
 
-    public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer) throws Exception {
+    public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer, final Predicate<String> processRevisioFCheck) throws Exception {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
         String localRepo = localGitWorkspace + File.separator + artifactConfig.getRepoName() + File.separator;
         new File(localRepo).mkdirs();
@@ -59,21 +60,23 @@ public class GitUtils {
             try {
                 String tokens[] = rev.split("\\|");
                 rev = tokens[0].trim();
-                long commitDateTime = fmt.parse(tokens[1].trim()).getTime();
+                if (processRevisioFCheck.test(rev)) {
+                    long commitDateTime = fmt.parse(tokens[1].trim()).getTime();
 
-                String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
-                LOGGER.info("\t Pom retrieved successfully");
+                    String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
+                    LOGGER.info("\t Pom retrieved successfully");
 
-                String[] gav = PomUtils.gidAidVersionArray(pom);
-                LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
+                    String[] gav = PomUtils.gidAidVersionArray(pom);
+                    LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
 //                if (!gav[2].contains("SNAPSHOT")) {
-                MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2], commitDateTime);
-                MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
-                mavenGitVersionMapping.setArtifactConfig(artifactConfig);
-                mavenGitVersionMapping.setGitRevision(rev);
-                mavenGitVersionMapping.setMavenCoordinates(mavenCoordinates);
-                mavenGitVersionMapping.setTimestamp(commitDateTime);
-                consumer.accept(mavenGitVersionMapping);
+                    MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2], commitDateTime);
+                    MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
+                    mavenGitVersionMapping.setArtifactConfig(artifactConfig);
+                    mavenGitVersionMapping.setGitRevision(rev);
+                    mavenGitVersionMapping.setMavenCoordinates(mavenCoordinates);
+                    mavenGitVersionMapping.setTimestamp(commitDateTime);
+                    consumer.accept(mavenGitVersionMapping);
+                }
 //                }
             } catch (Exception ignore) {
                 LOGGER.error("Error during collection for" + artifactConfig + " Git bersion: " + rev, ignore);

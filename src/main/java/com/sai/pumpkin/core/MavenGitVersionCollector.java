@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -67,7 +68,11 @@ public class MavenGitVersionCollector {
                 mongoTemplate.save(mapping);
                 LOGGER.info("Saved: " + mapping);
             };
-            GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction);
+            Predicate<String> revisionAlreadyCollected = (rev) -> {
+                MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev);
+                return (existing == null);
+            };
+            GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
