@@ -57,7 +57,7 @@ public class MavenGitVersionCollector {
         this.defectIdRegexPattern = Pattern.compile(defectIdRegex.trim());
     }
 
-    public void collect(ArtifactConfig config) {
+    public void collect(final ArtifactConfig config) {
         try {
             Consumer<MavenGitVersionMapping> saveOrUpdateFunction = (mapping) -> {
                 Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
@@ -69,7 +69,7 @@ public class MavenGitVersionCollector {
                 LOGGER.info("Saved: " + mapping);
             };
             Predicate<String> revisionAlreadyCollected = (rev) -> {
-                MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev);
+                MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev, config.getName());
                 return (existing == null);
             };
             GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected);
