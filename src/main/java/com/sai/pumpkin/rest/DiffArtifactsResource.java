@@ -130,23 +130,27 @@ public class DiffArtifactsResource {
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) {
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
-        List<MavenGitVersionMapping> before = mavenGitVersionMappingRepository.findLesserThanTimestamp(timestamp);
         List<GitLogResponse> responses = new ArrayList<>();
 
-        final Map<String, MavenGitVersionMapping> beforeMap = new HashMap<>();
-        final Map<String, MavenGitVersionMapping> afterMap = new HashMap<>();
+        final Map<String, List<MavenGitVersionMapping>> afterMap = new HashMap<>();
 
-        Collections.sort(before, (a, b) -> Long.valueOf(a.getTimestamp()).compareTo(b.getTimestamp()));
         Collections.sort(after, (a, b) -> Long.valueOf(a.getTimestamp()).compareTo(b.getTimestamp()));
 
-        before.forEach(m -> beforeMap.put(m.getMavenCoordinates().shortString(), m));
-        after.forEach(m -> afterMap.put(m.getMavenCoordinates().shortString(), m));
+        after.forEach(m -> {
+            afterMap.compute(m.getMavenCoordinates().shortString(), (k, v) -> {
+                if (v == null) {
+                    return new ArrayList<>();
+                } else {
+                    v.add(m);
+                    return v;
+                }
+            });
+        });
 
 
-        for (Map.Entry<String, MavenGitVersionMapping> afterEntry : afterMap.entrySet()) {
-            String mavenCoordinates = afterEntry.getKey();
-            MavenGitVersionMapping nw = afterEntry.getValue();
-            MavenGitVersionMapping old = beforeMap.get(mavenCoordinates);
+        for (Map.Entry<String, List<MavenGitVersionMapping>> afterEntry : afterMap.entrySet()) {
+            MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
+            MavenGitVersionMapping old = afterEntry.getValue().get(0);
 
             if (old != null && nw != null) {
                 GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
