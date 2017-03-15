@@ -149,12 +149,14 @@ public class DiffArtifactsResource {
 
 
         for (Map.Entry<String, List<MavenGitVersionMapping>> afterEntry : afterMap.entrySet()) {
-            MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
-            MavenGitVersionMapping old = afterEntry.getValue().get(0);
+            if (!afterEntry.getValue().isEmpty()) {
+                MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
+                MavenGitVersionMapping old = afterEntry.getValue().get(0);
 
-            if (old != null && nw != null) {
-                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
-                responses.add(s);
+                if (old != null && nw != null) {
+                    GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
+                    responses.add(s);
+                }
             }
         }
 
