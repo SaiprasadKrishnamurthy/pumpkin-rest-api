@@ -33,6 +33,6 @@ public interface MavenGitVersionMappingRepository extends MongoRepository<MavenG
     @Query("{$and: [{'timestamp' : {'$lt': ?0}}]}")
     List<MavenGitVersionMapping> findLesserThanTimestamp(long timestamp);
 
-    @Query("{$and: [{'gitRevision' : '?0'}, {'artifactConfig.name', : '?1'}]}")
+    @Query("{$and: [{'gitRevision' : '?0'}, {'artifactConfig.name' : '?1'}]}")
     MavenGitVersionMapping findByGitRevision(String rev, String artifactConfigName);
 }
