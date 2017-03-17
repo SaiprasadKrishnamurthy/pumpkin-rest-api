@@ -1,8 +1,6 @@
 package com.sai.pumpkin.rest;
 
-import com.sai.pumpkin.domain.MavenCoordinates;
-import com.sai.pumpkin.domain.MavenGitVersionMapping;
-import com.sai.pumpkin.domain.ReleaseArtifact;
+import com.sai.pumpkin.domain.*;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
 import com.sai.pumpkin.repository.ReleaseArtifactRepository;
 import io.swagger.annotations.ApiOperation;
@@ -92,6 +90,32 @@ public class ReleaseArtifactResource {
     @RequestMapping(value = "/releases", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> releases() {
         return new ResponseEntity<>(releaseArtifactRepository.findAll(), HttpStatus.OK);
+    }
+
+    @ApiOperation("Lists all release meta")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/release-meta", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> releasemeta(@RequestParam("version") String version, @RequestParam("name") String releaseName) {
+        Criteria c = Criteria.where("name").is(releaseName.trim()).and("version").is(version.trim());
+        ReleaseArtifact release = mongoTemplate.findOne(Query.query(c), ReleaseArtifact.class);
+        ReleaseMetadata meta = new ReleaseMetadata();
+        meta.setReleaseName(releaseName.trim());
+        meta.setVersion(version.trim());
+        for (MavenCoordinates artifact : release.getMavenArtifacts()) {
+            ArtifactCollection artifactCollection = new ArtifactCollection();
+            artifactCollection.setMavenCoordinates(artifact);
+            meta.getArtifacts().add(artifactCollection);
+            if (mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()) != null) {
+                if (mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId()) == null) {
+                    artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_COLLECTED);
+                } else {
+                    artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
+                }
+            } else {
+                artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
+            }
+        }
+        return new ResponseEntity<>(meta, HttpStatus.OK);
     }
 
     @ApiOperation("Lists all maven artifacts")
