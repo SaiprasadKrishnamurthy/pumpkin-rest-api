@@ -53,7 +53,7 @@ public class ReleaseArtifactResource {
 
     @ApiOperation("Saves a release artifact from a dump")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
-    @RequestMapping(value = "/release", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
+    @RequestMapping(value = "/release-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
     public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump) {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
