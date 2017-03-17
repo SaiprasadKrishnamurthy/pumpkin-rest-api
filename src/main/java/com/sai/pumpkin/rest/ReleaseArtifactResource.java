@@ -97,7 +97,7 @@ public class ReleaseArtifactResource {
     @ApiOperation("Lists all release meta")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-meta", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> releasemeta(@RequestParam("version") String version, @RequestParam("name") String releaseName) {
+    public ReleaseMetadata releasemeta(@RequestParam("version") String version, @RequestParam("name") String releaseName) {
         Criteria c = Criteria.where("name").is(releaseName.trim()).and("version").is(version.trim());
         ReleaseArtifact release = mongoTemplate.findOne(Query.query(c), ReleaseArtifact.class);
         ReleaseMetadata meta = new ReleaseMetadata();
@@ -114,7 +114,7 @@ public class ReleaseArtifactResource {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
             }
         }
-        return new ResponseEntity<>(meta, HttpStatus.OK);
+        return meta;
     }
 
     @ApiOperation("Lists all maven artifacts")
