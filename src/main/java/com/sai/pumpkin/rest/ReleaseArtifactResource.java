@@ -106,11 +106,7 @@ public class ReleaseArtifactResource {
             artifactCollection.setMavenCoordinates(artifact);
             meta.getArtifacts().add(artifactCollection);
             if (mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()) != null) {
-                if (mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId()) == null) {
-                    artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_COLLECTED);
-                } else {
-                    artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
-                }
+                artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
             } else {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
             }
