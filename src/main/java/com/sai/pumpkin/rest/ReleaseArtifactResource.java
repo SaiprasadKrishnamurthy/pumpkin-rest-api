@@ -6,6 +6,7 @@ import com.sai.pumpkin.repository.ReleaseArtifactRepository;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -92,6 +93,7 @@ public class ReleaseArtifactResource {
         return new ResponseEntity<>(releaseArtifactRepository.findAll(), HttpStatus.OK);
     }
 
+    @Cacheable(cacheNames = "releaseMetaCache", key = "#p0.concat('releaseMetaCache').concat(#p1)")
     @ApiOperation("Lists all release meta")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-meta", method = RequestMethod.GET, produces = "application/json")
@@ -105,7 +107,8 @@ public class ReleaseArtifactResource {
             ArtifactCollection artifactCollection = new ArtifactCollection();
             artifactCollection.setMavenCoordinates(artifact);
             meta.getArtifacts().add(artifactCollection);
-            if (mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()) != null) {
+            List<MavenGitVersionMapping> byMavenCoordinates = mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
+            if (byMavenCoordinates != null && !byMavenCoordinates.isEmpty()) {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
             } else {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
