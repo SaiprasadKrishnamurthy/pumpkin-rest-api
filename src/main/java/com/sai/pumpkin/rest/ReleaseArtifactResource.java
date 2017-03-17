@@ -1,5 +1,6 @@
 package com.sai.pumpkin.rest;
 
+import com.sai.pumpkin.domain.MavenCoordinates;
 import com.sai.pumpkin.domain.MavenGitVersionMapping;
 import com.sai.pumpkin.domain.ReleaseArtifact;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
@@ -18,6 +19,9 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by saipkri on 07/03/17.
@@ -50,9 +54,34 @@ public class ReleaseArtifactResource {
     @ApiOperation("Saves a release artifact from a dump")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
-    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestBody String releaseDump) {
+    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump) {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
+        List<MavenCoordinates> allMavenCoordinates = Stream.of(releaseDump.split("\n"))
+                .filter(l -> l.trim().length() > 0)
+                .map(s -> {
+                    MavenCoordinates mavenCoordinates = new MavenCoordinates();
+                    String[] tokens = s.trim().split(" ");
+                    List<String> kv = Stream.of(tokens).filter(t -> t.contains("=")).collect(toList());
+                    for (String kvp : kv) {
+                        String value = kvp.split("=")[1];
+                        if (kvp.contains("groupId")) {
+                            mavenCoordinates.setGroupId(value.trim());
+                        } else if (kvp.contains("artifactId")) {
+                            mavenCoordinates.setArtifactId(value.trim());
+                        } else if (kvp.contains("version")) {
+                            mavenCoordinates.setVersion(value.trim());
+                        }
+                    }
+                    return mavenCoordinates;
+                }).collect(toList());
+        ReleaseArtifact releaseArtifact = new ReleaseArtifact();
+        releaseArtifact.setName(releaseName.trim());
+        releaseArtifact.setVersion(version);
+        releaseArtifact.setMavenArtifacts(allMavenCoordinates);
+        Criteria c = Criteria.where("name").is(releaseArtifact.getName()).and("version").is(releaseArtifact.getVersion());
+        mongoTemplate.remove(Query.query(c), ReleaseArtifact.class);
+        mongoTemplate.save(releaseArtifact);
         Map<String, String> json = new HashMap<>();
         json.put("status", "success");
         return new ResponseEntity<>(json, HttpStatus.CREATED);
