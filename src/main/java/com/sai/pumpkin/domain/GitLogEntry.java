@@ -23,7 +23,7 @@ public class GitLogEntry implements Serializable {
     private long timestamp;
     private String commitMessage;
 
-    private final SimpleDateFormat IN_DATE_FMT_ALT_2 = new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SS");
+    private final SimpleDateFormat IN_DATE_FMT_ALT_2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss YYYY Z");
 
     @Transient
     private List<ChangeSetEntry> changes;
