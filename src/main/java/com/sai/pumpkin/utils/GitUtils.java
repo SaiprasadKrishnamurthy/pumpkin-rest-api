@@ -166,6 +166,7 @@ public class GitUtils {
                 .execute()
                 .getExitValue();
         if (exit > 0) {
+            LOGGER.info("Performing a GIT Fetch: " + localRepo);
             new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "fetch")
                     .redirectOutput(new LogOutputStream() {
                         @Override
@@ -175,6 +176,18 @@ public class GitUtils {
                     })
                     .execute()
                     .getExitValue();
+            LOGGER.info("Performing a GIT Pull: " + localRepo);
+
+            exit = new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "pull")
+                    .redirectOutput(new LogOutputStream() {
+                        @Override
+                        protected void processLine(String line) {
+                            System.out.println(line);
+                        }
+                    })
+                    .execute()
+                    .getExitValue();
+            LOGGER.info("GIT Pull status code: " + exit);
         }
     }
 
