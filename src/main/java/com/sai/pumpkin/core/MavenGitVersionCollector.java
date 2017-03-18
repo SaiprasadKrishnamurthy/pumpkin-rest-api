@@ -223,7 +223,9 @@ public class MavenGitVersionCollector {
                 gle.getChanges().forEach(cse -> {
                     _summaryResponse.getAuthorsToChangeSet().compute(author, (k, v) -> {
                         if (v == null) {
-                            return new HashSet<>();
+                            Set<ChangeSetEntry> entry = new HashSet<>();
+                            entry.add(cse);
+                            return entry;
                         } else {
                             v.add(cse);
                             return v;
