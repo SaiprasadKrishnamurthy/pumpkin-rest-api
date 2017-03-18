@@ -145,8 +145,13 @@ public class MavenGitVersionCollector {
 
         try {
             clock.start();
-            gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(),
-                    m2.getMavenCoordinates().getGroupId(), m2.getMavenCoordinates().getArtifactId(), m2.getMavenCoordinates().getVersion());
+            if (m1.getMavenCoordinates().getBuiltTimestamp() > 0 && m2.getMavenCoordinates().getBuiltTimestamp() > 0) {
+                gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(),m1.getMavenCoordinates().getBuiltTimestamp(),
+                        m2.getMavenCoordinates().getGroupId(), m2.getMavenCoordinates().getArtifactId(), m2.getMavenCoordinates().getVersion(), m2.getMavenCoordinates().getBuiltTimestamp());
+            } else {
+                gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(),
+                        m2.getMavenCoordinates().getGroupId(), m2.getMavenCoordinates().getArtifactId(), m2.getMavenCoordinates().getVersion());
+            }
             if (gitLogResponse == null) {
                 return null;
             }
