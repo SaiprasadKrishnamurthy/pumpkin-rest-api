@@ -167,7 +167,7 @@ public class GitUtils {
                 .getExitValue();
         if (exit > 0) {
             LOGGER.info("Performing a GIT Fetch: " + localRepo);
-            new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "fetch")
+            new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "fetch", "origin")
                     .redirectOutput(new LogOutputStream() {
                         @Override
                         protected void processLine(String line) {
