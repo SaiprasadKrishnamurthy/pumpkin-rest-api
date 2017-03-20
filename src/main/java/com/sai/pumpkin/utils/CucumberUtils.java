@@ -20,14 +20,14 @@ public class CucumberUtils {
         String outHtmlDir = System.getProperty("java.io.tmpdir") + File.separator + testName;
         FileUtils.forceMkdir(new File(outHtmlDir));
         FileUtils.write(new File(outHtmlDir + File.separator + "test.feature"), featureFileContents);
-        Main.run(new String[]{"/Users/saipkri/pumpkin/pumpkin-rest-api/src/main/resources", "-p", "html:"+outHtmlDir, "-g", ReleaseCheckStepDefs.class.getPackage().getName()}, Thread.currentThread().getContextClassLoader());
+        Main.run(new String[]{outHtmlDir, "-p", "html:"+outHtmlDir, "-g", ReleaseCheckStepDefs.class.getPackage().getName()}, Thread.currentThread().getContextClassLoader());
         String templateContents = IOUtils.toString(CucumberUtils.class.getClassLoader().getResourceAsStream("test_report_template.html"));
         String reportJscontents = IOUtils.toString(new FileInputStream(outHtmlDir + File.separator + "report.js"));
         templateContents = templateContents.replace("REPORT_JS", reportJscontents);
         return templateContents;
     }
 
-    public static void mains(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         String testName = "aaa";
         String contents = IOUtils.toString(CucumberUtils.class.getClassLoader().getResourceAsStream("release_check_feature.feature"));
         System.out.println(runFeature(testName, contents));

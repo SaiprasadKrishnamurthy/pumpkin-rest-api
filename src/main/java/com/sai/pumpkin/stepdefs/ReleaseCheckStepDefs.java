@@ -48,7 +48,7 @@ public class ReleaseCheckStepDefs {
         }
     }
 
-    @And("^the version of maven artifact \"([^\"]*)\" should be greater than \"([^\"]*)\"$")
+    @And("^the version of maven artifact \"([^\"]*)\" should be atleast \"([^\"]*)\"$")
     public void theVersionOfMavenArtifactShouldBeGreaterThan(String gidAid, String version) throws Throwable {
         List<MavenCoordinates> mavenCoordinates = latestRelease.getMavenArtifacts().stream().filter(mc ->
                 mc.getGroupId().equals(gidAid.split(":")[0]) && mc.getArtifactId().equals(gidAid.split(":")[1]))
