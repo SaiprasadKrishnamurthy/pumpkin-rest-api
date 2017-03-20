@@ -27,7 +27,7 @@ public class CucumberUtils {
         return templateContents;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
         String testName = "aaa";
         String contents = IOUtils.toString(CucumberUtils.class.getClassLoader().getResourceAsStream("release_check_feature.feature"));
         System.out.println(runFeature(testName, contents));
