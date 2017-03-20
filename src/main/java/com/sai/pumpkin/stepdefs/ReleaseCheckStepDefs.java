@@ -62,7 +62,7 @@ public class ReleaseCheckStepDefs {
     }
 
     private long toNumeric(String version) {
-        version = version.trim().replace("_", "").replace("SNAPSHOT", "").replace("-", "").replace("SNAPHOT", "").replace("\\.","");
+        version = version.trim().replace("_", "").replace("SNAPSHOT", "").replace("-", "").replace("SNAPHOT", "").replace(".","");
         return Long.parseLong(version);
     }
 }
