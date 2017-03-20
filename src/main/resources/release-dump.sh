@@ -1,6 +1,9 @@
 #!/bin/sh
-export RELEASE_NAME=$1
-export RELEASE_VERSION=$2
+export RELEASE_ARTIFACT_LOCATION=http://10.104.119.201/prime/
+RELEASE_ARTIFACT=`wget --spider --level=1 -nd -r -np $RELEASE_ARTIFACT_LOCATION 2>&1 | sed 's/.*PI/PI/' | grep 'ova$' | tail -1`
+RELEASE_NAME='Prime Infrastructure'
+RELEASE_VERSION=`echo $RELEASE_ARTIFACT | sed 's/[A-Za-z]*//g' | sed 's/[\-]*//g' | sed 's/[\,]*//g'  | rev | cut -c 2- | rev`
+
 >payload.txt
 for file in `find /opt/CSCOlumos/lib -name "*.jar" | grep -v "third-party"`
 do

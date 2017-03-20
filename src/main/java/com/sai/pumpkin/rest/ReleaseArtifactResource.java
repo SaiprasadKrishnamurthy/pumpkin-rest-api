@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -32,12 +34,15 @@ public class ReleaseArtifactResource {
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
     private final MongoTemplate mongoTemplate;
     private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseArtifactResource.class);
+    private final ExecutorService DIFF_WORKERS = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final DiffArtifactsResource diffArtifactsResource;
 
     @Inject
-    public ReleaseArtifactResource(final ReleaseArtifactRepository releaseArtifactRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MongoTemplate mongoTemplate) {
+    public ReleaseArtifactResource(final ReleaseArtifactRepository releaseArtifactRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MongoTemplate mongoTemplate, DiffArtifactsResource diffArtifactsResource) {
         this.releaseArtifactRepository = releaseArtifactRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.mongoTemplate = mongoTemplate;
+        this.diffArtifactsResource = diffArtifactsResource;
     }
 
     @ApiOperation("Saves a release artifact")
@@ -56,6 +61,8 @@ public class ReleaseArtifactResource {
     public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump) {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
+        List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
+
         List<MavenCoordinates> allMavenCoordinates = Stream.of(releaseDump.split("\n"))
                 .filter(l -> l.trim().length() > 0)
                 .map(s -> {
@@ -74,15 +81,20 @@ public class ReleaseArtifactResource {
                     }
                     return mavenCoordinates;
                 }).collect(toList());
-        ReleaseArtifact releaseArtifact = new ReleaseArtifact();
-        releaseArtifact.setName(releaseName.trim());
-        releaseArtifact.setVersion(version);
-        releaseArtifact.setMavenArtifacts(allMavenCoordinates);
-        Criteria c = Criteria.where("name").is(releaseArtifact.getName()).and("version").is(releaseArtifact.getVersion());
+        ReleaseArtifact currRelease = new ReleaseArtifact();
+        currRelease.setName(releaseName.trim());
+        currRelease.setVersion(version);
+        currRelease.setMavenArtifacts(allMavenCoordinates);
+        Criteria c = Criteria.where("name").is(currRelease.getName()).and("version").is(currRelease.getVersion());
         mongoTemplate.remove(Query.query(c), ReleaseArtifact.class);
-        mongoTemplate.save(releaseArtifact);
+        mongoTemplate.save(currRelease);
         Map<String, String> json = new HashMap<>();
         json.put("status", "success");
+
+        if (!allReleases.isEmpty()) {
+            ReleaseArtifact prev = allReleases.get(allReleases.size() - 1);
+            DIFF_WORKERS.submit(() -> diffArtifactsResource.releaseDiff(prev.getName() + ":" + prev.getVersion(), currRelease.getName() + ":" + currRelease.getVersion()));
+        }
         return new ResponseEntity<>(json, HttpStatus.CREATED);
     }
 
