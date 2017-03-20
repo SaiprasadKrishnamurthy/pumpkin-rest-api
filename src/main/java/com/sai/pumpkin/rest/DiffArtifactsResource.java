@@ -210,7 +210,9 @@ public class DiffArtifactsResource {
                 MavenCoordinates old = first.get();
                 MavenCoordinates nw = first1.get();
                 GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), "");
-                grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+                if (s != null) {
+                    grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+                }
             }
         }
         return new ResponseEntity<>(grand, HttpStatus.OK);
