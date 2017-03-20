@@ -6,7 +6,7 @@ import redis.clients.jedis.Jedis;
  * Created by saipkri on 08/03/17.
  */
 public class CacheDummy {
-    public static void main(String[] args) {
+    public static void mains(String[] args) {
         Jedis jedis = new Jedis("10.126.219.142");
 
         System.out.println("Connection to server sucessfully");
