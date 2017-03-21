@@ -12,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Created by saipkri on 19/03/17.
@@ -27,9 +30,9 @@ public class CucumberUtils {
         LOGGER.info("Dir: {}", outHtmlDir);
         FileUtils.forceMkdir(new File(outHtmlDir));
         FileUtils.write(new File(outHtmlDir + File.separator + testName + ".feature"), featureFileContents);
-        LOGGER.info("{}", Files.list(Paths.get(new File(outHtmlDir).getAbsolutePath())));
+        LOGGER.info("{}", Files.list(Paths.get(new File(outHtmlDir).getAbsolutePath())).map(Path::toString).collect(joining("\n")));
         Main.run(new String[]{outHtmlDir, "-p", "html:" + outHtmlDir, "-g", ReleaseCheckStepDefs.class.getPackage().getName()}, Thread.currentThread().getContextClassLoader());
-        LOGGER.info("{}", Files.list(Paths.get(new File(outHtmlDir).getAbsolutePath())));
+        LOGGER.info("{}", Files.list(Paths.get(new File(outHtmlDir).getAbsolutePath())).map(Path::toString).collect(joining("\n")));
         String templateContents = IOUtils.toString(CucumberUtils.class.getClassLoader().getResourceAsStream("test_report_template.html"));
         String reportJscontents = IOUtils.toString(new FileInputStream(outHtmlDir + File.separator + "report.js"));
         templateContents = templateContents.replace("REPORT_JS", reportJscontents);
