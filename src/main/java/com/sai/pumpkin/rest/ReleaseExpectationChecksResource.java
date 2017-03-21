@@ -6,6 +6,8 @@ import com.sai.pumpkin.utils.CucumberUtils;
 import com.sai.pumpkin.utils.SlackUtils;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,6 +24,8 @@ import javax.inject.Inject;
 public class ReleaseExpectationChecksResource {
 
     private final MongoTemplate mongoTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseExpectationChecksResource.class);
+
 
     @Inject
     public ReleaseExpectationChecksResource(final MongoTemplate mongoTemplate) {
@@ -39,11 +43,13 @@ public class ReleaseExpectationChecksResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/testresult", method = RequestMethod.GET, produces = "text/html")
     public ResponseEntity<?> runTestByName(@RequestParam("testName") String testName) throws Exception {
+        LOGGER.info("Going to run test: {}", testName);
         Criteria criteria = Criteria.where("name").is(testName.trim());
         ReleaseExpectation releaseExpectation = mongoTemplate.findOne(Query.query(criteria), ReleaseExpectation.class);
         if (releaseExpectation == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        LOGGER.info("Got test: {}", releaseExpectation);
         String html = CucumberUtils.runFeature(testName.trim(), releaseExpectation.getFeatureText());
         return new ResponseEntity<>(html, HttpStatus.OK);
     }
