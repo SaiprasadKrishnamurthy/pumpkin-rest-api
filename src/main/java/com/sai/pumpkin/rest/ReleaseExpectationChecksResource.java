@@ -5,6 +5,7 @@ import com.sai.pumpkin.domain.ReleaseExpectationResult;
 import com.sai.pumpkin.utils.CucumberUtils;
 import com.sai.pumpkin.utils.SlackUtils;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,6 +26,13 @@ public class ReleaseExpectationChecksResource {
     @Inject
     public ReleaseExpectationChecksResource(final MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    @ApiOperation("runs a specific the test by name")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/testtemplate", method = RequestMethod.GET, produces = "text/plain")
+    public ResponseEntity<?> testTemplate() throws Exception {
+        return new ResponseEntity<>(IOUtils.toString(ReleaseExpectationChecksResource.class.getClassLoader().getResourceAsStream("test_report_template.html")), HttpStatus.OK);
     }
 
     @ApiOperation("runs a specific the test by name")
