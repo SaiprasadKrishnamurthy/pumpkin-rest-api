@@ -22,6 +22,8 @@ public class CucumberUtils {
     public static String runFeature(String testName, String featureFileContents) throws Exception {
         LOGGER.info("Test name: {}, \n {}", testName, featureFileContents);
         String outHtmlDir = System.getProperty("java.io.tmpdir") + File.separator + testName;
+        LOGGER.info("Dir: {}", outHtmlDir);
+        FileUtils.forceDelete(new File(outHtmlDir));
         FileUtils.forceMkdir(new File(outHtmlDir));
         FileUtils.write(new File(outHtmlDir + File.separator + "test.feature"), featureFileContents);
         Main.run(new String[]{outHtmlDir, "-p", "html:" + outHtmlDir, "-g", ReleaseCheckStepDefs.class.getPackage().getName()}, Thread.currentThread().getContextClassLoader());
