@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class DiffArtifactsResource {
         this.releaseArtifactRepository = releaseArtifactRepository;
     }
 
+    @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1)")
     @ApiOperation("Gets a diff between artifact 1 and artifact 2")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/summarydiff", method = RequestMethod.GET, produces = "application/json")
@@ -53,11 +55,12 @@ public class DiffArtifactsResource {
         return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "");
     }
 
+    @Cacheable(cacheNames = "releaseDiffCache", key = "#p0.concat('releaseDiffCache').concat(#p1)")
     @ApiOperation("Gets a diff between release 1 and release 2")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-diff", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> releaseDiff(@ApiParam("name:version") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
-                                         @ApiParam("name:version") @RequestParam("releaseCoordinates2") String releaseCoordinates2) {
+    public ReleaseDiffResponse releaseDiff(@ApiParam("name:version") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
+                                           @ApiParam("name:version") @RequestParam("releaseCoordinates2") String releaseCoordinates2) {
         String[] c1 = releaseCoordinates1.split(":");
         String[] c2 = releaseCoordinates2.split(":");
         if (c1.length < 2 || c2.length < 2) {
@@ -68,7 +71,7 @@ public class DiffArtifactsResource {
         ReleaseArtifact artifact2 = releaseArtifactRepository.findRelease(c2[0].trim(), c2[1].trim());
 
         if (artifact1 == null || artifact2 == null) {
-            return new ResponseEntity<>("No release found for the given coordinates.", HttpStatus.NOT_FOUND);
+            throw new IllegalArgumentException("Not found");
 
         }
         List<MavenCoordinates> removed = artifact1.getMavenArtifacts().stream().filter(old -> !artifact2.getMavenArtifacts().contains(old)).collect(Collectors.toList());
@@ -105,7 +108,7 @@ public class DiffArtifactsResource {
         releaseDiffResponse.setDiffs(summaries);
         releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
         releaseDiffResponse.setRemoved(removed.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
-        return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
+        return releaseDiffResponse;
     }
 
     @ApiOperation("Gets a diff between artifact 1 and artifact 2")
