@@ -32,7 +32,7 @@ public class ReleaseExpectationChecksResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/testtemplate", method = RequestMethod.GET, produces = "text/plain")
     public ResponseEntity<?> testTemplate() throws Exception {
-        return new ResponseEntity<>(IOUtils.toString(ReleaseExpectationChecksResource.class.getClassLoader().getResourceAsStream("test_report_template.html")), HttpStatus.OK);
+        return new ResponseEntity<>(IOUtils.toString(ReleaseExpectationChecksResource.class.getClassLoader().getResourceAsStream("release_check_feature.feature")), HttpStatus.OK);
     }
 
     @ApiOperation("runs a specific the test by name")
