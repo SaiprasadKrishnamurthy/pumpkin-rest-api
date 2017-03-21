@@ -240,7 +240,7 @@ public class MavenGitVersionCollector {
             });
             String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
             String pomPath = m1.getArtifactConfig().getPomPath();
-            String moduleDir = localRepo + pomPath.substring(0, pomPath.lastIndexOf(File.separator));
+            String moduleDir = pomPath.substring(0, pomPath.lastIndexOf(File.separator));
 
             try {
                 String stat = GitUtils.linesStat(localRepo, moduleDir, m1.getGitRevision(), m2.getGitRevision());
