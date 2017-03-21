@@ -146,7 +146,7 @@ public class MavenGitVersionCollector {
         try {
             clock.start();
             if (m1.getMavenCoordinates().getBuiltTimestamp() > 0 && m2.getMavenCoordinates().getBuiltTimestamp() > 0) {
-                gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(),m1.getMavenCoordinates().getBuiltTimestamp(),
+                gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(), m1.getMavenCoordinates().getBuiltTimestamp(),
                         m2.getMavenCoordinates().getGroupId(), m2.getMavenCoordinates().getArtifactId(), m2.getMavenCoordinates().getVersion(), m2.getMavenCoordinates().getBuiltTimestamp());
             } else {
                 gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(m1.getMavenCoordinates().getGroupId(), m1.getMavenCoordinates().getArtifactId(), m1.getMavenCoordinates().getVersion(),
@@ -239,9 +239,11 @@ public class MavenGitVersionCollector {
                 });
             });
             String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
+            String pomPath = m1.getArtifactConfig().getPomPath();
+            String moduleDir = localRepo + pomPath.substring(0, pomPath.lastIndexOf(File.separator));
 
             try {
-                String stat = GitUtils.linesStat(localRepo, m1.getGitRevision(), m2.getGitRevision());
+                String stat = GitUtils.linesStat(localRepo, moduleDir, m1.getGitRevision(), m2.getGitRevision());
                 String tokens[] = stat.split(",");
                 long files = 0;
                 long linesInserted = 0;

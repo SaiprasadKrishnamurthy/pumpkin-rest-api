@@ -222,8 +222,8 @@ public class GitUtils {
                 .outputString();
     }
 
-    public static String linesStat(String localRepo, String gitRevision, String gitRevision1) throws Exception {
-        return new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "diff", "--shortstat", gitRevision, gitRevision1)
+    public static String linesStat(String localRepo, String moduleDir, String gitRevision, String gitRevision1) throws Exception {
+        return new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "diff", "--shortstat", gitRevision, gitRevision1, moduleDir)
                 .readOutput(true)
                 .execute()
                 .outputString();
