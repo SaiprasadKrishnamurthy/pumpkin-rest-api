@@ -167,7 +167,9 @@ public class GitUtils {
                 .getExitValue();
         if (exit > 0) {
             LOGGER.info("Performing a GIT Hard Reset: " + localRepo);
-            new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "reset", "--hard")
+            new ProcessExecutor()
+                    .directory(new File(localRepo))
+                    .command("git", "--git-dir=" + localRepo + File.separator + ".git", "reset", "--hard")
                     .redirectOutput(new LogOutputStream() {
                         @Override
                         protected void processLine(String line) {
