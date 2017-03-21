@@ -223,6 +223,7 @@ public class GitUtils {
     }
 
     public static String linesStat(String localRepo, String moduleDir, String gitRevision, String gitRevision1) throws Exception {
+        LOGGER.info("Local Repo: {},  Module Dir: {}\n\n\n", localRepo, moduleDir);
         return new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "diff", "--shortstat", gitRevision, gitRevision1, moduleDir)
                 .readOutput(true)
                 .execute()
