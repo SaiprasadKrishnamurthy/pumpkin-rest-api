@@ -21,11 +21,10 @@ public class CucumberUtils {
 
     public static String runFeature(String testName, String featureFileContents) throws Exception {
         LOGGER.info("Test name: {}, \n {}", testName, featureFileContents);
-        String outHtmlDir = System.getProperty("java.io.tmpdir") + File.separator + testName;
+        String outHtmlDir = System.getProperty("java.io.tmpdir");
         LOGGER.info("Dir: {}", outHtmlDir);
-        FileUtils.forceDelete(new File(outHtmlDir));
         FileUtils.forceMkdir(new File(outHtmlDir));
-        FileUtils.write(new File(outHtmlDir + File.separator + "test.feature"), featureFileContents);
+        FileUtils.write(new File(outHtmlDir + File.separator + testName + ".feature"), featureFileContents);
         Main.run(new String[]{outHtmlDir, "-p", "html:" + outHtmlDir, "-g", ReleaseCheckStepDefs.class.getPackage().getName()}, Thread.currentThread().getContextClassLoader());
         String templateContents = IOUtils.toString(CucumberUtils.class.getClassLoader().getResourceAsStream("test_report_template.html"));
         String reportJscontents = IOUtils.toString(new FileInputStream(outHtmlDir + File.separator + "report.js"));
