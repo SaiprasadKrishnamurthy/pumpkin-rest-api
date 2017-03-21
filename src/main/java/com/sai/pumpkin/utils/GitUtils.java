@@ -166,6 +166,17 @@ public class GitUtils {
                 .execute()
                 .getExitValue();
         if (exit > 0) {
+            LOGGER.info("Performing a GIT Hard Reset: " + localRepo);
+            new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "reset", "--hard")
+                    .redirectOutput(new LogOutputStream() {
+                        @Override
+                        protected void processLine(String line) {
+                            System.out.println(line);
+                        }
+                    })
+                    .execute()
+                    .getExitValue();
+
             LOGGER.info("Performing a GIT Fetch: " + localRepo);
             new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "fetch", "origin")
                     .redirectOutput(new LogOutputStream() {
