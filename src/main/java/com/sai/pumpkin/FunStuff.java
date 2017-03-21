@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public class FunStuff {
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
 
         while (true) {
 
