@@ -1,6 +1,10 @@
 package com.sai.pumpkin;
 
 import com.google.common.base.Predicates;
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.spring.cache.HazelcastCacheManager;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -52,7 +52,7 @@ public class PumpkinApp {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean
+    /*@Bean
     public JedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory();
 
@@ -76,6 +76,17 @@ public class PumpkinApp {
         // Number of seconds before expiration. Defaults to unlimited (0)
         cacheManager.setDefaultExpiration(3000);
         return cacheManager;
+    }*/
+
+    @Bean
+    public HazelcastInstance hazelcastInstance() {
+        Config config = new Config();
+        return Hazelcast.newHazelcastInstance(config);
+    }
+
+    @Bean
+    CacheManager cacheManager() {
+        return new HazelcastCacheManager(hazelcastInstance());
     }
 
 
