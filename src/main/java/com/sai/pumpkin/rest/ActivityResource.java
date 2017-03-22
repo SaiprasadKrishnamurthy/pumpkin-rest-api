@@ -3,16 +3,18 @@ package com.sai.pumpkin.rest;
 import com.sai.pumpkin.domain.GitLogEntry;
 import com.sai.pumpkin.domain.MavenGitVersionMapping;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
@@ -43,6 +45,30 @@ public class ActivityResource {
         return res;
     }
 
+    @ApiOperation("Finds all activities (based on number of commits) since the specified timestamp.")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/commitsTrend", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Integer> commitsTrend(@RequestParam("sinceTimestamp") long sinceTimestamp) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+        Map<String, Integer> histogram = new LinkedHashMap<>();
+        long from = DateUtils.round(new Date(sinceTimestamp), Calendar.DAY_OF_YEAR).getTime();
+        long to = from + (1000 * 60 * 60 * 24);
+
+        for (int i = 0; i < 20; i++) {
+            Query q = Query.query(Criteria.where("timestamp").gte(from).and("timestamp").lt(to));
+            List<MavenGitVersionMapping> results = mongoTemplate.find(q, MavenGitVersionMapping.class);
+            if (results != null) {
+                histogram.put(sdf.format(new Date(from)), results.size());
+            } else {
+                histogram.put(sdf.format(new Date(from)), 0);
+            }
+            from = to;
+            to = from + (1000 * 60 * 60 * 24);
+        }
+        return histogram;
+    }
+
     @ApiOperation("Finds all activities (based on number of commits by a committer) since the specified timestamp.")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/committer-activities", method = RequestMethod.GET, produces = "application/json")
@@ -56,4 +82,6 @@ public class ActivityResource {
         results.forEach(m -> res.put(m.get("_id").toString(), Long.parseLong(m.get("count").toString())));
         return res;
     }
+
+
 }
