@@ -56,7 +56,7 @@ public class ActivityResource {
         long to = from + (1000 * 60 * 60 * 24);
 
         for (int i = 0; i < 20; i++) {
-            Query q = Query.query(Criteria.where("timestamp").gte(from).and("timestamp").lt(to));
+            Query q = Query.query(Criteria.where("timestamp").gte(from).lt(to));
             List<MavenGitVersionMapping> results = mongoTemplate.find(q, MavenGitVersionMapping.class);
             if (results != null) {
                 histogram.put(sdf.format(new Date(from)), results.size());
