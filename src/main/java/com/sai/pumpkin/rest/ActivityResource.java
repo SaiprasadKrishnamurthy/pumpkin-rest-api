@@ -52,7 +52,7 @@ public class ActivityResource {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
         Map<String, Integer> histogram = new LinkedHashMap<>();
-        long from = DateUtils.round(new Date(sinceTimestamp), Calendar.DAY_OF_YEAR).getTime();
+        long from = DateUtils.round(new Date(sinceTimestamp), Calendar.DAY_OF_WEEK_IN_MONTH).getTime();
         long to = from + (1000 * 60 * 60 * 24);
 
         for (int i = 0; i < 20; i++) {
