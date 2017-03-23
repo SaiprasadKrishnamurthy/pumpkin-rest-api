@@ -181,6 +181,7 @@ public class GitUtils {
 
             LOGGER.info("Performing a GIT Fetch: " + localRepo);
             new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "fetch", "origin")
+                    .directory(new File(localRepo))
                     .redirectOutput(new LogOutputStream() {
                         @Override
                         protected void processLine(String line) {
@@ -189,9 +190,11 @@ public class GitUtils {
                     })
                     .execute()
                     .getExitValue();
+
             LOGGER.info("Performing a GIT Pull: " + localRepo);
 
             exit = new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "pull")
+                    .directory(new File(localRepo))
                     .redirectOutput(new LogOutputStream() {
                         @Override
                         protected void processLine(String line) {
