@@ -126,6 +126,7 @@ public class GitUtils {
         List<GitLogEntry> filtered = entries.stream().filter(gitLogEntry -> gitLogEntry.getChanges()
                 .stream()
                 .filter(cse -> cse.getFilePath().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)).count() > 0)
+                .filter(gl -> !gl.getChanges().isEmpty())
                 .collect(Collectors.toList());
 
         resp.setFrom(artifact1.getMavenCoordinates());
@@ -144,7 +145,7 @@ public class GitUtils {
 
     private static Set<String> gitLogCommitSHAs(String localRepo, String filePath, String branch) throws Exception {
         String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
-        return new LinkedHashSet<>(Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--", baseDir)
+        return new LinkedHashSet<>(Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--first-parent", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--", baseDir)
                 .readOutput(true)
                 .execute()
                 .outputString()
