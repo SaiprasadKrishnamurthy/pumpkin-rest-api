@@ -5,7 +5,9 @@ import com.sai.pumpkin.repository.ChangeSetEntryRepository;
 import com.sai.pumpkin.repository.GitLogEntryRepository;
 import com.sai.pumpkin.repository.GitLogResponseRepository;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
+import com.sai.pumpkin.utils.BitBucketUtils;
 import com.sai.pumpkin.utils.GitUtils;
+import com.sai.pumpkin.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ import org.springframework.util.StopWatch;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -45,16 +49,21 @@ public class MavenGitVersionCollector {
     private final GitLogResponseRepository gitLogResponseRepository;
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
     private final Pattern defectIdRegexPattern;
+    private final String bitbucketAuth;
+    private final String bitbucketPullReqUrl;
+    private final ExecutorService EXECUTORS = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
 
     @Inject
-    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository, @Value("${defectIdRegex}") final String defectIdRegex) {
+    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository, @Value("${defectIdRegex}") final String defectIdRegex, @Value("${bitbucketAuth}") final String bitbucketAuth, @Value("${bitbucketPullReqUrl}") final String bitbucketPullReqUrl) {
         this.mongoTemplate = mongoTemplate;
         this.gitLogEntryRepository = gitLogEntryRepository;
         this.changeSetEntryRepository = changeSetEntryRepository;
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.defectIdRegexPattern = Pattern.compile(defectIdRegex.trim());
+        this.bitbucketAuth = bitbucketAuth;
+        this.bitbucketPullReqUrl = bitbucketPullReqUrl;
     }
 
     public void collect(final ArtifactConfig config) {
@@ -73,8 +82,32 @@ public class MavenGitVersionCollector {
                 return (existing == null);
             };
             GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected);
+            collectPullRequests(config);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void collectPullRequests(final ArtifactConfig config) throws Exception {
+        for (int i = 0; i < 5; i++) {
+            // https://bitbucket-eng-sjc1.cisco.com/bitbucket/projects/CVGPI/repos/%s/pull-requests?%s=0&state=MERGED&limit=100
+            final int index = i;
+            EXECUTORS.submit(() -> {
+                try {
+                    String url = String.format(bitbucketPullReqUrl, config.getRepoName(), index * 100);
+                    LOGGER.info("\t\t Pull Req URL: "+url);
+                    String rawJson = BitBucketUtils.pullRequests(url, bitbucketAuth);
+                    List<PullRequest> pullRequests = JsonUtils.pullRequest(rawJson);
+                    for (PullRequest pullRequest : pullRequests) {
+                        Criteria criteria = Criteria.where("mergedInto").is(pullRequest.getMergedInto().trim());
+                        mongoTemplate.remove(Query.query(criteria), PullRequest.class);
+                        mongoTemplate.save(pullRequest);
+                        LOGGER.info("\t\t Collecting pull requests for repo {}, Pull req id: {}", config.getRepoName(), pullRequest.getId());
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
         }
     }
 
