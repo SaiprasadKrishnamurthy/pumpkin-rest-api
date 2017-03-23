@@ -48,7 +48,7 @@ public class GitUtils {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
         String localRepo = localGitWorkspace + File.separator + artifactConfig.getRepoName() + File.separator;
         new File(localRepo).mkdirs();
-        gitClone(artifactConfig.getRepoUrl(), localRepo);
+        gitClone(artifactConfig.getRepoUrl(), localRepo, artifactConfig.getBranch().trim());
         LOGGER.info(" Before commit sha ");
         Set<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
         LOGGER.info(" After commit sha " + revisions);
@@ -153,7 +153,7 @@ public class GitUtils {
     }
 
 
-    private static void gitClone(String repoPath, String localRepo) throws IOException, InterruptedException, TimeoutException {
+    private static void gitClone(String repoPath, String localRepo, String defaultBranch) throws IOException, InterruptedException, TimeoutException {
         int exit = new ProcessExecutor().command("git", "clone", repoPath, localRepo)
                 .redirectOutput(new LogOutputStream() {
                     @Override
@@ -188,6 +188,19 @@ public class GitUtils {
                     })
                     .execute()
                     .getExitValue();
+
+            LOGGER.info("Performing a GIT checkout to branch: " + defaultBranch);
+            new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "checkout", defaultBranch)
+                    .directory(new File(localRepo))
+                    .redirectOutput(new LogOutputStream() {
+                        @Override
+                        protected void processLine(String line) {
+                            System.out.println(line);
+                        }
+                    })
+                    .execute()
+                    .getExitValue();
+
 
             LOGGER.info("Performing a GIT Pull: " + localRepo);
 
