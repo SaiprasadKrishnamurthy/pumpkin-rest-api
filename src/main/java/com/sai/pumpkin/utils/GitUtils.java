@@ -11,10 +11,7 @@ import org.zeroturnaround.exec.stream.LogOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -53,7 +50,7 @@ public class GitUtils {
         new File(localRepo).mkdirs();
         gitClone(artifactConfig.getRepoUrl(), localRepo);
         LOGGER.info(" Before commit sha ");
-        List<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
+        Set<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
         LOGGER.info(" After commit sha " + revisions);
 
         for (String rev : revisions) {
@@ -145,13 +142,13 @@ public class GitUtils {
                 .outputString();
     }
 
-    private static List<String> gitLogCommitSHAs(String localRepo, String filePath, String branch) throws Exception {
+    private static Set<String> gitLogCommitSHAs(String localRepo, String filePath, String branch) throws Exception {
         String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
-        return Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--follow", "--", baseDir)
+        return new LinkedHashSet<>(Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--follow", "--", baseDir)
                 .readOutput(true)
                 .execute()
                 .outputString()
-                .split("\n"));
+                .split("\n")));
     }
 
 
