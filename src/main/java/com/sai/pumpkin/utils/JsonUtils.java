@@ -27,7 +27,6 @@ public final class JsonUtils {
             String onTopOfSha = jsonContext.read(jsonPath + ".toRef.latestCommit");
             String author = jsonContext.read(jsonPath + ".author.user.displayName");
             String approverPath = jsonPath + ".reviewers[?(@.approved==true)])";
-            System.out.println(approverPath);
             List<Map> approvers = jsonContext.read(approverPath);
             List<String> approverNames = approvers.stream().map(m -> ((Map) m.get("user")).get("displayName").toString()).collect(toList());
             prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames));

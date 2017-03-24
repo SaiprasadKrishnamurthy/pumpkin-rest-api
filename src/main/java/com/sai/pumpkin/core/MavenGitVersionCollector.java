@@ -90,7 +90,7 @@ public class MavenGitVersionCollector {
 
     private void collectPullRequests(final ArtifactConfig config) throws Exception {
         for (int i = 0; i < 5; i++) {
-            // https://bitbucket-eng-sjc1.cisco.com/bitbucket/projects/CVGPI/repos/%s/pull-requests?%s=0&state=MERGED&limit=100
+            // https://bitbucket-eng-sjc1.cisco.com/bitbucket/projects/CVGPI/repos/%s/pull-requests?start=%s&state=MERGED&limit=100
             final int index = i;
             EXECUTORS.submit(() -> {
                 try {
@@ -102,7 +102,7 @@ public class MavenGitVersionCollector {
                         Criteria criteria = Criteria.where("mergedInto").is(pullRequest.getMergedInto().trim());
                         mongoTemplate.remove(Query.query(criteria), PullRequest.class);
                         mongoTemplate.save(pullRequest);
-                        LOGGER.info("\t\t Collecting pull requests for repo {}, Pull req id: {}", config.getRepoName(), pullRequest.getId());
+                        LOGGER.info("\t\t Collecting pull requests for repo {}, Pull req id: {}", config.getRepoName(), pullRequest.getTitle());
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
