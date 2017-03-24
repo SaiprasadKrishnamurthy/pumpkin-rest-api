@@ -140,6 +140,7 @@ public class DiffArtifactsResource {
         Collections.sort(after, (a, b) -> Long.valueOf(a.getTimestamp()).compareTo(b.getTimestamp()));
 
         after.forEach(m -> {
+            LOGGER.info("Git Revision: {} ", m.getGitRevision());
             afterMap.compute(m.getMavenCoordinates().shortString(), (k, v) -> {
                 if (v == null) {
                     return new ArrayList<>();
@@ -150,7 +151,6 @@ public class DiffArtifactsResource {
             });
         });
 
-
         for (Map.Entry<String, List<MavenGitVersionMapping>> afterEntry : afterMap.entrySet()) {
             if (!afterEntry.getValue().isEmpty()) {
                 MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
@@ -160,6 +160,7 @@ public class DiffArtifactsResource {
                     GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
                     responses.add(s);
                 }
+
             }
         }
 
