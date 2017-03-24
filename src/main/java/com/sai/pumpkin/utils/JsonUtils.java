@@ -35,7 +35,6 @@ public final class JsonUtils {
                 //TODO pull req url.
                 String pullRequestUrl = jsonPath + ".links.self[0].href";
                 String prUrl = jsonContext.read(pullRequestUrl);
-
                 prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames, prUrl));
             } catch (Exception ignored) {
             }
@@ -43,7 +42,7 @@ public final class JsonUtils {
         return prs;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
         String json = IOUtils.toString(new FileInputStream("/Users/saipkri/pumpkin/pumpkin-rest-api/a.json"));
         System.out.println(pullRequest(json));
     }
