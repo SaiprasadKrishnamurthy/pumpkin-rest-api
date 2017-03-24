@@ -20,16 +20,19 @@ public final class JsonUtils {
         List<PullRequest> prs = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
-            String jsonPath = "$.values[" + i + "]";
-            Integer id = jsonContext.read(jsonPath + ".id");
-            String title = jsonContext.read(jsonPath + ".title");
-            long closedDate = jsonContext.read(jsonPath + ".closedDate");
-            String onTopOfSha = jsonContext.read(jsonPath + ".toRef.latestCommit");
-            String author = jsonContext.read(jsonPath + ".author.user.displayName");
-            String approverPath = jsonPath + ".reviewers[?(@.approved==true)])";
-            List<Map> approvers = jsonContext.read(approverPath);
-            List<String> approverNames = approvers.stream().map(m -> ((Map) m.get("user")).get("displayName").toString()).collect(toList());
-            prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames));
+            try {
+                String jsonPath = "$.values[" + i + "]";
+                Integer id = jsonContext.read(jsonPath + ".id");
+                String title = jsonContext.read(jsonPath + ".title");
+                long closedDate = jsonContext.read(jsonPath + ".closedDate");
+                String onTopOfSha = jsonContext.read(jsonPath + ".toRef.latestCommit");
+                String author = jsonContext.read(jsonPath + ".author.user.displayName");
+                String approverPath = jsonPath + ".reviewers[?(@.approved==true)])";
+                List<Map> approvers = jsonContext.read(approverPath);
+                List<String> approverNames = approvers.stream().map(m -> ((Map) m.get("user")).get("displayName").toString()).collect(toList());
+                prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames));
+            } catch (Exception ignored) {
+            }
         }
         return prs;
     }
