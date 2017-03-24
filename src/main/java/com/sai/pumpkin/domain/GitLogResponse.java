@@ -21,6 +21,9 @@ public class GitLogResponse implements Serializable {
     private List<GitLogEntry> gitLogEntries = new ArrayList<>();
     private List<String> gitLogUUIDs = new ArrayList<>();
 
+    @Transient
+    private List<PullRequest> pullRequests = new ArrayList<>();
+
     public List<GitLogEntry> getGitLogEntries() {
         if (gitLogEntries == null) {
             return new ArrayList<>();

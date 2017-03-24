@@ -4,6 +4,7 @@ import com.sai.pumpkin.core.MavenGitVersionCollector;
 import com.sai.pumpkin.domain.*;
 import com.sai.pumpkin.repository.GitLogResponseRepository;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
+import com.sai.pumpkin.repository.PullRequestRepository;
 import com.sai.pumpkin.repository.ReleaseArtifactRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,13 +32,15 @@ public class DiffArtifactsResource {
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
     private final MavenGitVersionCollector mavenGitVersionCollector;
     private final ReleaseArtifactRepository releaseArtifactRepository;
+    private final PullRequestRepository pullRequestRepository;
 
     @Inject
-    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository) {
+    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository, final PullRequestRepository pullRequestRepository) {
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.mavenGitVersionCollector = mavenGitVersionCollector;
         this.releaseArtifactRepository = releaseArtifactRepository;
+        this.pullRequestRepository = pullRequestRepository;
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1)")
@@ -51,7 +54,6 @@ public class DiffArtifactsResource {
         if (c1.length < 3 || c2.length < 3) {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
         }
-
         return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "");
     }
 
@@ -158,6 +160,15 @@ public class DiffArtifactsResource {
 
                 if (old != null && nw != null) {
                     GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
+                    List<PullRequest> prs = pullRequestRepository.findPullRequestsMergedIntoCommit(old.getGitRevision());
+                    List<PullRequest> prs1 = pullRequestRepository.findPullRequestsMergedIntoCommit(nw.getGitRevision());
+
+                    if (prs != null) {
+                        s.getPullRequests().addAll(prs);
+                    }
+                    if (prs1 != null) {
+                        s.getPullRequests().addAll(prs1);
+                    }
                     responses.add(s);
                 }
 

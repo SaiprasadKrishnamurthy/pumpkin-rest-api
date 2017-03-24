@@ -76,7 +76,7 @@ public class GitUtils {
                 }
 //                }
             } catch (Exception ignore) {
-                LOGGER.error("Error during collection for" + artifactConfig + " Git bersion: " + rev, ignore);
+                LOGGER.error("Error during collection for" + artifactConfig + " Git version: " + rev, ignore);
             }
         }
     }
@@ -87,7 +87,7 @@ public class GitUtils {
         GitLogEntry curr = null;
         List<GitLogEntry> entries = new ArrayList<>();
         List<ChangeSetEntry> currEntries = null;
-        String output = new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "--name-status", "--pretty=format:\"%h###%an###%ad###%s\"", artifact1.getGitRevision() + ".." + artifact2.getGitRevision())
+        String output = new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--first-parent", "--name-status", "--pretty=format:\"%h###%an###%ad###%s\"", artifact1.getGitRevision() + ".." + artifact2.getGitRevision())
                 .readOutput(true)
                 .execute()
                 .outputString();
