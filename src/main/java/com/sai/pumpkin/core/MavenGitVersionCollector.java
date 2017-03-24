@@ -1,10 +1,7 @@
 package com.sai.pumpkin.core;
 
 import com.sai.pumpkin.domain.*;
-import com.sai.pumpkin.repository.ChangeSetEntryRepository;
-import com.sai.pumpkin.repository.GitLogEntryRepository;
-import com.sai.pumpkin.repository.GitLogResponseRepository;
-import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
+import com.sai.pumpkin.repository.*;
 import com.sai.pumpkin.utils.BitBucketUtils;
 import com.sai.pumpkin.utils.GitUtils;
 import com.sai.pumpkin.utils.JsonUtils;
@@ -48,6 +45,7 @@ public class MavenGitVersionCollector {
     private final ChangeSetEntryRepository changeSetEntryRepository;
     private final GitLogResponseRepository gitLogResponseRepository;
     private final MavenGitVersionMappingRepository mavenGitVersionMappingRepository;
+    private final PullRequestRepository pullRequestRepository;
     private final Pattern defectIdRegexPattern;
     private final String bitbucketAuth;
     private final String bitbucketPullReqUrl;
@@ -55,12 +53,13 @@ public class MavenGitVersionCollector {
 
 
     @Inject
-    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository, @Value("${defectIdRegex}") final String defectIdRegex, @Value("${bitbucketAuth}") final String bitbucketAuth, @Value("${bitbucketPullReqUrl}") final String bitbucketPullReqUrl) {
+    public MavenGitVersionCollector(final MongoTemplate mongoTemplate, final GitLogEntryRepository gitLogEntryRepository, final ChangeSetEntryRepository changeSetEntryRepository, final GitLogResponseRepository gitLogResponseRepository, MavenGitVersionMappingRepository mavenGitVersionMappingRepository, @Value("${defectIdRegex}") final String defectIdRegex, PullRequestRepository pullRequestRepository, @Value("${bitbucketAuth}") final String bitbucketAuth, @Value("${bitbucketPullReqUrl}") final String bitbucketPullReqUrl) {
         this.mongoTemplate = mongoTemplate;
         this.gitLogEntryRepository = gitLogEntryRepository;
         this.changeSetEntryRepository = changeSetEntryRepository;
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
+        this.pullRequestRepository = pullRequestRepository;
         this.defectIdRegexPattern = Pattern.compile(defectIdRegex.trim());
         this.bitbucketAuth = bitbucketAuth;
         this.bitbucketPullReqUrl = bitbucketPullReqUrl;
@@ -95,7 +94,7 @@ public class MavenGitVersionCollector {
             EXECUTORS.submit(() -> {
                 try {
                     String url = String.format(bitbucketPullReqUrl, config.getRepoName(), index * 100);
-                    LOGGER.info("\t\t Pull Req URL: "+url);
+                    LOGGER.info("\t\t Pull Req URL: " + url);
                     String rawJson = BitBucketUtils.pullRequests(url, bitbucketAuth);
                     List<PullRequest> pullRequests = JsonUtils.pullRequest(rawJson);
                     for (PullRequest pullRequest : pullRequests) {
@@ -250,6 +249,7 @@ public class MavenGitVersionCollector {
             Set<String> defectids = new LinkedHashSet<>();
             GitLogSummaryResponse _summaryResponse = summaryResponse;
 
+
             gitLogResponse.getGitLogEntries().forEach(gle -> {
                 String author = gle.getAuthor().trim();
                 Matcher matcher = defectIdRegexPattern.matcher(gle.getCommitMessage());
@@ -271,6 +271,11 @@ public class MavenGitVersionCollector {
                     });
                 });
             });
+            List<PullRequest> pullRequests = gitLogResponse.getGitLogEntries().stream()
+                    .flatMap(gle -> pullRequestRepository.findPullRequestsMergedIntoCommit(gle.getRevision()).stream())
+                    .collect(toList());
+
+
             String localRepo = localGitWorkspace + File.separator + m1.getArtifactConfig().getRepoName() + File.separator;
             String pomPath = m1.getArtifactConfig().getPomPath();
             String moduleDir = pomPath.substring(0, pomPath.lastIndexOf(File.separator));
@@ -290,6 +295,8 @@ public class MavenGitVersionCollector {
                 summaryResponse.setNoOfLinesInserted(linesInserted);
                 summaryResponse.setNoOfLinesDeleted(linesDeleted);
                 summaryResponse.setDefectIds(defectids);
+                summaryResponse.setPullRequests(pullRequests);
+
 
             } catch (Exception ex) {
                 LOGGER.error("Error while getting git stat for  " + m1 + " and " + m2, ex);

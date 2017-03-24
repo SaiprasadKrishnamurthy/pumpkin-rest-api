@@ -21,4 +21,5 @@ public class GitLogSummaryResponse implements Serializable {
     private Set<String> defectIds;
     private Set<String> featureIds;
     private Map<String, Set<ChangeSetEntry>> authorsToChangeSet = new HashMap<>();
+    private List<PullRequest> pullRequests;
 }
