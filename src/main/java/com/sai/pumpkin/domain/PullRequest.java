@@ -23,4 +23,6 @@ public class PullRequest implements Serializable {
     private String mergedInto;
     private String author;
     private List<String> approverNames;
+    // https://bitbucket-eng-sjc1.cisco.com/bitbucket/projects/CVGPI/repos/wireless/pull-requests/5900 ==> links.self
+    private String url;
 }

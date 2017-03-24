@@ -3,7 +3,9 @@ package com.sai.pumpkin.utils;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.sai.pumpkin.domain.PullRequest;
+import org.apache.commons.io.IOUtils;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,19 @@ public final class JsonUtils {
                 String approverPath = jsonPath + ".reviewers[?(@.approved==true)])";
                 List<Map> approvers = jsonContext.read(approverPath);
                 List<String> approverNames = approvers.stream().map(m -> ((Map) m.get("user")).get("displayName").toString()).collect(toList());
-                prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames));
+                //TODO pull req url.
+                String pullRequestUrl = jsonPath + ".links.self[0].href";
+                String prUrl = jsonContext.read(pullRequestUrl);
+
+                prs.add(new PullRequest(null, id, title, closedDate, onTopOfSha, author, approverNames, prUrl));
             } catch (Exception ignored) {
             }
         }
         return prs;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String json = IOUtils.toString(new FileInputStream("/Users/saipkri/pumpkin/pumpkin-rest-api/a.json"));
+        System.out.println(pullRequest(json));
     }
 }
