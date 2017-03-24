@@ -11,6 +11,6 @@ import java.util.List;
  */
 
 public interface PullRequestRepository extends MongoRepository<PullRequest, String> {
-    @Query("{$and: [{'mergedInto' : ?0}]}")
+    @Query("{$and: [{'mergedInto' :  {'$regex': '^?0'}}]}")
     List<PullRequest> findPullRequestsMergedIntoCommit(String mergedInto);
 }

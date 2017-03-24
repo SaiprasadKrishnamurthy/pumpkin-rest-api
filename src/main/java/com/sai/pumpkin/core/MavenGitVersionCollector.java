@@ -272,7 +272,7 @@ public class MavenGitVersionCollector {
                 });
             });
             List<PullRequest> pullRequests = gitLogResponse.getGitLogEntries().stream()
-                    .map(gle -> "\"" + gle.getRevision().substring(0, 7))
+                    .map(gle ->  gle.getRevision().replace("\"", "").trim())
                     .peek(c -> LOGGER.info(" \t\t Commit revision got pull request: {}", c))
                     .flatMap(c -> pullRequestRepository.findPullRequestsMergedIntoCommit(c).stream())
                     .collect(toList());
