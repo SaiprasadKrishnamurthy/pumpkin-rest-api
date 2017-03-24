@@ -110,13 +110,10 @@ public class GitUtils {
                     curr.setChanges(currEntries);
                     entries.add(curr);
                 }
-            } else if ((line.startsWith("A") || line.startsWith("M") || line.startsWith("D")) && currEntries != null) {
-                String tokens[] = line.split("\t");
-                List<String> filtered = Stream.of(tokens).filter(s -> StringUtils.isNotBlank(s.trim())).collect(toList());
+            } else if ((line.startsWith(" ") || line.startsWith("A") || line.startsWith("M") || line.startsWith("D")) && currEntries != null) {
                 ChangeSetEntry entry = new ChangeSetEntry();
-                entry.setChangeType(filtered.get(0));
-                entry.setFilePath(filtered.get(1));
-                if (filtered.get(1).startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
+                entry.setFilePath(line.trim());
+                if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
                     currEntries.add(entry);
                 }
             }

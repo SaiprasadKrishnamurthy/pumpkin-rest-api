@@ -40,5 +40,4 @@ public class GitLogEntry implements Serializable {
             ignore.printStackTrace();
         }
     }
-
 }
