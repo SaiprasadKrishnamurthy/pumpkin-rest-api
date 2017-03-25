@@ -139,7 +139,7 @@ public class DiffArtifactsResource {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date dateTime = dateParser.parse(format.format(in));
+        Date dateTime = format.parse(dateParser.format(in));
         LOGGER.info("Local time: {}", new Date());
         LOGGER.info("Converted GMT time: {}", dateTime);
         LOGGER.info("Millis in GMT: {}", dateTime.getTime());
