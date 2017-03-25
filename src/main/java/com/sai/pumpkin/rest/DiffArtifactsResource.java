@@ -134,14 +134,14 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        TimeZone tz = TimeZone.getDefault();
+        /*TimeZone tz = TimeZone.getDefault();
         int offsetGmtToPst = tz.getOffset(Calendar.ZONE_OFFSET);
-        long adjustedTime = timestamp - offsetGmtToPst;
+        long adjustedTime = timestamp - offsetGmtToPst;*/
         LOGGER.info("Original timestamp: {}", timestamp);
-        LOGGER.info("Adjusted  timestamp: {}", adjustedTime);
+//        LOGGER.info("Adjusted  timestamp: {}", adjustedTime);
 
 
-        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(adjustedTime);
+        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
         LOGGER.info("Retrieved index entries: {}", after);
 
         List<GitLogResponse> responses = new ArrayList<>();
