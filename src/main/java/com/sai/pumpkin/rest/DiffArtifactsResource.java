@@ -140,18 +140,7 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        /*TimeZone tz = TimeZone.getDefault();
-        int offsetGmtToPst = tz.getOffset(Calendar.ZONE_OFFSET);
-        long adjustedTime = timestamp - offsetGmtToPst;*/
         LOGGER.info("Original timestamp: {}", timestamp);
-//        LOGGER.info("Adjusted  timestamp: {}", adjustedTime);
-
-        // Get the last version just lesser than the timestamp.
-        Query query = Query.query(Criteria.where("timestamp").lt(timestamp)).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
-        List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query, MavenGitVersionMapping.class);
-        LOGGER.info("Start Revision: {}", startingRev);
-
-
 
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
         LOGGER.info("Retrieved index entries: {}", after);
@@ -177,7 +166,11 @@ public class DiffArtifactsResource {
         for (Map.Entry<String, List<MavenGitVersionMapping>> afterEntry : afterMap.entrySet()) {
             if (!afterEntry.getValue().isEmpty()) {
                 MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
-                MavenGitVersionMapping old = afterEntry.getValue().get(0);
+                // Get the last version just lesser than the timestamp.
+                Query query = Query.query(Criteria.where("timestamp").lt(timestamp).and("artifactConfig.name").is(nw.getArtifactConfig().getName())).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
+                List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query, MavenGitVersionMapping.class);
+                LOGGER.info("Start Revision: {}", startingRev);
+                MavenGitVersionMapping old = startingRev.get(0);
 
                 if (old != null && nw != null) {
                     GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
@@ -194,7 +187,6 @@ public class DiffArtifactsResource {
                         responses.add(s);
                     }
                 }
-
             }
         }
 
