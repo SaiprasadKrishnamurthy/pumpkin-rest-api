@@ -12,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +37,16 @@ public class DiffArtifactsResource {
     private final MavenGitVersionCollector mavenGitVersionCollector;
     private final ReleaseArtifactRepository releaseArtifactRepository;
     private final PullRequestRepository pullRequestRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Inject
-    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository, final PullRequestRepository pullRequestRepository) {
+    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository, final PullRequestRepository pullRequestRepository, MongoTemplate mongoTemplate) {
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.mavenGitVersionCollector = mavenGitVersionCollector;
         this.releaseArtifactRepository = releaseArtifactRepository;
         this.pullRequestRepository = pullRequestRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1)")
@@ -139,6 +145,12 @@ public class DiffArtifactsResource {
         long adjustedTime = timestamp - offsetGmtToPst;*/
         LOGGER.info("Original timestamp: {}", timestamp);
 //        LOGGER.info("Adjusted  timestamp: {}", adjustedTime);
+
+        // Get the last version just lesser than the timestamp.
+        Query query = Query.query(Criteria.where("timestamp").lt(timestamp)).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
+        List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query, MavenGitVersionMapping.class);
+        LOGGER.info("Start Revision: {}", startingRev);
+
 
 
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
