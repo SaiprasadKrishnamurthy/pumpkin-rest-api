@@ -137,7 +137,7 @@ public class DiffArtifactsResource {
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
         Date in = new Date(timestamp);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("GMT-7"));
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateTime = dateParser.parse(format.format(in));
         LOGGER.info("Local time: {}", new Date());
