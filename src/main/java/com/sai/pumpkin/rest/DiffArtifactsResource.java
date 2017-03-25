@@ -139,11 +139,11 @@ public class DiffArtifactsResource {
         LOGGER.info("Retrieved index entries: {}", after);
         Date in = new Date(timestamp);
         LOGGER.info("Local time: {}", in);
-        final SimpleDateFormat sdf =
-                new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        in = sdf.parse(sdf.format(in));
-        LOGGER.info("Converted GMT time: {}", in);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dateTime = dateParser.parse(format.format(in));
+        LOGGER.info("Converted GMT time: {}", dateTime);
 
 
         List<GitLogResponse> responses = new ArrayList<>();
