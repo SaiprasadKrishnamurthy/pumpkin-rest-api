@@ -110,7 +110,8 @@ public class GitUtils {
             } else if ((line.startsWith(" ") || line.startsWith("A") || line.startsWith("M") || line.startsWith("D")) && currEntries != null) {
                 LOGGER.info("Line starts with whitespace: {}", line);
                 ChangeSetEntry entry = new ChangeSetEntry();
-                entry.setFilePath(line.trim());
+                entry.setChangeType(line.charAt(0) + "");
+                entry.setFilePath(line.substring(1).trim());
                 if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator) || line.substring(1).trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
                     LOGGER.info("Changeset added: {}", entry);
                     currEntries.add(entry);
