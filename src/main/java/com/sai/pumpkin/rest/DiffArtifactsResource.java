@@ -145,7 +145,7 @@ public class DiffArtifactsResource {
         LOGGER.info("Millis in PST: {}", dateTime.getTime());
         LOGGER.info("Timestamp: {}", timestamp);
         LOGGER.info("Date: {}", new Date(timestamp));
-        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
+        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dateTime.getTime());
         LOGGER.info("Retrieved index entries: {}", after);
 
         List<GitLogResponse> responses = new ArrayList<>();
