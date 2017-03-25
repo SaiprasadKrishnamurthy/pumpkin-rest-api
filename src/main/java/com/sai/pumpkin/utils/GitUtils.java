@@ -94,6 +94,7 @@ public class GitUtils {
         StringTokenizer tokenizer = new StringTokenizer(output, "\n");
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
+            LOGGER.info("Line: {}", line);
             if (line.contains("###") && line.indexOf("###") != line.lastIndexOf("###")) {
                 String[] tokens = line.split("###");
                 if (tokens.length == 4) {
@@ -111,6 +112,7 @@ public class GitUtils {
                     entries.add(curr);
                 }
             } else if ((line.startsWith(" ") || line.startsWith("A") || line.startsWith("M") || line.startsWith("D")) && currEntries != null) {
+                LOGGER.info("Line starts with whitespace: {}", line);
                 ChangeSetEntry entry = new ChangeSetEntry();
                 entry.setFilePath(line.trim());
                 if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
@@ -127,7 +129,6 @@ public class GitUtils {
                 .filter(gl -> !gl.getChanges().isEmpty())
                 .collect(Collectors.toList());
         LOGGER.info("Filtered: {}", filtered);
-
 
         resp.setFrom(artifact1.getMavenCoordinates());
         resp.setTo(artifact2.getMavenCoordinates());
