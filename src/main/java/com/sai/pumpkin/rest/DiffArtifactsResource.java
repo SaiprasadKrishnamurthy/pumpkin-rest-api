@@ -136,18 +136,15 @@ public class DiffArtifactsResource {
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
         Date in = new Date(timestamp);
-        LOGGER.info("Local time: {}", in);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        format.setTimeZone(TimeZone.getTimeZone("GMT-7"));
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateTime = dateParser.parse(format.format(in));
+        LOGGER.info("Local time: {}", new Date());
         LOGGER.info("Converted GMT time: {}", dateTime);
+
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dateTime.getTime());
         LOGGER.info("Retrieved index entries: {}", after);
-
-
-
-
 
         List<GitLogResponse> responses = new ArrayList<>();
 
