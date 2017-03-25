@@ -135,6 +135,7 @@ public class DiffArtifactsResource {
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) {
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
+        LOGGER.info("Retrieved index entries: {}", after);
         List<GitLogResponse> responses = new ArrayList<>();
 
         final Map<String, List<MavenGitVersionMapping>> afterMap = new HashMap<>();
@@ -169,7 +170,7 @@ public class DiffArtifactsResource {
                     if (prs1 != null) {
                         s.getPullRequests().addAll(prs1);
                     }
-                    if(!s.getGitLogEntries().isEmpty()) {
+                    if (!s.getGitLogEntries().isEmpty()) {
                         responses.add(s);
                     }
                 }
