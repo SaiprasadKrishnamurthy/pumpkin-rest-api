@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,9 +134,18 @@ public class DiffArtifactsResource {
     @ApiOperation("Gets detailed commits after a specified timestamp")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) {
+    public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
         LOGGER.info("Retrieved index entries: {}", after);
+        Date in = new Date(timestamp);
+        LOGGER.info("Local time: {}", in);
+        final SimpleDateFormat sdf =
+                new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a z");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        in = sdf.parse(sdf.format(in));
+        LOGGER.info("Converted GMT time: {}", in);
+
+
         List<GitLogResponse> responses = new ArrayList<>();
 
         final Map<String, List<MavenGitVersionMapping>> afterMap = new HashMap<>();
