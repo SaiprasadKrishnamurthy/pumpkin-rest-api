@@ -2,7 +2,6 @@ package com.sai.pumpkin.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sai.pumpkin.domain.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -16,9 +15,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by saipkri on 07/03/17.
@@ -115,7 +111,7 @@ public class GitUtils {
                 LOGGER.info("Line starts with whitespace: {}", line);
                 ChangeSetEntry entry = new ChangeSetEntry();
                 entry.setFilePath(line.trim());
-                if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
+                if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator) || line.substring(1).trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
                     currEntries.add(entry);
                 }
             }
