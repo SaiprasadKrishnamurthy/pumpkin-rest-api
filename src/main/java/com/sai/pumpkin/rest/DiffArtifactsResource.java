@@ -139,7 +139,7 @@ public class DiffArtifactsResource {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("PST"));
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date dateTime = dateParser.parse(dateParser.format(in));
+        Date dateTime = format.parse(format.format(in));
         LOGGER.info("Local time: {}", new Date());
         LOGGER.info("Converted PST time: {}", dateTime);
         LOGGER.info("Millis in PST: {}", dateTime.getTime());
