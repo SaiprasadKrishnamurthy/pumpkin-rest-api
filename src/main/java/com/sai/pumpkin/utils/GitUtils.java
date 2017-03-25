@@ -112,6 +112,7 @@ public class GitUtils {
                 ChangeSetEntry entry = new ChangeSetEntry();
                 entry.setFilePath(line.trim());
                 if (line.trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator) || line.substring(1).trim().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)) {
+                    LOGGER.info("Changeset added: {}", entry);
                     currEntries.add(entry);
                 }
             }
