@@ -169,7 +169,9 @@ public class DiffArtifactsResource {
                     if (prs1 != null) {
                         s.getPullRequests().addAll(prs1);
                     }
-                    responses.add(s);
+                    if(!s.getGitLogEntries().isEmpty()) {
+                        responses.add(s);
+                    }
                 }
 
             }

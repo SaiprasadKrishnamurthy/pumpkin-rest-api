@@ -143,23 +143,25 @@ public class MavenGitVersionCollector {
                 gitLogResponse = diffLogPreComputed(m1, m2);
                 if (gitLogResponse == null) {
                     gitLogResponse = GitUtils.gitLogResponse(localGitWorkspace, m1, m2);
-                    List<String> gitLogEntryUuids = new ArrayList<>();
-                    List<GitLogEntry> entries = gitLogResponse.getGitLogEntries();
+                    if (!gitLogResponse.getGitLogEntries().isEmpty()) {
+                        List<String> gitLogEntryUuids = new ArrayList<>();
+                        List<GitLogEntry> entries = gitLogResponse.getGitLogEntries();
 
-                    for (GitLogEntry entry : entries) {
-                        entry.setUuid(UUID.randomUUID().toString());
-                        gitLogEntryUuids.add(entry.getUuid());
-                        List<String> changesUuids = entry.getChanges().stream().map(changeSetEntry -> {
-                            String uuid = UUID.randomUUID().toString();
-                            changeSetEntry.setUuid(uuid);
-                            mongoTemplate.save(changeSetEntry);
-                            return uuid;
-                        }).collect(toList());
-                        entry.setChangeUUIDs(changesUuids);
-                        mongoTemplate.save(entry);
+                        for (GitLogEntry entry : entries) {
+                            entry.setUuid(UUID.randomUUID().toString());
+                            gitLogEntryUuids.add(entry.getUuid());
+                            List<String> changesUuids = entry.getChanges().stream().map(changeSetEntry -> {
+                                String uuid = UUID.randomUUID().toString();
+                                changeSetEntry.setUuid(uuid);
+                                mongoTemplate.save(changeSetEntry);
+                                return uuid;
+                            }).collect(toList());
+                            entry.setChangeUUIDs(changesUuids);
+                            mongoTemplate.save(entry);
+                        }
+                        gitLogResponse.setGitLogUUIDs(gitLogEntryUuids);
+                        mongoTemplate.save(gitLogResponse);
                     }
-                    gitLogResponse.setGitLogUUIDs(gitLogEntryUuids);
-                    mongoTemplate.save(gitLogResponse);
                     clock.stop();
                     LOGGER.info("Time taken by the Difference collector engine to COMPUTE the diff between {} and {} : {} seconds", m1.getMavenCoordinates(), m2.getMavenCoordinates(), clock.getTotalTimeSeconds() + " seconds");
                 }
@@ -272,7 +274,7 @@ public class MavenGitVersionCollector {
                 });
             });
             List<PullRequest> pullRequests = gitLogResponse.getGitLogEntries().stream()
-                    .map(gle ->  gle.getRevision().replace("\"", "").trim())
+                    .map(gle -> gle.getRevision().replace("\"", "").trim())
                     .peek(c -> LOGGER.info(" \t\t Commit revision got pull request: {}", c))
                     .flatMap(c -> pullRequestRepository.findPullRequestsMergedIntoCommit(c).stream())
                     .collect(toList());
