@@ -135,8 +135,6 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
-        LOGGER.info("Retrieved index entries: {}", after);
         Date in = new Date(timestamp);
         LOGGER.info("Local time: {}", in);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -144,6 +142,11 @@ public class DiffArtifactsResource {
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateTime = dateParser.parse(format.format(in));
         LOGGER.info("Converted GMT time: {}", dateTime);
+        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dateTime.getTime());
+        LOGGER.info("Retrieved index entries: {}", after);
+
+
+
 
 
         List<GitLogResponse> responses = new ArrayList<>();
