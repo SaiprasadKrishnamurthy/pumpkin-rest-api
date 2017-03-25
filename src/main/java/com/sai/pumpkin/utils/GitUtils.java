@@ -119,12 +119,15 @@ public class GitUtils {
             }
         }
 
+        LOGGER.info("Entries: {}", entries);
         // Filter here.
         List<GitLogEntry> filtered = entries.stream().filter(gitLogEntry -> gitLogEntry.getChanges()
                 .stream()
                 .filter(cse -> cse.getFilePath().startsWith(artifact1.getArtifactConfig().moduleDir() + File.separator)).count() > 0)
                 .filter(gl -> !gl.getChanges().isEmpty())
                 .collect(Collectors.toList());
+        LOGGER.info("Filtered: {}", filtered);
+
 
         resp.setFrom(artifact1.getMavenCoordinates());
         resp.setTo(artifact2.getMavenCoordinates());
