@@ -155,7 +155,9 @@ public class DiffArtifactsResource {
             LOGGER.info("Git Revision: {} ", m.getGitRevision());
             afterMap.compute(m.getMavenCoordinates().shortString(), (k, v) -> {
                 if (v == null) {
-                    return new ArrayList<>();
+                    List<MavenGitVersionMapping> mapping = new ArrayList<>();
+                    mapping.add(m);
+                    return mapping;
                 } else {
                     v.add(m);
                     return v;
