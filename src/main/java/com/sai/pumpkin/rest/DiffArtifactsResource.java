@@ -135,15 +135,14 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        /*Date in = new Date(timestamp);
+        Date in = new Date(timestamp);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        format.setTimeZone(TimeZone.getTimeZone("PST"));
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateTime = format.parse(dateParser.format(in));
         LOGGER.info("Local time: {}", new Date());
-        LOGGER.info("Converted GMT time: {}", dateTime);
-        LOGGER.info("Millis in GMT: {}", dateTime.getTime());
-*/
+        LOGGER.info("Converted PST time: {}", dateTime);
+        LOGGER.info("Millis in PST: {}", dateTime.getTime());
         LOGGER.info("Timestamp: {}", timestamp);
         LOGGER.info("Date: {}", new Date(timestamp));
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
