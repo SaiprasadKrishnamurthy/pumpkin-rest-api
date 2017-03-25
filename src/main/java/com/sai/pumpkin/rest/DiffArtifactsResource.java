@@ -8,6 +8,8 @@ import com.sai.pumpkin.repository.PullRequestRepository;
 import com.sai.pumpkin.repository.ReleaseArtifactRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -135,17 +137,14 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        Date in = new Date(timestamp);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("PST"));
-        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date dateTime = format.parse(format.format(in));
-        LOGGER.info("Local time: {}", new Date());
-        LOGGER.info("Converted PST time: {}", dateTime);
-        LOGGER.info("Millis in PST: {}", dateTime.getTime());
-        LOGGER.info("Timestamp: {}", timestamp);
-        LOGGER.info("Date: {}", new Date(timestamp));
-        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dateTime.getTime());
+        DateTime dt = new DateTime(timestamp);
+        LOGGER.info("Before: {} ", dt.getMillis());
+        dt = dt.toDateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("PST")));
+        LOGGER.info("After: {} ", dt.getMillis());
+
+
+
+        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dt.getMillis());
         LOGGER.info("Retrieved index entries: {}", after);
 
         List<GitLogResponse> responses = new ArrayList<>();
