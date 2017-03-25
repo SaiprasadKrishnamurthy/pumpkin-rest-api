@@ -134,11 +134,9 @@ public class DiffArtifactsResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        TimeZone tz = TimeZone.getTimeZone("PST");
-        TimeZone tz1 = TimeZone.getTimeZone(TimeZone.getDefault().getID());
+        TimeZone tz = TimeZone.getDefault();
         int offsetGmtToPst = tz.getOffset(Calendar.ZONE_OFFSET);
-        int offsetIstToGmt = tz1.getOffset(Calendar.ZONE_OFFSET);
-        long adjustedTime = timestamp + offsetGmtToPst - offsetIstToGmt;
+        long adjustedTime = timestamp - offsetGmtToPst;
         LOGGER.info("Original timestamp: {}", timestamp);
         LOGGER.info("Adjusted  timestamp: {}", adjustedTime);
 
