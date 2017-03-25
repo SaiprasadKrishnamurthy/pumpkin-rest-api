@@ -142,6 +142,7 @@ public class DiffArtifactsResource {
         Date dateTime = dateParser.parse(format.format(in));
         LOGGER.info("Local time: {}", new Date());
         LOGGER.info("Converted GMT time: {}", dateTime);
+        LOGGER.info("Millis in GMT: {}", dateTime.getTime());
 
         List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(dateTime.getTime());
         LOGGER.info("Retrieved index entries: {}", after);
