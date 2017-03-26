@@ -1,6 +1,7 @@
 package com.sai.pumpkin.rest;
 
 import com.sai.pumpkin.domain.*;
+import com.sai.pumpkin.notification.NotificationService;
 import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
 import com.sai.pumpkin.repository.ReleaseArtifactRepository;
 import io.swagger.annotations.ApiOperation;
@@ -36,13 +37,15 @@ public class ReleaseArtifactResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseArtifactResource.class);
     private final ExecutorService DIFF_WORKERS = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final DiffArtifactsResource diffArtifactsResource;
+    private final NotificationService notificationService;
 
     @Inject
-    public ReleaseArtifactResource(final ReleaseArtifactRepository releaseArtifactRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MongoTemplate mongoTemplate, DiffArtifactsResource diffArtifactsResource) {
+    public ReleaseArtifactResource(final ReleaseArtifactRepository releaseArtifactRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MongoTemplate mongoTemplate, DiffArtifactsResource diffArtifactsResource, NotificationService notificationService) {
         this.releaseArtifactRepository = releaseArtifactRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.mongoTemplate = mongoTemplate;
         this.diffArtifactsResource = diffArtifactsResource;
+        this.notificationService = notificationService;
     }
 
     @ApiOperation("Saves a release artifact")
@@ -95,6 +98,7 @@ public class ReleaseArtifactResource {
             ReleaseArtifact prev = allReleases.get(allReleases.size() - 1);
             DIFF_WORKERS.submit(() -> diffArtifactsResource.releaseDiff(prev.getName() + ":" + prev.getVersion(), currRelease.getName() + ":" + currRelease.getVersion()));
         }
+        notificationService.sendReleaseNotification();
         return new ResponseEntity<>(json, HttpStatus.CREATED);
     }
 
