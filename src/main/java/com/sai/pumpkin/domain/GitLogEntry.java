@@ -1,5 +1,6 @@
 package com.sai.pumpkin.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -24,6 +25,7 @@ public class GitLogEntry implements Serializable {
     private String commitMessage;
 
     @Transient
+    @JsonIgnore
     private final SimpleDateFormat IN_DATE_FMT_ALT_2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss YYYY Z");
 
     @Transient
