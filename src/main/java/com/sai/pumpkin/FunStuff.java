@@ -13,7 +13,7 @@ import java.util.TimeZone;
  */
 public class FunStuff {
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
 
 
         long l = 1490434174000L;
