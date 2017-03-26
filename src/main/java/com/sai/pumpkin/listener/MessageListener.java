@@ -31,14 +31,15 @@ public class MessageListener {
     @JmsListener(destination = "artifact.collection.queue", concurrency = "${collectorConcurrency}")
     public void onMessage(String config) {
         try {
+            ArtifactConfig config1 = OBJECT_MAPPER.readValue(config, ArtifactConfig.class);
             CollectionOptions options = new CollectionOptions(10000000, 800, true);
             if (!mongoTemplate.collectionExists(CollectionJob.class)) {
                 mongoTemplate.createCollection(CollectionJob.class, options);
             }
             CollectionJob job = new CollectionJob();
-            job.setConfigName(config.trim());
+            job.setConfigName(config1.getName());
             job.setStartTime(System.currentTimeMillis());
-            mavenGitVersionCollector.collect(OBJECT_MAPPER.readValue(config, ArtifactConfig.class));
+            mavenGitVersionCollector.collect(config1);
             job.setEndTime(System.currentTimeMillis());
             job.setTotalTime(job.getEndTime() - job.getStartTime());
             mongoTemplate.save(job);
