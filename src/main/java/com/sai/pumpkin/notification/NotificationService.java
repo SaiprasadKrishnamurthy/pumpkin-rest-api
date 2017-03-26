@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by saipkri on 26/03/17.
@@ -24,6 +26,7 @@ public class NotificationService {
     private final String webLink1;
     private final String webLink2;
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
+    private final ExecutorService WORKERS = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public NotificationService(@Value("${apiToken}") final String apiToken, @Value("${apiUrl}") final String apiUrl, @Value("${notificationChannelId}") final String notificationChannelId, @Value("${webLink1}") final String webLink1, @Value("${webLink2}") final String webLink2) {
         this.apiToken = apiToken;
@@ -34,10 +37,12 @@ public class NotificationService {
     }
 
     public void sendReleaseNotification() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<?> request = securityHeader(apiToken);
-        LOGGER.info("API URL: {}", apiUrl);
-        LOGGER.info("Response: {}", restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class));
+        WORKERS.submit(() -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<?> request = securityHeader(apiToken);
+            LOGGER.info("API URL: {}", apiUrl);
+            LOGGER.info("Response: {}", restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class));
+        });
     }
 
     private HttpEntity<?> securityHeader(String apiToken) {
