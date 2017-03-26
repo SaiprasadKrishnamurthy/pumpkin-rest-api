@@ -37,7 +37,7 @@ public class NotificationService {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<?> request = securityHeader(apiToken);
         LOGGER.info("API URL: {}", apiUrl);
-        restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
+        LOGGER.info("Response: {}", restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class));
     }
 
     private HttpEntity<?> securityHeader(String apiToken) {
