@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by saipkri on 07/03/17.
  */
@@ -83,8 +85,8 @@ public class DiffArtifactsResource {
             throw new IllegalArgumentException("Not found");
 
         }
-        List<MavenCoordinates> removed = artifact1.getMavenArtifacts().stream().filter(old -> !artifact2.getMavenArtifacts().contains(old)).collect(Collectors.toList());
-        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(Collectors.toList());
+        List<MavenCoordinates> removed = artifact1.getMavenArtifacts().stream().filter(old -> !artifact2.getMavenArtifacts().contains(old)).collect(toList());
+        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
         List<GitLogSummaryResponse> summaries = new ArrayList<>();
 
         List<MavenCoordinates> diffs = new ArrayList<>();
@@ -115,8 +117,8 @@ public class DiffArtifactsResource {
         }
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(summaries);
-        releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
-        releaseDiffResponse.setRemoved(removed.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(Collectors.toList()));
+        releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(toList()));
+        releaseDiffResponse.setRemoved(removed.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(toList()));
         return releaseDiffResponse;
     }
 
@@ -195,7 +197,10 @@ public class DiffArtifactsResource {
                 if (old != null && nw != null) {
                     GitLogResponse s = mavenGitVersionCollector.diffLog(old.getMavenCoordinates().getGroupId(), old.getMavenCoordinates().getArtifactId(), old.getMavenCoordinates().getVersion(), old.getTimestamp() + "", nw.getMavenCoordinates().getGroupId(), nw.getMavenCoordinates().getArtifactId(), nw.getMavenCoordinates().getVersion(), nw.getTimestamp() + "");
                     List<PullRequest> prs = pullRequestRepository.findPullRequestsMergedIntoCommit(old.getGitRevision());
-                    List<PullRequest> prs1 = pullRequestRepository.findPullRequestsMergedIntoCommit(nw.getGitRevision());
+                    List<PullRequest> prs1 = afterEntry.getValue().stream()
+                            .flatMap(m ->
+                                    pullRequestRepository.findPullRequestsMergedIntoCommit(nw.getGitRevision()).stream())
+                            .collect(toList());
 
                     if (prs != null) {
                         s.getPullRequests().addAll(prs);
@@ -231,7 +236,7 @@ public class DiffArtifactsResource {
             return new ResponseEntity<>("No release found for the given coordinates.", HttpStatus.NOT_FOUND);
 
         }
-        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(Collectors.toList());
+        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
         List<GitLogSummaryResponse> summaries = new ArrayList<>();
 
         List<MavenCoordinates> diffs = new ArrayList<>();
