@@ -140,10 +140,10 @@ public class DiffArtifactsResource {
     @ApiOperation("Gets detailed commits since a specified timestamp")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> artifactDiff(@ApiParam("fromTimestamp") @RequestParam("fromTimestamp") long fromTimestamp,
-                                          @RequestParam("untilTimestamp") long untilTimestamp,
-                                          @ApiParam("relativeTime") @RequestParam("relativeTime") long relativeTime,
-                                          @ApiParam("relativeTimeUnit") @RequestParam("relativeTimeUnit") TimeUnit relativeTimeUnit) throws Exception {
+    public ResponseEntity<?> artifactDiff(@ApiParam("fromTimestamp") @RequestParam(value = "fromTimestamp", required = false) long fromTimestamp,
+                                          @RequestParam(value = "untilTimestamp", required = false) long untilTimestamp,
+                                          @ApiParam("relativeTime") @RequestParam(value = "relativeTime", required = false) long relativeTime,
+                                          @ApiParam("relativeTimeUnit") @RequestParam(value = "relativeTimeUnit", required = false) TimeUnit relativeTimeUnit) throws Exception {
         LOGGER.info("Range timestamp: {} - {} ", fromTimestamp, untilTimestamp);
         LOGGER.info("Relative timestamp: {} - {} ", relativeTime, relativeTimeUnit);
 
