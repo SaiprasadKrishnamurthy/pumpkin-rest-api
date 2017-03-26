@@ -1,5 +1,7 @@
 package com.sai.pumpkin.notification;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +23,7 @@ public class NotificationService {
     private final String notificationChannelId;
     private final String webLink1;
     private final String webLink2;
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
     public NotificationService(@Value("apiToken") final String apiToken, @Value("apiUrl") final String apiUrl, @Value("notificationChannelId") final String notificationChannelId, @Value("webLink1") final String webLink1, @Value("webLink2") final String webLink2) {
         this.apiToken = apiToken;
@@ -33,6 +36,7 @@ public class NotificationService {
     public void sendReleaseNotification() {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<?> request = securityHeader(apiToken);
+        LOGGER.info("API URL: {}", apiUrl);
         restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
     }
 
