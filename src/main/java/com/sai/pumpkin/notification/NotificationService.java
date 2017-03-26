@@ -48,8 +48,8 @@ public class NotificationService {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                int exit = new ProcessExecutor().command("curl", "-v", "-H", "\"Content-type:application/json; charset=utf-8\"",
-                        "-H",  "\"Authorization:Bearer " + apiToken + "\"", "-X", "POST", "-d", "'" + payload + "'", apiUrl)
+                int exit = new ProcessExecutor().command("curl", "-v", "-H", "Content-type:application/json; charset=utf-8",
+                        "-H", "Authorization:Bearer " + apiToken, "-X", "POST", "-d", "'" + payload + "'", apiUrl)
                         .redirectOutput(new LogOutputStream() {
                             @Override
                             protected void processLine(String line) {
