@@ -199,7 +199,7 @@ public class DiffArtifactsResource {
                     List<PullRequest> prs = pullRequestRepository.findPullRequestsMergedIntoCommit(old.getGitRevision());
                     List<PullRequest> prs1 = afterEntry.getValue().stream()
                             .flatMap(m ->
-                                    pullRequestRepository.findPullRequestsMergedIntoCommit(nw.getGitRevision()).stream())
+                                    pullRequestRepository.findPullRequestsMergedIntoCommit(m.getGitRevision()).stream())
                             .collect(toList());
 
                     if (prs != null) {
