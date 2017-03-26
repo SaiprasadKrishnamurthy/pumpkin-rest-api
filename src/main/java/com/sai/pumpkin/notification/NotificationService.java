@@ -1,17 +1,14 @@
 package com.sai.pumpkin.notification;
 
-import com.sai.pumpkin.utils.SSLUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.stream.LogOutputStream;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -42,27 +39,29 @@ public class NotificationService {
     public void sendReleaseNotification() {
         WORKERS.submit(() -> {
             try {
-                SSLUtil.turnOffSslChecking();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
+                Map<String, String> body = new HashMap<>();
+                body.put("roomId", notificationChannelId);
+                body.put("text", "[A new release has been loaded into Pumpkin]" + webLink1 + ", Verify your expectations here: " + webLink2);
+                String payload = null;
+                try {
+                    payload = new ObjectMapper().writeValueAsString(body).replace("\n", "");
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+                int exit = new ProcessExecutor().command("curl", "-v", "-H", "\"Content-type:application/json; charset=utf-8\"",
+                        "-H \"Authorization:Bearer " + apiToken + "\"", "-X", "POST", "-d", "'" + payload + "'", apiUrl)
+                        .redirectOutput(new LogOutputStream() {
+                            @Override
+                            protected void processLine(String line) {
+                                LOGGER.info(line);
+                            }
+                        })
+                        .execute()
+                        .getExitValue();
+                LOGGER.info("Notification process exit status: {}", exit);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<?> request = securityHeader(apiToken);
-            LOGGER.info("API URL: {}", apiUrl);
-            LOGGER.info("Response: {}", restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class));
         });
-    }
-
-    private HttpEntity<?> securityHeader(String apiToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer:" + apiToken.trim());
-        headers.add("Content-Type", "application/json");
-        headers.add("Accept", "application/json");
-        Map<String, String> body = new HashMap<>();
-        body.put("roomId", notificationChannelId);
-        body.put("text", "[A new release has been loaded into Pumpkin]" + webLink1 + ", Verify your expectations here: " + webLink2);
-        return new HttpEntity<>(body, headers);
     }
 }
