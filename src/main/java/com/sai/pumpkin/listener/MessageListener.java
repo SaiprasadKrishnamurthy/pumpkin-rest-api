@@ -31,7 +31,7 @@ public class MessageListener {
     @JmsListener(destination = "artifact.collection.queue", concurrency = "${collectorConcurrency}")
     public void onMessage(String config) {
         try {
-            CollectionOptions options = new CollectionOptions(null, 50, true);
+            CollectionOptions options = new CollectionOptions(10000000, 800, true);
             if (!mongoTemplate.collectionExists(CollectionJob.class)) {
                 mongoTemplate.createCollection(CollectionJob.class, options);
             }
