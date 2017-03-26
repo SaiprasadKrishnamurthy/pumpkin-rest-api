@@ -1,9 +1,11 @@
 package com.sai.pumpkin.rest;
 
+import com.sai.pumpkin.domain.CollectionJob;
 import com.sai.pumpkin.domain.GitLogEntry;
 import com.sai.pumpkin.domain.MavenGitVersionMapping;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -83,5 +85,11 @@ public class ActivityResource {
         return res;
     }
 
-
+    @ApiOperation("Finds all activities (based on number of commits by a committer) since the specified timestamp.")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/collection-job-stats", method = RequestMethod.GET, produces = "application/json")
+    public List<CollectionJob> collectionJobStats() {
+        Query q = Query.query(Criteria.where("startTime").gt(0L)).with(new Sort(Sort.Direction.DESC, "startTime")).limit(700);
+        return mongoTemplate.find(q, CollectionJob.class);
+    }
 }
