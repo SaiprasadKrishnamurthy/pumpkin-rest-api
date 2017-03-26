@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -136,14 +137,31 @@ public class DiffArtifactsResource {
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
     }
 
-    @ApiOperation("Gets detailed commits after a specified timestamp")
+    @ApiOperation("Gets detailed commits since a specified timestamp")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/changes", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> artifactDiff(@ApiParam("timestamp") @RequestParam("timestamp") long timestamp) throws Exception {
-        LOGGER.info("Original timestamp: {}", timestamp);
+    public ResponseEntity<?> artifactDiff(@ApiParam("fromTimestamp") @RequestParam("fromTimestamp") long fromTimestamp,
+                                          @RequestParam("untilTimestamp") long untilTimestamp,
+                                          @ApiParam("relativeTime") @RequestParam("relativeTime") long relativeTime,
+                                          @ApiParam("relativeTimeUnit") @RequestParam("relativeTimeUnit") TimeUnit relativeTimeUnit) throws Exception {
+        LOGGER.info("Range timestamp: {} - {} ", fromTimestamp, untilTimestamp);
+        LOGGER.info("Relative timestamp: {} - {} ", relativeTime, relativeTimeUnit);
 
-        List<MavenGitVersionMapping> after = mavenGitVersionMappingRepository.findGreaterThanTimestamp(timestamp);
-        LOGGER.info("Retrieved index entries: {}", after);
+        if ((fromTimestamp > 0 && untilTimestamp > 0) && (relativeTime > 0)) {
+            return new ResponseEntity<>("You can either specify a time range or a relative time with a unit. Not both.", HttpStatus.BAD_REQUEST);
+        }
+        if ((fromTimestamp > 0 && untilTimestamp > 0) && (relativeTimeUnit != null)) {
+            return new ResponseEntity<>("You can either specify a time range or a relative time with a unit. Not both.", HttpStatus.BAD_REQUEST);
+        }
+        if (relativeTime > 0 && relativeTimeUnit != null) {
+            relativeTime = System.currentTimeMillis() - relativeTimeUnit.toMillis(relativeTime);
+            fromTimestamp = relativeTime;
+            untilTimestamp = System.currentTimeMillis();
+        }
+        Query query = Query.query(Criteria.where("timestamp").gt(fromTimestamp).lte(untilTimestamp));
+        List<MavenGitVersionMapping> after = mongoTemplate.find(query, MavenGitVersionMapping.class);
+
+        LOGGER.info("Retrieved entries within the time range: {}", after);
 
         List<GitLogResponse> responses = new ArrayList<>();
 
@@ -169,7 +187,7 @@ public class DiffArtifactsResource {
             if (!afterEntry.getValue().isEmpty()) {
                 MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
                 // Get the last version just lesser than the timestamp.
-                Query query = Query.query(Criteria.where("timestamp").lt(timestamp).and("artifactConfig.name").is(nw.getArtifactConfig().getName())).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
+                query = Query.query(Criteria.where("timestamp").lt(fromTimestamp).and("artifactConfig.name").is(nw.getArtifactConfig().getName())).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
                 List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query, MavenGitVersionMapping.class);
                 LOGGER.info("Start Revision: {}", startingRev);
                 MavenGitVersionMapping old = startingRev.get(0);
@@ -191,7 +209,6 @@ public class DiffArtifactsResource {
                 }
             }
         }
-
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
