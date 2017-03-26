@@ -25,7 +25,7 @@ public class NotificationService {
     private final String webLink2;
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
-    public NotificationService(@Value("apiToken") final String apiToken, @Value("apiUrl") final String apiUrl, @Value("notificationChannelId") final String notificationChannelId, @Value("webLink1") final String webLink1, @Value("webLink2") final String webLink2) {
+    public NotificationService(@Value("${apiToken}") final String apiToken, @Value("${apiUrl}") final String apiUrl, @Value("${notificationChannelId}") final String notificationChannelId, @Value("${webLink1}") final String webLink1, @Value("${webLink2}") final String webLink2) {
         this.apiToken = apiToken;
         this.apiUrl = apiUrl;
         this.notificationChannelId = notificationChannelId;
