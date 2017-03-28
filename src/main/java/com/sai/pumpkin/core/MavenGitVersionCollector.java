@@ -27,7 +27,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -342,14 +341,25 @@ public class MavenGitVersionCollector {
         for (GitLogEntry e : s.getGitLogEntries()) {
             committersCsv = committersCsv.toLowerCase().trim().replace(" ", "");
             String author = e.getAuthor().toLowerCase().trim().replace(" ", "").replace("\t", "");
-            LOGGER.info("Commiters: {}, Author: {} ", committersCsv, author);
+            List<String> committersTokens = Arrays.asList(committersCsv.split(","));
 
-            if (committersCsv.contains(author) || author.contains(committersCsv)) {
+            LOGGER.info("Committers: {}, Author: {} ", committersCsv, author);
+
+            if (matched(committersTokens, author)) {
                 e.setMavenCoordinates(s.getTo());
                 gitLogEntries.add(e);
             }
         }
         return gitLogEntries;
+    }
+
+    private boolean matched(final List<String> committersTokens, final String author) {
+        for (String token : committersTokens) {
+            if (token.contains(author) || author.contains(token)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Map<String, String> bulkDiff(ArtifactConfig artifactConfig, String gitSha) {
