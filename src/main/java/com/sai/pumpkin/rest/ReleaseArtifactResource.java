@@ -16,9 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
@@ -61,14 +61,16 @@ public class ReleaseArtifactResource {
     @ApiOperation("Saves a release artifact from a dump")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
-    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump) {
+    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
         List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
+        allReleases.sort((a, b) -> a.getVersion().compareTo(b.getVersion()));
 
         List<MavenCoordinates> allMavenCoordinates = Stream.of(releaseDump.split("\n"))
                 .filter(l -> l.trim().length() > 0)
                 .map(s -> {
+                    Optional<Date> builtDate = builtDate(s);
                     MavenCoordinates mavenCoordinates = new MavenCoordinates();
                     String[] tokens = s.trim().split(" ");
                     List<String> kv = Stream.of(tokens).filter(t -> t.contains("=")).collect(toList());
@@ -81,6 +83,9 @@ public class ReleaseArtifactResource {
                         } else if (kvp.contains("version")) {
                             mavenCoordinates.setVersion(value.trim());
                         }
+                    }
+                    if (builtDate.isPresent()) {
+                        mavenCoordinates.setBuiltTimestamp(builtDate.get().getTime());
                     }
                     return mavenCoordinates;
                 }).collect(toList());
@@ -98,8 +103,25 @@ public class ReleaseArtifactResource {
             ReleaseArtifact prev = allReleases.get(allReleases.size() - 1);
             DIFF_WORKERS.submit(() -> diffArtifactsResource.releaseDiff(prev.getName() + ":" + prev.getVersion(), currRelease.getName() + ":" + currRelease.getVersion()));
         }
-        notificationService.sendReleaseNotification();
+        if (shouldNotify) {
+            notificationService.sendReleaseNotification();
+        }
         return new ResponseEntity<>(json, HttpStatus.CREATED);
+    }
+
+    private Optional<Date> builtDate(String line) {
+        final SimpleDateFormat fmt = new SimpleDateFormat("EEE MMM dd hh:mm:ss ZZ yyyy");
+        if (line.contains("#") && line.contains("version")) {
+            line = line.trim();
+            String clipped = line.substring(line.indexOf("#", 2) + 1, line.indexOf("version")).trim();
+            try {
+                return Optional.of(fmt.parse(clipped));
+            } catch (ParseException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @ApiOperation("Lists all releases")
