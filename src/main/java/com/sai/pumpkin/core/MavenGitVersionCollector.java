@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -340,8 +341,10 @@ public class MavenGitVersionCollector {
         List<GitLogEntry> gitLogEntries = new ArrayList<>();
         for (GitLogEntry e : s.getGitLogEntries()) {
             committersCsv = committersCsv.toLowerCase().trim().replace(" ", "");
-            String author = e.getAuthor().toLowerCase().trim().replace(" ", "").replace("\t", "").replaceAll("\\P{Alnum}", "");
-            if (committersCsv.contains(author)) {
+            String author = e.getAuthor().toLowerCase().trim().replace(" ", "").replace("\t", "");
+            LOGGER.info("Commiters: {}, Author: {} ", committersCsv, author);
+
+            if (committersCsv.contains(author) || author.contains(committersCsv)) {
                 e.setMavenCoordinates(s.getTo());
                 gitLogEntries.add(e);
             }
