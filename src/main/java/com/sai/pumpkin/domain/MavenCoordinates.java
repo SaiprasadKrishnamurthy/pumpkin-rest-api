@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = "version")
+@EqualsAndHashCode(exclude = {"version", "builtTimestamp"})
 public class MavenCoordinates implements Serializable {
     private String groupId;
     private String artifactId;
