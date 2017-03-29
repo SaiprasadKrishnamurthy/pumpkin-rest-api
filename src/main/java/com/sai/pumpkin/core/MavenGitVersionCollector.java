@@ -292,18 +292,20 @@ public class MavenGitVersionCollector {
 
             try {
                 String stat = GitUtils.linesStat(localRepo, moduleDir, m1.getGitRevision(), m2.getGitRevision());
-                String tokens[] = stat.split(",");
-                long files = 0;
-                long linesInserted = 0;
-                long linesDeleted = 0;
+                if (StringUtils.isNotBlank(stat)) {
+                    String tokens[] = stat.split(",");
+                    long files = 0;
+                    long linesInserted = 0;
+                    long linesDeleted = 0;
 
-                List<String> trimmed = IntStream.range(0, tokens.length).mapToObj(i -> tokens[i].trim()).collect(toList());
-                files = Long.parseLong(trimmed.get(0).split(" ")[0].trim());
-                linesInserted = Long.parseLong(trimmed.get(1).split(" ")[0].trim());
-                linesDeleted = Long.parseLong(trimmed.get(2).split(" ")[0].trim());
-                summaryResponse.setNoOfFilesChanged(files);
-                summaryResponse.setNoOfLinesInserted(linesInserted);
-                summaryResponse.setNoOfLinesDeleted(linesDeleted);
+                    List<String> trimmed = IntStream.range(0, tokens.length).mapToObj(i -> tokens[i].trim()).collect(toList());
+                    files = Long.parseLong(trimmed.get(0).split(" ")[0].trim());
+                    linesInserted = Long.parseLong(trimmed.get(1).split(" ")[0].trim());
+                    linesDeleted = Long.parseLong(trimmed.get(2).split(" ")[0].trim());
+                    summaryResponse.setNoOfFilesChanged(files);
+                    summaryResponse.setNoOfLinesInserted(linesInserted);
+                    summaryResponse.setNoOfLinesDeleted(linesDeleted);
+                }
                 summaryResponse.setDefectIds(defectids);
                 summaryResponse.setPullRequests(pullRequests);
 
