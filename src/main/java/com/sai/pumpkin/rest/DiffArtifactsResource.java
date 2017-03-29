@@ -102,6 +102,9 @@ public class DiffArtifactsResource {
             Optional<MavenCoordinates> _m = smaller.stream().filter(s -> s.equals(m)).findFirst();
             if (_m.isPresent() && !_m.get().getVersion().equals(m.getVersion())) {
                 diffs.add(m);
+            } else if(_m.isPresent() && _m.get().getVersion().equals(m.getVersion()) && _m.get().getVersion().contains("SNAPSHOT")) {
+                // 2 snapshots same version.
+                diffs.add(m);
             }
         }
 
