@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -66,7 +67,43 @@ public class ReleaseArtifactResource {
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
         List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
         allReleases.sort((a, b) -> a.getVersion().compareTo(b.getVersion()));
+        allReleases = allReleases.stream().filter(r -> r.getSnapshot() == null || !r.getSnapshot()).collect(Collectors.toList());
 
+        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, false);
+        Map<String, String> json = new HashMap<>();
+        json.put("status", "success");
+
+        if (allReleases.size() > 1) {
+            ReleaseArtifact prev = allReleases.get(allReleases.size() - 1);
+            DIFF_WORKERS.submit(() -> diffArtifactsResource.releaseDiff(prev.getName() + ":" + prev.getVersion(), currRelease.getName() + ":" + currRelease.getVersion()));
+        }
+        if (shouldNotify) {
+            notificationService.sendReleaseNotification();
+        }
+        return new ResponseEntity<>(json, HttpStatus.CREATED);
+    }
+
+    @ApiOperation("Saves a snapshot artifact from a dump")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/snapshot-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
+    public ResponseEntity<?> saveSnapshotFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) {
+        LOGGER.info("Saving the release dump for: {}", version);
+        LOGGER.info("Dump is \n {} \n\n", releaseDump);
+        List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
+        allReleases.sort((a, b) -> a.getVersion().compareTo(b.getVersion()));
+        allReleases = allReleases.stream().filter(r -> r.getSnapshot() != null && r.getSnapshot()).collect(Collectors.toList());
+
+        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, true);
+        Map<String, String> json = new HashMap<>();
+        json.put("status", "success");
+
+        if (shouldNotify) {
+            notificationService.sendSnapshotNotification();
+        }
+        return new ResponseEntity<>(json, HttpStatus.CREATED);
+    }
+
+    private ReleaseArtifact processDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump, boolean isSnapshot) {
         List<MavenCoordinates> allMavenCoordinates = Stream.of(releaseDump.split("\n"))
                 .filter(l -> l.trim().length() > 0)
                 .map(s -> {
@@ -93,20 +130,11 @@ public class ReleaseArtifactResource {
         currRelease.setName(releaseName.trim());
         currRelease.setVersion(version);
         currRelease.setMavenArtifacts(allMavenCoordinates);
+        currRelease.setSnapshot(isSnapshot);
         Criteria c = Criteria.where("name").is(currRelease.getName()).and("version").is(currRelease.getVersion());
         mongoTemplate.remove(Query.query(c), ReleaseArtifact.class);
         mongoTemplate.save(currRelease);
-        Map<String, String> json = new HashMap<>();
-        json.put("status", "success");
-
-        if (!allReleases.isEmpty()) {
-            ReleaseArtifact prev = allReleases.get(allReleases.size() - 1);
-            DIFF_WORKERS.submit(() -> diffArtifactsResource.releaseDiff(prev.getName() + ":" + prev.getVersion(), currRelease.getName() + ":" + currRelease.getVersion()));
-        }
-        if (shouldNotify) {
-            notificationService.sendReleaseNotification();
-        }
-        return new ResponseEntity<>(json, HttpStatus.CREATED);
+        return currRelease;
     }
 
     private Optional<Date> builtDate(String line) {

@@ -25,15 +25,17 @@ public class NotificationService {
     private final String notificationChannelId;
     private final String webLink1;
     private final String webLink2;
+    private final String snapshotDeltaLink;
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
     private final ExecutorService WORKERS = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public NotificationService(@Value("${apiToken}") final String apiToken, @Value("${apiUrl}") final String apiUrl, @Value("${notificationChannelId}") final String notificationChannelId, @Value("${webLink1}") final String webLink1, @Value("${webLink2}") final String webLink2) {
+    public NotificationService(@Value("${apiToken}") final String apiToken, @Value("${apiUrl}") final String apiUrl, @Value("${notificationChannelId}") final String notificationChannelId, @Value("${webLink1}") final String webLink1, @Value("${webLink2}") final String webLink2, @Value("${snapshotDeltaLink}") final String snapshotDeltaLink) {
         this.apiToken = apiToken;
         this.apiUrl = apiUrl;
         this.notificationChannelId = notificationChannelId;
         this.webLink1 = webLink1;
         this.webLink2 = webLink2;
+        this.snapshotDeltaLink = snapshotDeltaLink;
     }
 
     public void sendReleaseNotification() {
@@ -42,6 +44,35 @@ public class NotificationService {
                 Map<String, String> body = new HashMap<>();
                 body.put("roomId", notificationChannelId);
                 body.put("text", "[A new release has been loaded into Pumpkin]" + webLink1 + ", Verify your expectations here: " + webLink2);
+                String payload = null;
+                try {
+                    payload = new ObjectMapper().writeValueAsString(body).replace("\n", "");
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+                int exit = new ProcessExecutor().command("curl", "-v", "-H", "Content-type:application/json; charset=utf-8",
+                        "-H", "Authorization:Bearer " + apiToken, "-X", "POST", "-d", "" + payload + "", apiUrl)
+                        .redirectOutput(new LogOutputStream() {
+                            @Override
+                            protected void processLine(String line) {
+                                LOGGER.info(line);
+                            }
+                        })
+                        .execute()
+                        .getExitValue();
+                LOGGER.info("Notification process exit status: {}", exit);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    public void sendSnapshotNotification() {
+        WORKERS.submit(() -> {
+            try {
+                Map<String, String> body = new HashMap<>();
+                body.put("roomId", notificationChannelId);
+                body.put("text", "[A new SNAPSHOT has been loaded into Pumpkin]" + " View deltas here: "+snapshotDeltaLink);
                 String payload = null;
                 try {
                     payload = new ObjectMapper().writeValueAsString(body).replace("\n", "");
