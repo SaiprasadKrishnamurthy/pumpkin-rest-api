@@ -133,21 +133,12 @@ public class MavenGitVersionCollector {
                 MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
                 MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
-                // same version different snapshot.
-                if (g1.equals(g2) && a1.equals(a2) && v1.equals(v2)) {
-                    m1 = m1List.get(0);
-                    m2 = m2List.get(m2List.size() - 1);
-                }
-
                 if (m1List.size() != m2List.size()) {
                     m1 = m1List.get(0);
                     m2 = m2List.get(m2List.size() - 1);
                 }
 
                 clock.start();
-                if(a1.equals("rfm")) {
-                    System.out.println("RFM");
-                }
                 gitLogResponse = diffLogPreComputed(m1, m2);
                 if (gitLogResponse == null) {
                     gitLogResponse = GitUtils.gitLogResponse(localGitWorkspace, m1, m2);
@@ -229,6 +220,31 @@ public class MavenGitVersionCollector {
         mongoTemplate.remove(gitLogResponse);
     }
 
+    public MavenGitVersionMapping[] fromAndTo(final MavenCoordinates m1, final MavenCoordinates m2) {
+        List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(m1.getGroupId(), m1.getArtifactId(), m1.getVersion());
+        List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(m2.getGroupId(), m2.getArtifactId(), m2.getVersion());
+        if (m1List.isEmpty() || m2List.isEmpty()) {
+            return new MavenGitVersionMapping[]{};
+        }
+
+        MavenGitVersionMapping mm1 = m1List.get(m1List.size() - 1);
+        MavenGitVersionMapping mm2 = m2List.get(m2List.size() - 1);
+
+        // if same versions but a different snapshot.
+        if (m1.getGroupId().equals(m2.getGroupId()) && m1.getArtifactId().equals(m2.getArtifactId()) && m1.getVersion().equals(m2.getVersion())) {
+            mm1 = m1List.get(0);
+            mm2 = m2List.get(m2List.size() - 1);
+        }
+
+        if (m1List.size() != m2List.size()) {
+            mm1 = m1List.get(0);
+            mm2 = m2List.get(m2List.size() - 1);
+        }
+
+        return new MavenGitVersionMapping[]{mm1, mm2};
+
+    }
+
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7)")
     public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
         GitLogSummaryResponse summaryResponse = null;
@@ -246,11 +262,6 @@ public class MavenGitVersionCollector {
             MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
             MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
-            // if same versions but a different snapshot.
-            if (g1.equals(g2) && a1.equals(a2) && v1.equals(v2)) {
-                m1 = m1List.get(0);
-                m2 = m2List.get(m2List.size() - 1);
-            }
             if (m1List.size() != m2List.size()) {
                 m1 = m1List.get(0);
                 m2 = m2List.get(m2List.size() - 1);

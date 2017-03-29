@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -102,7 +101,7 @@ public class DiffArtifactsResource {
             Optional<MavenCoordinates> _m = smaller.stream().filter(s -> s.equals(m)).findFirst();
             if (_m.isPresent() && !_m.get().getVersion().equals(m.getVersion())) {
                 diffs.add(m);
-            } else if(_m.isPresent() && _m.get().getVersion().equals(m.getVersion()) && _m.get().getVersion().contains("SNAPSHOT")) {
+            } else if (_m.isPresent() && _m.get().getVersion().equals(m.getVersion()) && _m.get().getVersion().contains("SNAPSHOT")) {
                 // 2 snapshots same version.
                 diffs.add(m);
             }
@@ -111,9 +110,15 @@ public class DiffArtifactsResource {
         for (MavenCoordinates diff : diffs) {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
-            GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), "");
-            if (s != null) {
-                summaries.add(s);
+
+            // Get the from and to.
+            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw);
+
+            if (fromAndTo.length == 2) {
+                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "");
+                if (s != null) {
+                    summaries.add(s);
+                }
             } else {
                 LOGGER.warn("No Log Summary found for: {}, {}", old, nw);
             }
