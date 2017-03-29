@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class FunStuff {
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
         SimpleDateFormat fmt = new SimpleDateFormat("EEE MMM dd hh:mm:ss ZZ yyyy");
 
         Files.lines(Paths.get("s.txt"))
