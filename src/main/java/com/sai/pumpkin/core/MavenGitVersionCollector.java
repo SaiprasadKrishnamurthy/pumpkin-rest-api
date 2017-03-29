@@ -133,12 +133,21 @@ public class MavenGitVersionCollector {
                 MavenGitVersionMapping m1 = m1List.get(m1List.size() - 1);
                 MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
+                // same version different snapshot.
+                if (g1.equals(g2) && a1.equals(a2) && v1.equals(v2)) {
+                    m1 = m1List.get(0);
+                    m2 = m2List.get(m2List.size() - 1);
+                }
+
                 if (m1List.size() != m2List.size()) {
                     m1 = m1List.get(0);
                     m2 = m2List.get(m2List.size() - 1);
                 }
 
                 clock.start();
+                if(a1.equals("rfm")) {
+                    System.out.println("RFM");
+                }
                 gitLogResponse = diffLogPreComputed(m1, m2);
                 if (gitLogResponse == null) {
                     gitLogResponse = GitUtils.gitLogResponse(localGitWorkspace, m1, m2);
@@ -229,10 +238,8 @@ public class MavenGitVersionCollector {
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1, Long.parseLong(t1));
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2, Long.parseLong(t2));
         } else {
-            // TODO check if snapshot and go back to the last but one item in the indx whose timestamp is less than the built timestamp of this artifact.
             m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(g1, a1, v1);
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
-            System.out.println(m1List);
         }
         if (!m1List.isEmpty() && !m2List.isEmpty()) {
             summaryResponse = new GitLogSummaryResponse();
@@ -240,7 +247,7 @@ public class MavenGitVersionCollector {
             MavenGitVersionMapping m2 = m2List.get(m2List.size() - 1);
 
             // if same versions but a different snapshot.
-            if (a1.equals(a2) && v1.equals(v2)) {
+            if (g1.equals(g2) && a1.equals(a2) && v1.equals(v2)) {
                 m1 = m1List.get(0);
                 m2 = m2List.get(m2List.size() - 1);
             }
