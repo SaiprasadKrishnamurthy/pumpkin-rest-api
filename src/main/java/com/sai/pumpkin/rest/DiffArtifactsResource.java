@@ -280,21 +280,11 @@ public class DiffArtifactsResource {
         return new ResponseEntity<>(grand, HttpStatus.OK);
     }
 
-    @ApiOperation("Deletes the diff result collected of artifact 1 and artifact 2")
+    @ApiOperation("Refreshes all the cache")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.DELETE, RequestMethod.GET})
-    @RequestMapping(value = "/removediff", method = RequestMethod.DELETE, produces = "application/json")
-    @CacheEvict(cacheNames = {"detailedDiffCache", "summaryDiffCache"}, key = "#p0.concat('-').concat(#p1)")
-    public ResponseEntity<?> deleteDiff(@ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates1") String mavenCoordinates1,
-                                        @ApiParam("groupId:artifactId:version") @RequestParam("mavenCoordinates2") String mavenCoordinates2) {
-        String[] c1 = mavenCoordinates1.split(":");
-        String[] c2 = mavenCoordinates2.split(":");
-        if (c1.length < 3 || c2.length < 3) {
-            return new ResponseEntity<Object>("Maven coordinates must be in the format: 'groupId:artifactId:version'", HttpStatus.BAD_REQUEST);
-        }
-        GitLogResponse gitLogResponse = gitLogResponseRepository.findByMavenCoordinates(c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]);
-        mavenGitVersionCollector.deleteDiffResultTree(gitLogResponse);
+    @RequestMapping(value = "/cache-refresh", method = RequestMethod.DELETE, produces = "application/json")
+    @CacheEvict(cacheNames = {"detailedDiffCache", "summaryDiffCache", "releaseMetaCache", "releaseDiffCache"})
+    public ResponseEntity<?> refreshCache() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }
