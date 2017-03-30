@@ -1,224 +1,756 @@
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building Strawberry event processor 1.0-SNAPSHOT
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- maven-dependency-plugin:2.10:tree (default-cli) @ event-processor ---
-[INFO] com.sai.strawberry:event-processor:jar:1.0-SNAPSHOT
-[INFO] +- com.sai.strawberry.api:strawberry-api:jar:1.0-SNAPSHOT:compile
-[INFO] |  +- org.springframework.data:spring-data-mongodb:jar:1.8.4.RELEASE:compile
-[INFO] |  |  +- org.springframework:spring-context:jar:4.2.5.RELEASE:compile
-[INFO] |  |  +- org.springframework:spring-expression:jar:4.2.5.RELEASE:compile
-[INFO] |  |  +- org.springframework.data:spring-data-commons:jar:1.11.4.RELEASE:compile
-[INFO] |  |  \- org.slf4j:jcl-over-slf4j:jar:1.7.16:compile
-[INFO] |  +- org.hdrhistogram:HdrHistogram:jar:2.1.8:compile
-[INFO] |  +- com.datastax.cassandra:cassandra-driver-mapping:jar:2.1.9:compile
-[INFO] |  \- com.datastax.cassandra:cassandra-driver-core:jar:2.1.9:compile
-[INFO] |     +- io.netty:netty-handler:jar:4.0.27.Final:compile
-[INFO] |     |  +- io.netty:netty-buffer:jar:4.0.27.Final:compile
-[INFO] |     |  |  \- io.netty:netty-common:jar:4.0.27.Final:compile
-[INFO] |     |  +- io.netty:netty-transport:jar:4.0.27.Final:compile
-[INFO] |     |  \- io.netty:netty-codec:jar:4.0.27.Final:compile
-[INFO] |     \- com.codahale.metrics:metrics-core:jar:3.0.2:compile
-[INFO] +- org.springframework.boot:spring-boot-starter-data-mongodb:jar:1.3.3.RELEASE:compile
-[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:1.3.3.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot:jar:1.3.3.RELEASE:compile
-[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:1.3.3.RELEASE:compile
-[INFO] |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:1.3.3.RELEASE:compile
-[INFO] |  |     +- ch.qos.logback:logback-classic:jar:1.1.5:compile
-[INFO] |  |     |  \- ch.qos.logback:logback-core:jar:1.1.5:compile
-[INFO] |  |     +- org.slf4j:jul-to-slf4j:jar:1.7.16:compile
-[INFO] |  |     \- org.slf4j:log4j-over-slf4j:jar:1.7.16:compile
-[INFO] |  \- org.mongodb:mongo-java-driver:jar:2.13.3:compile
-[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:1.3.3.RELEASE:compile
-[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:1.3.3.RELEASE:compile
-[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:8.0.32:compile
-[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:8.0.32:compile
-[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-logging-juli:jar:8.0.32:compile
-[INFO] |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:8.0.32:compile
-[INFO] |  +- org.springframework.boot:spring-boot-starter-validation:jar:1.3.3.RELEASE:compile
-[INFO] |  |  \- org.hibernate:hibernate-validator:jar:5.2.4.Final:compile
-[INFO] |  |     +- javax.validation:validation-api:jar:1.1.0.Final:compile
-[INFO] |  |     \- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
-[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.5:compile
-[INFO] |  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.5:compile
-[INFO] |  +- org.springframework:spring-web:jar:4.2.5.RELEASE:compile
-[INFO] |  |  \- org.springframework:spring-aop:jar:4.2.5.RELEASE:compile
-[INFO] |  |     \- aopalliance:aopalliance:jar:1.0:compile
-[INFO] |  \- org.springframework:spring-webmvc:jar:4.2.5.RELEASE:compile
-[INFO] +- org.springframework.cloud:spring-cloud-starter-eureka:jar:1.1.0.RC1:compile
-[INFO] |  +- org.springframework.cloud:spring-cloud-starter:jar:1.1.0.RC2:compile
-[INFO] |  |  +- org.springframework.cloud:spring-cloud-context:jar:1.1.0.RC2:compile
-[INFO] |  |  |  \- org.springframework.security:spring-security-crypto:jar:4.0.3.RELEASE:compile
-[INFO] |  |  \- org.springframework.cloud:spring-cloud-commons:jar:1.1.0.RC2:compile
-[INFO] |  +- org.springframework.cloud:spring-cloud-netflix-core:jar:1.1.0.RC1:compile
-[INFO] |  +- org.springframework.cloud:spring-cloud-netflix-eureka-client:jar:1.1.0.RC1:compile
-[INFO] |  +- com.netflix.eureka:eureka-client:jar:1.4.4:compile
-[INFO] |  |  +- org.codehaus.jettison:jettison:jar:1.3.7:runtime
-[INFO] |  |  |  \- stax:stax-api:jar:1.0.1:runtime
-[INFO] |  |  +- com.netflix.netflix-commons:netflix-eventbus:jar:0.3.0:runtime
-[INFO] |  |  +- com.netflix.archaius:archaius-core:jar:0.7.3:compile
-[INFO] |  |  +- javax.ws.rs:jsr311-api:jar:1.1.1:runtime
-[INFO] |  |  +- com.netflix.servo:servo-core:jar:0.10.1:runtime
-[INFO] |  |  |  \- com.netflix.servo:servo-internal:jar:0.10.1:runtime
-[INFO] |  |  +- com.sun.jersey:jersey-core:jar:1.19.1:runtime
-[INFO] |  |  +- com.sun.jersey:jersey-client:jar:1.19.1:runtime
-[INFO] |  |  +- com.sun.jersey.contribs:jersey-apache-client4:jar:1.19.1:runtime
-[INFO] |  |  +- com.google.inject:guice:jar:4.0:runtime
-[INFO] |  |  \- com.netflix.governator:governator-api:jar:1.12.10:runtime
-[INFO] |  +- com.netflix.eureka:eureka-core:jar:1.4.4:compile
-[INFO] |  |  +- com.amazonaws:aws-java-sdk-core:jar:1.10.30:runtime
-[INFO] |  |  +- com.amazonaws:aws-java-sdk-ec2:jar:1.10.30:runtime
-[INFO] |  |  +- com.amazonaws:aws-java-sdk-autoscaling:jar:1.9.3:runtime
-[INFO] |  |  +- com.amazonaws:aws-java-sdk-sts:jar:1.9.3:runtime
-[INFO] |  |  +- com.amazonaws:aws-java-sdk-route53:jar:1.9.3:runtime
-[INFO] |  |  +- com.netflix.governator:governator:jar:1.12.10:runtime
-[INFO] |  |  |  \- com.netflix.governator:governator-core:jar:1.12.10:runtime
-[INFO] |  |  \- org.codehaus.woodstox:woodstox-core-asl:jar:4.4.1:runtime
-[INFO] |  |     +- javax.xml.stream:stax-api:jar:1.0-2:runtime
-[INFO] |  |     \- org.codehaus.woodstox:stax2-api:jar:3.1.4:runtime
-[INFO] |  +- org.springframework.cloud:spring-cloud-starter-archaius:jar:1.1.0.RC1:compile
-[INFO] |  |  \- commons-configuration:commons-configuration:jar:1.8:compile
-[INFO] |  |     \- commons-lang:commons-lang:jar:2.6:compile
-[INFO] |  +- org.springframework.cloud:spring-cloud-starter-ribbon:jar:1.1.0.RC1:compile
-[INFO] |  |  +- com.netflix.ribbon:ribbon:jar:2.1.3:compile
-[INFO] |  |  |  +- com.netflix.ribbon:ribbon-transport:jar:2.1.3:runtime
-[INFO] |  |  |  |  +- io.reactivex:rxnetty-contexts:jar:0.4.9:runtime
-[INFO] |  |  |  |  \- io.reactivex:rxnetty-servo:jar:0.4.9:runtime
-[INFO] |  |  |  \- io.reactivex:rxnetty:jar:0.4.9:runtime
-[INFO] |  |  |     +- io.netty:netty-codec-http:jar:4.0.27.Final:runtime
-[INFO] |  |  |     \- io.netty:netty-transport-native-epoll:jar:4.0.27.Final:runtime
-[INFO] |  |  +- com.netflix.ribbon:ribbon-core:jar:2.1.3:compile
-[INFO] |  |  +- com.netflix.ribbon:ribbon-httpclient:jar:2.1.3:compile
-[INFO] |  |  |  \- com.netflix.netflix-commons:netflix-commons-util:jar:0.1.1:runtime
-[INFO] |  |  +- com.netflix.ribbon:ribbon-loadbalancer:jar:2.1.3:compile
-[INFO] |  |  |  \- com.netflix.netflix-commons:netflix-statistics:jar:0.1.1:runtime
-[INFO] |  |  \- io.reactivex:rxjava:jar:1.0.14:compile
-[INFO] |  +- com.netflix.ribbon:ribbon-eureka:jar:2.1.3:compile
-[INFO] |  \- com.thoughtworks.xstream:xstream:jar:1.4.2:compile
-[INFO] |     +- xmlpull:xmlpull:jar:1.1.3.1:compile
-[INFO] |     \- xpp3:xpp3_min:jar:1.1.4c:compile
-[INFO] +- org.springframework.cloud:spring-cloud-starter-hystrix:jar:1.1.0.RC1:compile
-[INFO] |  +- com.netflix.hystrix:hystrix-core:jar:1.5.1:compile
-[INFO] |  +- com.netflix.hystrix:hystrix-metrics-event-stream:jar:1.5.1:compile
-[INFO] |  \- com.netflix.hystrix:hystrix-javanica:jar:1.5.1:compile
-[INFO] |     +- org.aspectj:aspectjweaver:jar:1.8.8:compile
-[INFO] |     +- commons-collections:commons-collections:jar:3.2.2:compile
-[INFO] |     \- org.ow2.asm:asm:jar:5.0.4:compile
-[INFO] +- org.springframework.cloud:spring-cloud-starter-config:jar:1.1.0.RC1:compile
-[INFO] |  \- org.springframework.cloud:spring-cloud-config-client:jar:1.1.0.RC1:compile
-[INFO] +- org.springframework.kafka:spring-kafka:jar:1.0.0.RELEASE:compile
-[INFO] |  +- org.springframework:spring-messaging:jar:4.2.5.RELEASE:compile
-[INFO] |  +- org.springframework.retry:spring-retry:jar:1.1.2.RELEASE:compile
-[INFO] |  \- org.apache.kafka:kafka-clients:jar:0.9.0.1:compile
-[INFO] |     +- org.xerial.snappy:snappy-java:jar:1.1.1.7:compile
-[INFO] |     \- net.jpountz.lz4:lz4:jar:1.2.0:compile
-[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:1.3.3.RELEASE:test
-[INFO] |  +- junit:junit:jar:4.12:test
-[INFO] |  +- org.mockito:mockito-core:jar:1.10.19:test
-[INFO] |  |  \- org.objenesis:objenesis:jar:2.1:test
-[INFO] |  +- org.hamcrest:hamcrest-core:jar:1.3:test
-[INFO] |  +- org.hamcrest:hamcrest-library:jar:1.3:test
-[INFO] |  +- org.springframework:spring-core:jar:4.3.2.RELEASE:compile
-[INFO] |  \- org.springframework:spring-test:jar:4.2.5.RELEASE:test
-[INFO] +- commons-io:commons-io:jar:2.4:compile
-[INFO] +- javax.inject:javax.inject:jar:1:compile
-[INFO] +- org.projectlombok:lombok:jar:1.16.6:provided
-[INFO] +- org.apache.commons:commons-lang3:jar:3.4:compile
-[INFO] +- io.springfox:springfox-swagger2:jar:2.3.1:compile
-[INFO] |  +- org.mapstruct:mapstruct:jar:1.0.0.Final:compile
-[INFO] |  +- io.swagger:swagger-annotations:jar:1.5.5:compile
-[INFO] |  +- io.swagger:swagger-models:jar:1.5.5:compile
-[INFO] |  +- io.springfox:springfox-spi:jar:2.3.1:compile
-[INFO] |  |  \- io.springfox:springfox-core:jar:2.3.1:compile
-[INFO] |  +- io.springfox:springfox-schema:jar:2.3.1:compile
-[INFO] |  +- io.springfox:springfox-swagger-common:jar:2.3.1:compile
-[INFO] |  +- io.springfox:springfox-spring-web:jar:2.3.1:compile
-[INFO] |  +- com.google.guava:guava:jar:18.0:compile
-[INFO] |  +- com.fasterxml:classmate:jar:1.3.1:compile
-[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.16:compile
-[INFO] |  +- org.springframework.plugin:spring-plugin-core:jar:1.2.0.RELEASE:compile
-[INFO] |  \- org.springframework.plugin:spring-plugin-metadata:jar:1.2.0.RELEASE:compile
-[INFO] +- io.springfox:springfox-swagger-ui:jar:2.3.1:compile
-[INFO] +- io.springfox:springfox-staticdocs:jar:2.0.3:test
-[INFO] |  \- io.github.robwin:swagger2markup:jar:0.6.2:test
-[INFO] |     +- io.github.robwin:markup-document-builder:jar:0.1.4:test
-[INFO] |     \- io.swagger:swagger-compat-spec-parser:jar:1.0.8:test
-[INFO] |        +- io.swagger:swagger-core:jar:1.5.0:test
-[INFO] |        |  \- com.fasterxml.jackson.datatype:jackson-datatype-joda:jar:2.6.5:test
-[INFO] |        +- io.swagger:swagger-parser:jar:1.0.8:test
-[INFO] |        |  \- org.slf4j:slf4j-ext:jar:1.6.3:test
-[INFO] |        |     \- ch.qos.cal10n:cal10n-api:jar:0.7.4:test
-[INFO] |        +- com.github.fge:json-schema-validator:jar:2.2.3:test
-[INFO] |        |  +- com.github.fge:json-schema-core:jar:1.2.1:test
-[INFO] |        |  |  +- com.github.fge:uri-template:jar:0.9:test
-[INFO] |        |  |  \- org.mozilla:rhino:jar:1.7R4:test
-[INFO] |        |  +- com.googlecode.libphonenumber:libphonenumber:jar:6.0:test
-[INFO] |        |  +- javax.mail:mailapi:jar:1.4.3:test
-[INFO] |        |  |  \- javax.activation:activation:jar:1.1:test
-[INFO] |        |  +- com.google.code.findbugs:jsr305:jar:2.0.1:test
-[INFO] |        |  \- net.sf.jopt-simple:jopt-simple:jar:4.6:test
-[INFO] |        \- com.github.fge:json-patch:jar:1.6:test
-[INFO] |           \- com.github.fge:jackson-coreutils:jar:1.6:test
-[INFO] |              \- com.github.fge:msg-simple:jar:1.1:test
-[INFO] |                 \- com.github.fge:btf:jar:1.2:test
-[INFO] +- com.typesafe.akka:akka-actor_2.11:jar:2.4.8:compile
-[INFO] |  +- org.scala-lang:scala-library:jar:2.11.8:compile
-[INFO] |  +- com.typesafe:config:jar:1.3.0:compile
-[INFO] |  \- org.scala-lang.modules:scala-java8-compat_2.11:jar:0.7.0:compile
-[INFO] +- joda-time:joda-time:jar:2.3:compile
-[INFO] +- com.sai.strawberry.api:stream-api:jar:1.0-SNAPSHOT:compile
-[INFO] +- commons-codec:commons-codec:jar:1.10:compile
-[INFO] +- io.searchbox:jest:jar:2.0.3:compile
-[INFO] |  +- io.searchbox:jest-common:jar:2.0.3:compile
-[INFO] |  |  \- com.google.code.gson:gson:jar:2.3.1:compile
-[INFO] |  +- org.apache.httpcomponents:httpcore-nio:jar:4.4.4:compile
-[INFO] |  |  \- org.apache.httpcomponents:httpcore:jar:4.4.4:compile
-[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.1:compile
-[INFO] |  \- org.apache.httpcomponents:httpasyncclient:jar:4.1.1:compile
-[INFO] +- org.elasticsearch:elasticsearch:jar:2.4.0:compile
-[INFO] |  +- org.apache.lucene:lucene-core:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-backward-codecs:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-analyzers-common:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-queries:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-memory:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-highlighter:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-queryparser:jar:5.5.2:compile
-[INFO] |  |  \- org.apache.lucene:lucene-sandbox:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-suggest:jar:5.5.2:compile
-[INFO] |  |  \- org.apache.lucene:lucene-misc:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-join:jar:5.5.2:compile
-[INFO] |  |  \- org.apache.lucene:lucene-grouping:jar:5.5.2:compile
-[INFO] |  +- org.apache.lucene:lucene-spatial:jar:5.5.2:compile
-[INFO] |  |  +- org.apache.lucene:lucene-spatial3d:jar:5.5.2:compile
-[INFO] |  |  \- com.spatial4j:spatial4j:jar:0.5:compile
-[INFO] |  +- org.elasticsearch:securesm:jar:1.0:compile
-[INFO] |  +- com.carrotsearch:hppc:jar:0.7.1:compile
-[INFO] |  +- org.joda:joda-convert:jar:1.2:compile
-[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.6.5:compile
-[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-smile:jar:2.8.1:compile
-[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.6.5:compile
-[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:jar:2.8.1:compile
-[INFO] |  +- org.yaml:snakeyaml:jar:1.16:compile
-[INFO] |  +- io.netty:netty:jar:3.10.6.Final:compile
-[INFO] |  +- com.ning:compress-lzf:jar:1.0.2:compile
-[INFO] |  +- com.tdunning:t-digest:jar:3.0:compile
-[INFO] |  +- commons-cli:commons-cli:jar:1.3.1:compile
-[INFO] |  \- com.twitter:jsr166e:jar:1.1.0:compile
-[INFO] +- com.h2database:h2:jar:1.4.193:compile
-[INFO] +- org.apache.commons:commons-dbcp2:jar:2.1.1:compile
-[INFO] |  +- org.apache.commons:commons-pool2:jar:2.4.2:compile
-[INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
-[INFO] +- org.springframework:spring-jdbc:jar:4.3.2.RELEASE:compile
-[INFO] |  +- org.springframework:spring-beans:jar:4.2.5.RELEASE:compile
-[INFO] |  \- org.springframework:spring-tx:jar:4.2.5.RELEASE:compile
-[INFO] \- org.springframework.boot:spring-boot-starter-actuator:jar:1.3.3.RELEASE:compile
-[INFO]    \- org.springframework.boot:spring-boot-actuator:jar:1.3.3.RELEASE:compile
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1.840 s
-[INFO] Finished at: 2016-12-31T10:56:08+05:30
-[INFO] Final Memory: 34M/446M
-[INFO] ------------------------------------------------------------------------
+-bash-4.1# for file in `find /opt/CSCOlumos/lib -name "*.jar" | grep -v "third-party"`; do props=`unzip -p $file META-INF/maven/*.properties`; echo $props; done
+#Generated by Maven #Wed Mar 22 23:23:08 PDT 2017 version=3.200.11 groupId=com.cisco.ifm artifactId=ifm_aggregation_rest
+#Generated by Maven #Wed Nov 23 03:52:44 PST 2016 version=3.200.6 groupId=com.cisco.nm.sam.config.nam artifactId=sam_config_service
+#Generated by Maven #Thu Mar 23 02:25:26 PDT 2017 version=3.200.12 groupId=com.cisco.ifm artifactId=ifm_collection_service
+#Generated by Maven #Wed Nov 23 03:56:07 PST 2016 version=3.200.6 groupId=com.cisco.nm.da artifactId=da_wap_security
+#Generated by Maven #Thu Jan 19 04:07:18 PST 2017 version=3.200.3 groupId=com.cisco.nm.sam artifactId=sam_dda_service
+#Generated by Maven #Wed Nov 23 04:18:12 PST 2016 version=3.200.7 groupId=com.cisco.nm.da artifactId=da_packet_capture
+#Generated by Maven #Mon Mar 13 10:25:15 PDT 2017 version=3.200.10 groupId=com.cisco.nm.sam.siterule.restprovider artifactId=sam_siterule_rest_provider
+#Generated by Maven #Mon Mar 13 09:29:58 PDT 2017 version=3.200.14 groupId=com.cisco.nm.sam artifactId=sam_template_rest_provider
+#Generated by Maven #Wed Nov 23 04:42:04 PST 2016 version=3.200.7 groupId=com.cisco.nm.da artifactId=da_common_config
+#Generated by Maven #Mon Mar 13 09:55:07 PDT 2017 version=3.200.14 groupId=com.cisco.ifm artifactId=ifm_profile_service
+#Generated by Maven #Wed Nov 23 03:58:13 PST 2016 version=3.200.6 groupId=com.cisco.nm.sam.config.nam.rest artifactId=sam_config_rest
+#Generated by Maven #Mon Mar 13 23:04:08 PDT 2017 version=3.200.5 groupId=com.cisco.nm.sam artifactId=sam_nam_rest_provider
+#Generated by Maven #Mon Mar 06 03:17:36 PST 2017 version=3.200.9 groupId=com.cisco.nm.da artifactId=da_common_rest
+#Generated by Maven #Wed Nov 23 04:47:07 PST 2016 version=3.200.3 groupId=com.cisco.nm.sam artifactId=sam_device_resource_estimation
+#Generated by Maven #Wed Nov 23 04:34:43 PST 2016 version=3.200.6 groupId=com.cisco.nm.sam artifactId=sam_packet_capture
+#Generated by Maven #Wed Mar 22 23:10:33 PDT 2017 version=3.200.12 groupId=com.cisco.nm.sam artifactId=sam_baseline
+#Generated by Maven #Wed Nov 23 05:41:36 PST 2016 version=3.200.2 groupId=com.cisco.nm.sam artifactId=sam_waasrest_provider
+#Generated by Maven #Wed Nov 23 04:24:53 PST 2016 version=3.200.5 groupId=com.cisco.nm.sam artifactId=distributed_query
+#Generated by Maven #Wed Mar 22 23:17:47 PDT 2017 version=3.200.9 groupId=com.cisco.nm.sam.inventoryextensions artifactId=sam_inventory_extensions
+#Generated by Maven #Wed Nov 23 05:31:23 PST 2016 version=3.200.2 groupId=com.cisco.nm.sam artifactId=assurance_lync_service
+#Generated by org.apache.felix.bundleplugin #Tue Mar 21 00:33:23 PDT 2017 version=3.200.11 groupId=com.cisco.ifm artifactId=ifm_monitor_rest_service
+#Generated by Maven #Fri Apr 22 22:59:06 PDT 2016 version=3.70.11 groupId=com.cisco.nm.sam.medianet artifactId=sam_medianet
+#Generated by Maven #Tue Jan 10 20:19:40 PST 2017 version=3.200.8 groupId=com.cisco.nm.sam artifactId=sam_ui_action
+#Generated by Maven #Wed Nov 23 04:20:46 PST 2016 version=3.200.5 groupId=com.cisco.sam.licensing artifactId=sam_licensing
+#Generated by Maven #Tue Mar 21 00:07:46 PDT 2017 version=3.200.11 groupId=com.cisco.nm.sam artifactId=sam_wireless_user_integration
+#Generated by Maven #Wed Nov 23 04:10:19 PST 2016 version=3.200.6 groupId=com.cisco.ifm artifactId=ifm_threshold_monitor
+#Generated by Maven #Wed Nov 23 04:03:49 PST 2016 version=3.200.5 groupId=com.cisco.nm.sam artifactId=sam_system_namlogin
+#Generated by Maven #Mon Mar 13 10:31:24 PDT 2017 version=3.200.9 groupId=com.cisco.nm.sam artifactId=sam_system_service_definition
+#Generated by Maven #Tue Sep 24 17:39:26 PDT 2013 version=2.1.32 groupId=com.cisco.nm.da artifactId=dda_install_setup
+#Generated by Maven #Mon Mar 13 22:53:26 PDT 2017 version=3.200.10 groupId=com.cisco.nm.sam artifactId=sam_system_rest
+#Generated by Maven #Wed Mar 22 23:21:12 PDT 2017 version=3.200.16 groupId=com.cisco.ifm artifactId=ifm_aggregation_netflow
+#Generated by Maven #Thu Apr 10 14:07:28 PDT 2014 version=2.1.34 groupId=com.cisco.nm.da artifactId=da_admin_manager
+#Generated by Maven #Wed Nov 23 05:28:25 PST 2016 version=3.200.3 groupId=com.cisco.nm.sam.multi_NAM artifactId=sam_multi_NAM
+#Generated by Maven #Wed Mar 22 23:25:55 PDT 2017 version=3.200.14 groupId=com.cisco.nm.sam artifactId=sam_pfr_monitoring
+#Generated by Maven #Wed Mar 22 23:30:47 PDT 2017 version=3.200.21 groupId=com.cisco.nm.sam artifactId=sam_performance_service
+#Generated by Maven #Tue Mar 21 00:36:58 PDT 2017 version=3.200.16 groupId=com.cisco.ifm artifactId=ifm_aggregation_config
+#Generated by Maven #Mon Mar 13 23:11:34 PDT 2017 version=3.200.12 groupId=com.cisco.nm.da artifactId=da_poller_rest
+#Generated by Maven #Mon Mar 13 22:47:31 PDT 2017 version=3.200.6 groupId=com.cisco.nm.da artifactId=da_poller_common
+#Generated by Maven #Wed Nov 23 04:32:10 PST 2016 version=3.200.5 groupId=com.cisco.nm.sam.cdb.socket artifactId=sam_cdb_socket
+#Generated by Maven #Thu Dec 08 07:36:11 PST 2016 version=3.200.7 groupId=com.cisco.ifm artifactId=ifm_wireless_tca
+#Generated by Maven #Wed Nov 23 04:02:43 PST 2016 version=3.200.5 groupId=com.cisco.nm.da artifactId=da_user_web_cache
+#Generated by Maven #Thu Mar 23 20:21:01 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.lumos artifactId=wcs_extensions
+#Generated by Maven #Thu Mar 23 19:48:51 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=wcs_common_utils
+#Generated by Maven #Thu Mar 23 19:49:18 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=wcs_trap_codegen
+#Generated by Maven #Thu Mar 23 19:48:58 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=wcs_metadata
+#Generated by Maven #Wed Mar 05 14:59:23 PST 2014 version=1.6 groupId=com.cisco.prdch artifactId=BulkEmailHandler
+#Generated by Maven #Thu Jun 25 22:54:13 PDT 2015 version=3.0.2 groupId=com.cisco.prime.solutions artifactId=dyn_ap_handle
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Thu Mar 23 20:20:16 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=rfm
+#Generated by Maven #Thu Mar 23 19:48:43 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=wcs_wrapper
+#Generated by Maven #Thu Mar 23 19:48:39 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.lumos artifactId=lumos_install_manager
+#Generated by Maven #Thu Mar 23 20:21:07 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=rfm_invhook_fragment
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Tue Aug 02 02:22:52 PDT 2016 version=8.0.1.117-SNAPSHOT groupId=com.cisco.wnbu artifactId=locationServiceEngine-64bit
+#Generated by org.apache.felix.bundleplugin #Mon Aug 25 11:16:47 MEST 2014 version=2.12 groupId=org.glassfish.jersey.core artifactId=jersey-client
+#Generated by Maven #Wed Sep 03 10:32:26 CDT 2014 version=1.7.15 groupId=org.jruby artifactId=jruby-stdlib
+#Generated by org.apache.felix.bundleplugin #Thu Sep 05 20:07:11 CEST 2013 version=1.13 groupId=org.yaml artifactId=snakeyaml
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Fri Jul 25 15:40:46 CDT 2014 version=1.2 groupId=com.headius artifactId=options
+#Generated by org.apache.felix.bundleplugin #Fri Oct 22 18:34:28 CEST 2010 version=2.0.1 groupId=org.apache.mina artifactId=mina-core
+#Generated by Maven #Wed Sep 03 10:28:48 CDT 2014 version=1.7.15 groupId=org.jruby artifactId=jruby-core
+#Generated by Apache Maven #Thu Jun 09 10:09:23 PDT 2016 version=1.2.35 groupId=com.cisco.nesla artifactId=nesla
+#Generated by Maven #Mon Oct 06 06:52:21 CEST 2014 version=1.9 groupId=org.apache.commons artifactId=commons-compress
+ artifactId=commons-configuration
+#Generated by Maven #Wed Apr 03 16:04:27 EST 2013 version=1.1.2 groupId=com.github.jnr artifactId=jnr-netdb
+#Generated by Maven #Thu Feb 20 12:09:28 CST 2014 version=1.0.11 groupId=org.jruby.extras artifactId=bytelist
+#Generated by Maven #Thu Aug 28 11:41:42 CDT 2014 version=2.1.2 groupId=org.jruby.joni artifactId=joni
+#Generated by Maven #Tue Jun 30 21:07:18 CEST 2015 version=2.1.0 groupId=org.easyrules artifactId=easyrules-spring
+#Generated by Maven #Tue Jun 30 21:06:07 CEST 2015 version=2.1.0 groupId=org.easyrules artifactId=easyrules-core
+ artifactId=jasyptt47 CEST 2013
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Wed Apr 03 10:30:58 EST 2013 version=0.4 groupId=com.github.jnr artifactId=jnr-enxio
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Tue Jun 30 21:07:07 CEST 2015 version=2.1.0 groupId=org.easyrules artifactId=easyrules-quartz
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=commons-langT 2011
+#Generated by Maven #Tue Jun 30 21:06:54 CEST 2015 version=2.1.0 groupId=org.easyrules artifactId=easyrules-jmx
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Wed Sep 03 09:45:41 CDT 2014 version=3.0.6 groupId=com.github.jnr artifactId=jnr-posix
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=joda-time BST 2013
+#Generated by Maven #Wed Feb 20 16:34:35 JST 2013 version=1.1.2 groupId=com.jcraft artifactId=jzlib
+#Generated by org.apache.felix.plugin.bundle #Tue Dec 18 18:15:01 CET 2007 version=1.0.1 groupId=org.apache.geronimo.specs artifactId=geronimo-stax-api_1.0_spec
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Thu Mar 05 02:12:13 PST 2015 version=1.2.0.RELEASE groupId=org.springframework.plugin artifactId=spring-plugin-core
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Sat Apr 07 12:49:23 EST 2012 version=1.0.2 groupId=com.github.jnr artifactId=jnr-x86asm
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=stateless4j42 2014.bundleplugin
+#Generated by Maven #Wed Oct 12 00:36:22 EDT 2011 version=2.1.2 groupId=org.pcollections artifactId=pcollections
+#Generated by Maven #Fri May 10 16:27:24 CDT 2013 version=1.0.10 groupId=org.jruby.jcodings artifactId=jcodings
+ artifactId=commons-logging007
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=commons-pool2ns014
+#Generated by org.apache.felix.bundleplugin #Tue Jun 09 22:10:59 PDT 2015 version=2.5.4 groupId=com.fasterxml.jackson.dataformat artifactId=jackson-dataformat-yaml
+#Generated by Maven #Tue Oct 15 12:15:39 EST 2013 version=1.0.10 groupId=com.github.jnr artifactId=jnr-ffi
+#Generated by Maven #Wed Apr 03 10:47:06 EST 2013 version=0.3 groupId=com.github.jnr artifactId=jnr-unixsocket
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by org.apache.felix.bundleplugin #Tue Jun 09 18:27:32 PDT 2015 version=2.5.4 groupId=com.fasterxml.jackson.core artifactId=jackson-core
+#Generated by Maven #Sun Dec 02 20:08:05 EST 2012 version=0.9.1 groupId=com.martiansoftware artifactId=nailgun-server
+#Generated by Maven #Wed Nov 03 14:30:39 CET 2010 version=0.5.0 groupId=org.apache.sshd artifactId=sshd-core
+#Generated by org.apache.felix.bundleplugin #Tue Jun 09 18:43:09 PDT 2015 version=2.5.4 groupId=com.fasterxml.jackson.core artifactId=jackson-databind
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Mon Aug 11 16:25:55 CEST 2014 version=262 groupId=ch.ethz.ganymed artifactId=ganymed-ssh2
+#Generated by Maven #Tue Sep 17 10:13:06 EST 2013 version=0.8.5 groupId=com.github.jnr artifactId=jnr-constants
+#Generated by Maven #Fri Feb 22 03:02:19 PST 2008 version=0.9.94 groupId=jline artifactId=jline
+#Generated by Maven #Wed Jul 10 09:53:03 CDT 2013 version=1.0 groupId=org.jruby artifactId=yecht
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Thu Apr 04 14:00:13 EST 2013 version=1.2.7 groupId=com.github.jnr artifactId=jffi
+ artifactId=castor-xmlcastor10
+#Generated by Maven #Tue Aug 26 14:12:09 EDT 2008 version=1.5.9 groupId=org.jrobin artifactId=jrobin
+#Generated by org.apache.felix.bundleplugin #Thu Jan 01 15:31:53 PST 2015 version=2.5.0 groupId=com.fasterxml.jackson.core artifactId=jackson-annotations
+ artifactId=castor-coreastor10
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=struts-facests2008
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=trueziptherleT 2011
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=slf4j-ext CEST 2009
+#Generated by Maven #Wed Jan 12 15:02:59 EET 2011 version=4.0.0 groupId=net.sf.jasperreports artifactId=jasperreports-fonts
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=slf4j-api-jdk15008
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Mon Mar 16 00:31:21 PDT 2009 version=1.2 groupId=commons-cli artifactId=commons-cli
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=struts-mailreader-dao
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ #Generated by Maven #Fri Sep 19 08:18:07 GMT 2008 version=1.1.1 groupId=org.apache.servicemix.specs artifactId=org.apache.servicemix.specs.locatorervicemix.specs.stax-api-1.0 #Generated by Maven
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Wed Jul 08 09:09:37 PDT 2009 version=1.5.8-PATCHED groupId=org.slf4j artifactId=slf4j-api
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Fri Apr 23 13:41:48 CEST 2010 version=3.2 groupId=com.eaio.uuid artifactId=uuid
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=commons-logging007
+#Generated by Maven #Fri Dec 23 12:09:38 PST 2016 version=3.95.1 groupId=com.cisco.lumos.dashboard artifactId=cisco-dashboard-lib
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Sat Oct 15 19:42:19 CEST 2011 version=1.2 groupId=org.javatuples artifactId=javatuples
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Thu Feb 15 21:44:01 CET 2007 version=4.3.1 groupId=org.apache.avalon.framework artifactId=avalon-framework-api
+ artifactId=struts-scripting08
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=jcl-corehnologies0
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Mon Dec 08 20:50:37 PST 2008 version=1.0.6 groupId=net.sf.ezmorph artifactId=ezmorph
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Wed Feb 29 11:17:39 GMT 2012 version=3.4.2.Final groupId=org.hibernate artifactId=hibernate-search
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Fri Mar 10 23:46:02 PST 2017 version=3.200.5 groupId=com.cisco.ifm artifactId=ifm_ext
+#Generated by Maven #Thu Mar 23 20:29:05 PDT 2017 version=3.200.32 groupId=com.cisco.ifm artifactId=ifm_datacenter_impl
+#Generated by Maven #Fri Jan 06 02:12:09 PST 2017 version=3.200.16 groupId=com.cisco.ncs.nbi artifactId=nbi_api_device_management
+#Generated by Maven #Sun Feb 08 14:18:15 PST 2015 version=3.0.2 groupId=com.cisco.ifm artifactId=ifm_fault_message
+#Generated by Maven #Tue Mar 14 13:13:55 PDT 2017 version=3.200.11 groupId=com.cisco.ifm artifactId=ifm_template_service_impl
+#Generated by Maven #Fri Mar 24 10:40:34 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_impl
+#Generated by Maven #Thu Mar 23 20:59:00 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_api
+#Generated by Maven #Wed Apr 29 14:51:16 PDT 2015 version=3.0.2 groupId=com.cisco.ifm artifactId=ifm_messaging_service_intf
+#Generated by Maven #Wed Mar 01 06:57:58 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-intf
+#Generated by Maven #Mon Mar 20 23:51:04 PDT 2017 version=3.200.8 groupId=com.cisco.ifm artifactId=connected_mobility
+#Generated by Maven #Thu Dec 01 14:37:47 PST 2016 version=3.200.6 groupId=com.cisco.ifm artifactId=ifm_readiness_core
+#Generated by Maven #Thu Mar 23 21:59:15 PDT 2017 version=3.200.8 groupId=com.cisco.ifm artifactId=ifm_apic_service_impl
+#Generated by Maven #Thu Mar 23 21:04:52 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_notification
+#Generated by Maven #Wed Mar 08 16:07:05 PST 2017 version=3.200.9 groupId=com.cisco.ifm artifactId=ifm_alarm_adapter
+#Generated by Maven #Fri Jan 23 18:55:09 PST 2015 version=3.0.23 groupId=com.cisco.ifm artifactId=ifm_guided_workflow_service_intf
+#Generated by org.apache.felix.bundleplugin #Mon Mar 20 07:31:40 PDT 2017 version=3.200.10 groupId=com.cisco.ifm artifactId=ifm_common_helper
+#Generated by org.apache.felix.bundleplugin #Sat Mar 11 06:59:52 PST 2017 version=3.200.18 groupId=com.cisco.ifm artifactId=ifm_inventory_service_package
+#Generated by Maven #Thu Dec 10 09:34:05 PST 2015 version=2.1.0-SNAPSHOT groupId=com.cisco.apicem artifactId=service-common-util
+#Generated by Maven #Wed Mar 15 01:26:02 PDT 2017 version=3.200.32 groupId=com.cisco.ifm artifactId=ifm_compliance_xjc
+#Generated by Maven #Tue Feb 28 07:54:28 PST 2017 version=3.200.4 groupId=com.cisco.ncs artifactId=ncs_trap_ext
+#Generated by Maven #Wed Mar 15 10:50:51 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=udi
+#Generated by org.apache.felix.bundleplugin #Fri Mar 24 00:15:51 PDT 2017 version=3.200.36 groupId=com.cisco.ifm artifactId=ifm_grouping_rest_provider
+#Generated by Maven #Wed Mar 22 22:25:31 PDT 2017 version=3.200.6 groupId=com.cisco.server.services artifactId=ifm_system_monitor_jobs
+#Generated by Maven #Sat Mar 18 12:40:00 PDT 2017 version=3.200.14 groupId=com.cisco.ifm artifactId=ifm_template_rest_provider
+#Generated by Maven #Tue Mar 14 21:47:40 PDT 2017 version=3.200.13 groupId=com.cisco.ifm artifactId=ifm_config_archive_service_impl
+#Generated by org.apache.felix.bundleplugin #Wed Mar 15 01:07:43 PDT 2017 version=3.200.28 groupId=com.cisco.ifm artifactId=ifm_compliance_core
+#Generated by Maven #Thu Mar 23 20:29:13 PDT 2017 version=3.200.32 groupId=com.cisco.ifm artifactId=ifm_datacenter_rest
+#Generated by Maven #Wed Sep 21 00:31:14 PDT 2016 version=3.200.12 groupId=com.cisco.ifm.inventory.rest artifactId=ifm_inventory_rest_comp
+#Generated by Maven #Thu Oct 13 06:10:37 PDT 2016 version=3.200.1 groupId=com.cisco.ifm artifactId=nbi_api_vnfprovisioning_impl
+#Generated by Maven #Fri Aug 14 06:25:58 PDT 2015 version=3.0.27 groupId=com.cisco.ifm artifactId=ifm_guided_workflow_rest_provider
+#Generated by Maven #Wed Sep 21 00:48:42 PDT 2016 version=3.200.12 groupId=com.cisco.pi.inventory artifactId=smart_inventory
+#Generated by Maven #Thu Mar 23 21:08:27 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_rest
+#Generated by Maven #Wed Feb 22 23:43:56 PST 2017 version=3.200.15 groupId=com.cisco.ncs.nbi artifactId=nbi_api_wlanprovisioning_impl
+#Generated by Maven #Fri Mar 24 02:52:41 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_reporting_rest
+#Generated by Maven #Tue Feb 28 09:59:30 PST 2017 version=3.200.2 groupId=com.cisco.ncs artifactId=ncs_syslog_ext
+#Generated by Maven #Thu Oct 13 06:56:04 PDT 2016 version=3.200.1 groupId=com.cisco.ifm.mobility artifactId=ifm_mobility_impl
+#Generated by Maven #Tue Feb 07 11:25:35 PST 2017 version=3.200.2 groupId=com.cisco.ifm artifactId=ifm_container_service
+#Generated by Maven #Sun Feb 26 16:46:18 PST 2017 version=3.200.12 groupId=com.cisco.ifm.inventory.metadata artifactId=ifm_inventory_ui_metadata_impl
+#Generated by Maven #Fri Mar 17 15:54:44 PDT 2017 version=3.200.30 groupId=com.cisco.ifm artifactId=ifm_pnp_service_impl
+#Generated by Maven #Fri Mar 24 02:53:16 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_servers_rest
+#Generated by Maven #Fri Mar 24 02:53:26 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_transformers
+#Generated by Maven #Wed Mar 08 00:31:12 PST 2017 version=3.200.6 groupId=com.cisco.ifm artifactId=ifm_common_rest_services
+#Generated by Maven #Wed Mar 15 10:50:56 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=license-api
+#Generated by Maven #Fri Mar 24 10:40:35 PDT 2017 version=3.200.8 groupId=com.cisco.ncs artifactId=ncs_eventAlarm_ext
+#Generated by Maven #Tue Feb 28 08:32:10 PST 2017 version=3.200.5 groupId=com.cisco.ifm artifactId=ifm_admin_service
+#Generated by Maven #Mon Feb 27 13:56:24 PST 2017 version=3.200.10 groupId=com.cisco.ncs artifactId=ncs_common
+#Generated by Maven #Tue Mar 07 02:07:59 PST 2017 version=3.200.4 groupId=com.cisco.ncs artifactId=ncs_tl1
+#Generated by Maven #Tue May 26 12:50:24 PDT 2015 version=3.0.6 groupId=com.cisco.ifm artifactId=ifm_base_util
+#Generated by Maven #Wed Mar 01 06:57:23 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-core-intf
+#Generated by Maven #Tue Jan 06 22:23:26 PST 2015 version=3.0.1 groupId=com.cisco.ncs.nbi.securitylogging.svcimpl artifactId=ncs_securitylog_archive_nbi_srvc
+#Generated by Maven #Fri Mar 24 08:37:14 PDT 2017 version=3.200.45 groupId=com.cisco.ifm artifactId=ifm_config_archive_core
+#Generated by org.apache.felix.bundleplugin #Thu Mar 23 20:21:25 PDT 2017 version=3.200.50 groupId=com.cisco.ifm artifactId=ifm_grouping_service
+#Generated by Maven #Wed Mar 22 06:25:40 PDT 2017 version=3.200.16 groupId=com.cisco.ifm artifactId=ifm_cda_service
+#Generated by Maven #Fri Mar 24 01:41:05 PDT 2017 version=3.200.26 groupId=com.cisco.ncs.nbi artifactId=ncs_nbi_ops
+#Generated by org.apache.felix.bundleplugin #Thu Mar 09 03:36:58 PST 2017 version=3.200.20 groupId=com.cisco.ifm artifactId=ifm_swim_service_intf
+#Generated by org.apache.felix.bundleplugin #Fri May 29 11:41:47 PDT 2015 version=3.0.4 groupId=com.cisco.ifm artifactId=ifm_dm_reference_impl
+#Generated by Maven #Wed Jan 18 01:17:58 PST 2017 version=3.200.15 groupId=com.cisco.ifm artifactId=ifm_credentials_profile_manager
+#Generated by Maven #Wed Mar 08 16:06:26 PST 2017 version=3.200.9 groupId=com.cisco.ifm artifactId=ifm_base_dto
+#Generated by Maven #Thu Mar 23 21:23:14 PDT 2017 version=3.200.19 groupId=com.cisco.ifm artifactId=rfm_ext
+#Generated by Maven #Thu Dec 01 14:40:43 PST 2016 version=3.200.6 groupId=com.cisco.ifm artifactId=ifm_readiness_rest
+#Generated by Maven #Fri Mar 24 07:46:15 PDT 2017 version=3.200.10 groupId=com.cisco.prime.search artifactId=prime-search-core
+#Generated by Maven #Wed May 27 10:06:41 PDT 2015 version=3.0.2 groupId=com.cisco.ifm.common artifactId=ifm_common_util
+#Generated by Maven #Thu Mar 23 21:27:26 PDT 2017 version=3.200.32 groupId=com.cisco.ncs.nbi.jobmanagement artifactId=jobimplementation
+#Generated by org.apache.felix.bundleplugin #Fri Mar 24 01:38:50 PDT 2017 version=3.200.23 groupId=com.cisco.ifm artifactId=ifm_swim_service_impl
+#Generated by Maven #Fri Mar 24 07:55:03 PDT 2017 version=3.200.10 groupId=com.cisco.prime.search artifactId=prime-search-api
+#Generated by org.apache.felix.bundleplugin #Sun Feb 26 16:40:12 PST 2017 version=3.200.14 groupId=com.cisco.ifm.inventory.businessprocessor artifactId=ifm_ice_fragment
+#Generated by Maven #Thu Oct 13 06:09:34 PDT 2016 version=3.200.1 groupId=com.cisco.ifm artifactId=mnam_workflow_service
+#Generated by Maven #Tue Aug 18 23:15:29 PDT 2015 version=3.0.3 groupId=com.cisco.ifm artifactId=ifm_fault_tool_manager
+#Generated by Maven #Fri Mar 24 09:47:10 PDT 2017 version=3.200.51 groupId=com.cisco.ifm artifactId=ifm_access_workflow_service
+#Generated by Maven #Tue Jan 06 22:24:04 PST 2015 version=3.0.1 groupId=com.cisco.ifm artifactId=ifm_sysmsg_notifier
+#Generated by Maven #Mon May 18 12:34:34 PDT 2015 version=3.0.2 groupId=com.cisco.ifm artifactId=ifm_rtts_service
+#Generated by Maven #Wed Mar 15 10:52:19 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=license-inventory-hook
+#Generated by Maven #Fri Mar 24 01:37:24 PDT 2017 version=3.200.80 groupId=com.cisco.ncs.nbi.udfmanagement artifactId=udfmanagement
+#Generated by Maven #Thu Mar 23 21:03:24 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_srp
+#Generated by Maven #Fri Mar 24 02:53:40 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_dashlets_rest
+#Generated by Maven #Mon May 18 11:48:46 PDT 2015 version=3.0.24 groupId=com.cisco.ifm artifactId=ifm_guided_workflow_service_impl
+#Generated by Maven #Tue Apr 21 23:44:35 PDT 2015 version=3.0.5 groupId=com.cisco.ifm artifactId=ifm_cda_snmp_write
+#Generated by org.apache.felix.bundleplugin #Thu Mar 23 21:13:57 PDT 2017 version=3.200.14 groupId=com.cisco.ifm artifactId=ifm_jobscheduler_rest_provider
+#Generated by Maven #Tue Feb 28 07:22:05 PST 2017 version=3.200.5 groupId=com.cisco.ncs artifactId=ncs_syslog
+#Generated by org.apache.felix.bundleplugin #Thu Mar 09 02:04:30 PST 2017 version=3.200.8 groupId=com.cisco.ifm artifactId=ifm_config_archive_service_intf
+#Generated by Maven #Fri Mar 24 10:40:16 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service
+#Generated by Maven #Thu Mar 23 21:19:06 PDT 2017 version=3.200.19 groupId=com.cisco.ncs artifactId=ncs_eventAlarm
+#Generated by Maven #Wed Mar 15 10:50:46 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=udi-api
+#Generated by Maven #Fri Mar 24 10:40:27 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_rest
+#Generated by Maven #Wed Mar 08 16:06:56 PST 2017 version=3.200.9 groupId=com.cisco.ifm artifactId=ifm_alarm_service
+#Generated by Maven #Mon Jan 23 09:00:42 PST 2017 version=3.200.8 groupId=com.cisco.ifm artifactId=ifm_cids_service
+#Generated by Maven #Thu Feb 16 21:35:11 PST 2017 version=3.200.35 groupId=com.cisco.ifm artifactId=ifm_pnp_service_intf
+#Generated by Maven #Thu Dec 08 02:15:09 PST 2016 version=3.95.2 groupId=com.cisco.ifm artifactId=ifm_snmptrap_rest
+#Generated by Maven #Wed Mar 01 06:58:08 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-service
+#Generated by Maven #Tue Jan 06 16:57:03 PST 2015 version=3.0.1 groupId=com.cisco.ifm artifactId=ifm_pces_server
+#Generated by Maven #Thu Dec 10 00:08:55 PST 2015 version=2.2.0-SNAPSHOT groupId=com.cisco.enc artifactId=iwan-manager-model
+#Generated by Maven #Sun Feb 08 14:38:17 PST 2015 version=3.0.2 groupId=com.cisco.ifm artifactId=ifm_fault_event
+#Generated by Maven #Thu Dec 10 09:45:29 PST 2015 version=2.1.0-SNAPSHOT groupId=com.cisco.enc artifactId=apic-em-inventory-manager-service-api
+#Generated by Maven #Mon Mar 20 03:36:19 PDT 2017 version=1.0.10 groupId=com.cisco.reports artifactId=reports-generator-api #Generated by Maven #Tue Jun 07 13:05:22 PDT 2016 version=0.9.2 groupId=com.github.spullara.mustache.java artifactId=compiler #Generated by Maven #Mon Mar 20 03:46:24 PDT 2017 version=1.0.10 groupId=com.cisco.reports artifactId=reports-generator
+#Generated by Maven #Mon Mar 13 05:35:53 PDT 2017 version=3.200.28 groupId=com.cisco.ifm artifactId=ifm_inventory_rest_provider
+#Generated by Maven #Wed Sep 21 00:22:25 PDT 2016 version=3.200.12 groupId=com.cisco.ifm artifactId=ifm_discovery_service
+#Generated by Maven #Thu Mar 23 20:28:49 PDT 2017 version=3.200.32 groupId=com.cisco.ifm artifactId=ifm_datacenter_intf
+#Generated by Maven #Fri Mar 24 02:52:35 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_util
+#Generated by Maven #Tue Jun 30 03:01:56 PDT 2015 version=3.0.5 groupId=com.cisco.ifm artifactId=ifm_auditor
+#Generated by org.apache.felix.bundleplugin #Tue Jan 06 16:54:35 PST 2015 version=3.0.1 groupId=com.cisco.ifm artifactId=ifm_notification_service
+#Generated by Maven #Wed Oct 19 23:06:19 PDT 2016 version=3.200.3 groupId=com.cisco.ifm artifactId=mnam_workflow_rest
+#Generated by Maven #Fri Mar 24 02:53:34 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_dashboard
+#Generated by Maven #Fri Apr 08 05:22:52 PDT 2016 version=3.70.2 groupId=com.cisco.ifm artifactId=ifm_datamigration
+#Generated by Maven #Fri Oct 14 03:55:08 PDT 2016 version=3.200.2 groupId=com.cisco.ifm artifactId=ifm_template_service_intf
+#Generated by org.apache.felix.bundleplugin #Wed Mar 01 00:42:51 PST 2017 version=3.200.14 groupId=com.cisco.ifm artifactId=ifm_discovery_rest_provider
+#Generated by Maven #Wed Mar 01 06:58:14 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-rest
+#Generated by Maven #Thu Mar 23 21:03:10 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_impl
+#Generated by Maven #Thu Jan 12 23:10:35 PST 2017 version=3.200.8 groupId=com.cisco.ifm artifactId=config_archive_analyzer
+#Generated by Maven #Fri Mar 24 10:40:36 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_algo
+#Generated by Maven #Fri Mar 10 23:19:58 PST 2017 version=3.200.17 groupId=com.cisco.ncs artifactId=ncs_trap
+#Generated by Maven #Thu Mar 23 21:04:21 PDT 2017 version=3.200.12 groupId=com.cisco.lumos.fault artifactId=fault_policy_ce
+#Generated by Maven #Thu Oct 13 12:46:42 PDT 2016 version=3.200.2 groupId=com.cisco.ifm artifactId=ifm_apic_rest
+#Generated by Maven #Wed Oct 05 04:26:07 PDT 2016 version=3.200.2 groupId=com.cisco.ncs.nbi artifactId=statistics_nbi_impl
+#Generated by Maven #Fri Apr 24 18:17:56 PDT 2015 version=3.0.3 groupId=com.cisco.ifm artifactId=ifm_pces_util
+#Generated by Maven #Fri Mar 24 02:54:36 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_websocket_aggregator
+#Generated by Maven #Fri Mar 24 02:52:53 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_enablement_rest
+#Generated by Maven #Fri Mar 24 02:47:35 PDT 2017 version=3.200.27 groupId=com.cisco.ifm artifactId=ifm_system_monitoring_rest_service
+#Generated by Maven #Tue Mar 21 08:45:40 PDT 2017 version=3.200.27 groupId=com.cisco.ifm artifactId=ifm_config_rest
+#Generated by Maven #Sun Mar 19 09:08:53 PDT 2017 version=3.200.10 groupId=com.cisco.ifm artifactId=core_system
+#Generated by Maven #Fri Mar 24 04:55:54 PDT 2017 version=3.200.15 groupId=com.cisco.ifm artifactId=ifm_smart_agent
+#Generated by Maven #Fri Mar 24 01:42:25 PDT 2017 version=3.200.13 groupId=com.cisco.ifm artifactId=ifm_swim_rest
+#Generated by Maven #Thu Oct 13 06:59:59 PDT 2016 version=3.200.1 groupId=com.cisco.ifm.mobility artifactId=ifm_mobility_rest
+#Generated by Maven #Sun Feb 26 16:37:46 PST 2017 version=3.200.16 groupId=com.cisco.ifm artifactId=ifm_devices_supported
+#Generated by Maven #Wed Mar 02 05:29:06 PST 2016 version=2.2.0-SNAPSHOT groupId=com.cisco.enc artifactId=iwan-manager-service-api
+#Generated by Maven #Fri Mar 24 10:40:23 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_hook
+#Generated by Maven #Tue Feb 07 06:45:28 PST 2017 version=3.200.3 groupId=com.cisco.ifm artifactId=ifm_container_rest
+#Generated by Maven #Fri Mar 24 02:53:11 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_alarms_rest
+#Generated by Maven #Fri Mar 24 10:40:10 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_intf
+#Generated by org.apache.felix.bundleplugin #Fri Mar 10 23:15:40 PST 2017 version=3.200.13 groupId=com.cisco.ifm artifactId=ifm_jobscheduler_service
+#Generated by Maven #Fri Mar 24 07:46:19 PDT 2017 version=3.200.10 groupId=com.cisco.prime.search artifactId=prime-search-tracking
+#Generated by Maven #Wed Mar 08 12:03:32 PST 2017 version=3.95.3 groupId=com.cisco.ifm artifactId=apic_pi_integration
+#Generated by Maven #Fri Mar 24 10:40:12 PDT 2017 version=3.200.58 groupId=com.cisco.ngmaps artifactId=map_service_rest_intf
+#Generated by Maven #Wed Mar 15 01:34:08 PDT 2017 version=3.200.24 groupId=com.cisco.ifm artifactId=ifm_compliance_rest
+#Generated by Maven #Fri Mar 24 02:53:02 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_aggregators
+#Generated by Maven #Fri Oct 14 04:29:43 PDT 2016 version=3.200.4 groupId=com.cisco.ifm artifactId=ifm_trustsec_service
+#Generated by Maven #Fri Mar 24 01:44:10 PDT 2017 version=3.200.9 groupId=com.cisco.ifm artifactId=ifm_config_archive_rest_provider
+#Generated by Maven #Thu Oct 13 06:41:50 PDT 2016 version=3.200.2 groupId=com.cisco.ifm.mobility artifactId=ifm_mobility_intf
+#Generated by Maven #Tue Mar 03 15:53:58 PST 2015 version=3.0.5 groupId=com.cisco.ifm artifactId=ifm_messaging_service_impl
+#Generated by Maven #Fri Mar 24 02:52:45 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_vd_rest
+#Generated by Maven #Fri Mar 24 08:00:23 PDT 2017 version=1.0.11 groupId=com.cisco.reports artifactId=reports-generator-api
+#Generated by Maven #Wed Mar 15 10:51:54 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=license_service_impl
+#Generated by Maven #Thu Oct 13 06:08:50 PDT 2016 version=3.200.1 groupId=com.cisco.ifm artifactId=ifm_nfvos_service
+#Generated by Maven #Wed Mar 01 06:57:45 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-geo-intf
+#Generated by Maven #Thu Mar 02 14:17:14 PST 2017 version=3.200.2 groupId=com.cisco.prime artifactId=telemetry-agent-api
+#Generated by Maven #Thu Mar 02 14:17:30 PST 2017 version=3.200.2 groupId=com.cisco.prime artifactId=pi-telemetry-collectors
+#Generated by Maven #Fri Mar 24 02:52:23 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_stubs_api
+#Generated by org.apache.felix.bundleplugin #Sat Mar 11 23:51:47 PST 2017 version=3.200.35 groupId=com.cisco.ifm artifactId=ifm_inventory_service
+#Generated by Maven #Sat Feb 11 10:14:49 PST 2017 version=3.200.1 groupId=com.cisco.ifm artifactId=ifm_smart_agent_rest
+#Generated by Maven #Mon Mar 20 11:15:56 PDT 2017 version=3.200.27 groupId=com.cisco.ifm artifactId=ifm_config_service
+#Generated by Maven #Thu Mar 23 20:57:34 PDT 2017 version=3.200.27 groupId=com.cisco.ifm artifactId=ifm_pnp_rest
+#Generated by Maven #Fri Mar 24 02:53:13 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_protocol
+#Generated by org.apache.felix.bundleplugin #Tue Feb 28 02:40:52 PST 2017 version=3.200.1 groupId=com.cisco.ifm artifactId=ifm_admin_rest_provider
+#Generated by Maven #Wed Mar 01 06:57:41 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-core-service
+#Generated by Maven #Mon Mar 20 10:03:27 PDT 2017 version=3.200.16 groupId=com.cisco.ifm artifactId=ifm_common
+#Generated by Maven #Wed Mar 15 10:52:52 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=license_rest_impl
+#Generated by Maven #Wed Mar 15 10:51:25 PDT 2017 version=3.200.16 groupId=com.cisco.wnbu artifactId=license-ncs-impl
+#Generated by Maven #Thu Dec 01 15:12:49 PST 2016 version=3.200.2 groupId=com.cisco.ifm artifactId=ifm_customPalHandler
+#Generated by Maven #Fri Mar 24 02:52:29 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_core
+#Generated by Maven #Wed Mar 08 16:07:20 PST 2017 version=3.200.9 groupId=com.cisco.ifm artifactId=ifm_alarm_rest_provider
+#Generated by Maven #Wed May 25 12:26:49 PDT 2016 version=8.2.0 groupId=com.cisco.xmp.inventory artifactId=xmp_mdf_hook
+#Generated by Maven #Thu Mar 02 12:22:34 PST 2017 version=12.1.16 groupId=com.cisco.xmp.topology artifactId=xmp_topology_web
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:49 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_log4j_dynamic_ciscolog
+#Generated by org.apache.felix.bundleplugin #Thu Dec 03 16:52:47 PST 2015 version=8.0.67 groupId=com.cisco.xmp artifactId=xmp_snmp_mediation
+#Generated by Maven #Tue Jan 24 23:36:02 PST 2017 version=13.0.2 groupId=com.cisco.xmp.sso artifactId=xmp_cas_auth_provider
+#Generated by Maven #Tue Sep 20 17:45:37 PDT 2011 version=8.0.9 groupId=com.cisco.xmp.decap artifactId=decap.sdk.config
+#Generated by org.apache.felix.bundleplugin #Mon Jul 04 23:41:27 PDT 2016 version=13.0.0 groupId=com.cisco.xmp artifactId=xmp_grt_model
+#Generated by Maven #Tue Jan 24 23:35:39 PST 2017 version=13.0.2 groupId=com.cisco.xmp.sso artifactId=xmp_cas_web_filters
+#Generated by org.apache.felix.bundleplugin #Fri Mar 17 09:40:50 PDT 2017 version=11.3.11 groupId=com.cisco.xmp.config artifactId=xmp_config_impl
+#Generated by Maven #Fri Mar 10 01:26:39 PST 2017 version=13.0.2 groupId=com.cisco.xmp.datacenter artifactId=xmp_datacenter_customization
+#Generated by org.apache.felix.bundleplugin #Tue Jun 21 22:43:19 PDT 2016 version=8.0.67 groupId=com.cisco.xmp artifactId=xmp_snmp_sessionmgr
+#Generated by Maven #Mon Oct 14 13:58:50 PDT 2013 version=1.0.1 groupId=com.cisco.xmp artifactId=xmp_perf_collector
+#Generated by Maven #Thu Oct 20 16:29:57 PDT 2011 version=8.0.14 groupId=com.cisco.xmp.decap artifactId=decap.aggregation
+#Generated by org.apache.felix.bundleplugin #Thu Feb 18 22:50:37 PST 2016 version=11.1.4 groupId=com.cisco.xmp.xmpruntime artifactId=XMPMain
+#Generated by org.apache.felix.bundleplugin #Wed Mar 15 06:37:47 PDT 2017 version=13.0.8 groupId=com.cisco.xmp artifactId=xmp_grouping_impl
+#Generated by Maven #Fri Feb 24 10:47:55 PST 2017 version=0.0.16 groupId=com.cisco.xmp artifactId=dpl_rest_impl
+#Generated by Maven #Tue Jan 24 23:35:27 PST 2017 version=13.0.2 groupId=com.cisco.xmp.sso artifactId=xmp_cas_client
+#Generated by Maven #Mon Feb 27 08:26:09 PST 2017 version=13.0.4 groupId=com.cisco.xmp artifactId=xmp_correlation_extensions
+#Generated by Maven #Fri May 20 11:47:03 PDT 2016 version=12.1.0 groupId=com.cisco.xmp artifactId=xmp_correlation
+#Generated by Maven #Mon Feb 20 22:21:19 PST 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_persistence_impl
+#Generated by Maven #Thu Jun 13 17:32:29 PDT 2013 version=8.0.11 groupId=com.cisco.xmp artifactId=xmp_event_notify
+#Generated by Maven #Thu Jan 16 21:47:34 PST 2014 version=8.1.17 groupId=com.cisco.xmp artifactId=xmp_existence_discovery_adaptor
+#Generated by org.apache.felix.bundleplugin #Wed Jul 13 11:17:15 PDT 2016 version=11.1.6 groupId=com.cisco.xmp artifactId=xmp_preferences
+#Generated by Maven #Mon Feb 20 22:20:17 PST 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_persistence_intf
+#Generated by Maven #Wed Mar 22 10:35:26 PDT 2017 version=13.0.4 groupId=com.cisco.xmp artifactId=xmp_poller
+#Generated by Maven #Mon Feb 20 22:22:05 PST 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_persistence_spring
+#Generated by org.apache.felix.bundleplugin #Mon Feb 13 01:11:04 PST 2017 version=13.0.3 groupId=com.cisco.xmp artifactId=xmp_existence_inventory
+#Generated by Maven #Thu Mar 02 12:19:54 PST 2017 version=12.1.16 groupId=com.cisco.xmp.topology artifactId=xmp_topology_server_intf
+#Generated by Maven #Tue Jan 24 23:35:53 PST 2017 version=13.0.2 groupId=com.cisco.xmp.sso artifactId=xmp_cas_server_core
+#Generated by org.apache.felix.bundleplugin #Mon Nov 30 08:16:16 PST 2015 version=11.0.2 groupId=com.cisco.xmp artifactId=xmp_lock_manager
+#Generated by org.apache.felix.bundleplugin #Thu Dec 12 02:58:56 PST 2013 version=8.0.6 groupId=com.cisco.xmp.duplicatedevice artifactId=xmp_duplicate_device_detection
+#Generated by org.apache.felix.bundleplugin #Mon Jul 04 23:41:36 PDT 2016 version=13.0.0 groupId=com.cisco.xmp artifactId=xmp_grt_core
+#Generated by Maven #Fri Jul 01 08:35:05 PDT 2016 version=13.0.0 groupId=com.cisco.xmp artifactId=xmp_usermgmt_rbac_util
+#Generated by Maven #Wed Mar 22 15:28:41 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_filter
+#Generated by Maven #Wed Jan 04 22:55:49 PST 2017 version=14.0.0 groupId=com.cisco.xmp.common.pal artifactId=xmp_pal_actions
+#Generated by org.apache.felix.bundleplugin #Thu Aug 15 08:51:59 PDT 2013 version=8.0.26 groupId=com.cisco.xmp.decap artifactId=decap.netflow.java
+#Generated by Maven #Thu Mar 02 12:19:09 PST 2017 version=12.1.16 groupId=com.cisco.xmp.topology artifactId=xmp_topology_core
+#Generated by Maven #Tue Jan 20 07:04:42 PST 2015 version=10.0.2 groupId=com.cisco.xmp artifactId=xmp_resource_tag
+#Generated by org.apache.felix.bundleplugin #Wed Mar 09 22:49:21 PST 2016 version=11.0.1 groupId=com.cisco.xmp.xmpruntime artifactId=XMPClassLoader
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:36 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_ciscolog_log4j
+#Generated by org.apache.felix.bundleplugin #Wed Dec 02 10:37:18 PST 2015 version=8.0.23 groupId=com.cisco.xmp artifactId=xmp_mib_library_xml
+#Generated by org.apache.felix.bundleplugin #Mon Jan 04 12:31:43 PST 2016 version=6.2.4 groupId=com.cisco.xmp artifactId=xmp_data_handler
+#Generated by org.apache.felix.bundleplugin #Wed Feb 03 21:03:21 PST 2016 version=10.0.1 groupId=com.cisco.xmp.xde artifactId=xmp_xde_init
+#Generated by Maven #Wed Mar 22 15:29:09 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_grouping_plugin
+#Generated by Maven #Wed Jul 24 11:54:09 PDT 2013 version=6.1.32 groupId=com.cisco.xmp artifactId=xmp_load_db_related_sql
+#Generated by org.apache.felix.bundleplugin #Mon Feb 27 12:56:38 PST 2017 version=13.0.1 groupId=com.cisco.xmp.decap artifactId=decap.core.java
+#Generated by Maven #Wed Dec 16 01:07:15 PST 2015 version=8.0.24 groupId=com.cisco.xmp artifactId=xmp_mib_library
+#Generated by org.apache.felix.bundleplugin #Fri Mar 17 09:40:21 PDT 2017 version=11.3.11 groupId=com.cisco.xmp.config artifactId=xmp_config_intf
+#Generated by org.apache.felix.bundleplugin #Thu Mar 24 21:22:39 PDT 2016 version=8.0.54 groupId=com.cisco.xmp artifactId=xmp_credential_mgmt
+#Generated by Maven #Thu Mar 02 12:23:57 PST 2017 version=12.1.16 groupId=com.cisco.xmp.topology artifactId=xmp_topology_server_impl
+#Generated by Maven #Tue Feb 28 23:38:36 PST 2017 version=13.0.25 groupId=com.cisco.xmp.inventory artifactId=xmp_collector
+#Generated by org.apache.felix.bundleplugin #Mon Jul 20 07:42:01 PDT 2015 version=6.1.30 groupId=com.cisco.xmp artifactId=xmp_sys_admin_handler
+#Generated by org.apache.felix.bundleplugin #Fri Mar 10 03:43:45 PST 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_usermgmt
+#Generated by Maven #Tue Feb 28 23:38:18 PST 2017 version=13.0.25 groupId=com.cisco.xmp.inventory artifactId=xmp_collector_intf
+#Generated by org.apache.felix.bundleplugin #Thu Dec 03 16:53:09 PST 2015 version=8.0.67 groupId=com.cisco.xmp artifactId=xmp_snmp_mediation_xmp
+#Generated by org.apache.felix.bundleplugin #Wed Jul 13 11:17:26 PDT 2016 version=11.1.6 groupId=com.cisco.xmp artifactId=xmp_preferences_init
+#Generated by Maven #Tue Apr 29 01:31:03 PDT 2014 version=8.0.15 groupId=com.cisco.xmp artifactId=xmp_cache
+#Generated by Maven #Mon Jul 04 23:46:22 PDT 2016 version=13.0.0 groupId=com.cisco.xmp artifactId=xmp_ice_job_adaptor
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:31 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_log4j_improved
+#Generated by org.apache.felix.bundleplugin #Fri Jun 12 06:53:10 PDT 2015 version=8.0.35 groupId=com.cisco.xmp.audit artifactId=xmp_audit_components_impl
+#Created by Apache Maven 3.0.5 #Thu Mar 16 10:38:03 PDT 2017 version=3.200.27 groupId=com.cisco.xmp artifactId=xmp_update_rest
+#Generated by Maven #Wed Mar 22 15:28:53 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_dojo_transform
+#Generated by Maven #Fri Mar 03 02:39:30 PST 2017 version=13.0.2 groupId=com.cisco.xmp.common artifactId=xmp_utilities
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:42 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_log4j_manager
+#Generated by Maven #Tue Mar 14 23:43:10 PDT 2017 version=1.0.10 groupId=com.cisco.xmp artifactId=xmp_conn_manager
+#Created by Apache Maven 3.0.5 #Thu Mar 16 10:37:35 PDT 2017 version=3.200.27 groupId=com.cisco.xmp artifactId=xmp_update_core
+#Generated by Maven #Mon Mar 13 22:28:18 PDT 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_nice_utilities
+#Generated by Maven #Thu Mar 02 12:19:33 PST 2017 version=12.1.16 groupId=com.cisco.xmp.topology artifactId=xmp_topology_service
+#Generated by org.apache.felix.bundleplugin #Wed Mar 08 00:53:51 PST 2017 version=13.0.12 groupId=com.cisco.xmp artifactId=xmp_jobscheduler
+#Generated by Maven #Wed Mar 22 15:27:41 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_fw
+#Generated by org.apache.felix.bundleplugin #Wed Aug 03 16:07:19 PDT 2016 version=13.0.1 groupId=com.cisco.xmp artifactId=xmp_persistence_init
+#Generated by org.apache.felix.bundleplugin #Wed Mar 15 06:37:37 PDT 2017 version=13.0.8 groupId=com.cisco.xmp artifactId=xmp_grouping_intf
+#Generated by Maven #Wed Mar 22 15:27:07 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_docs
+#Generated by Maven #Fri Mar 10 01:23:21 PST 2017 version=13.0.2 groupId=com.cisco.xmp.datacenter artifactId=xmp_datacenter_perf_pal_handler
+#Generated by Maven #Fri Mar 10 01:28:01 PST 2017 version=13.0.2 groupId=com.cisco.xmp.datacenter artifactId=xmp_datacenter_event
+#Generated by Maven #Mon Jun 01 07:12:35 PDT 2015 version=8.0.6 groupId=com.cisco.xmp.keystore artifactId=xmp_keystore
+#Generated by Maven #Mon Mar 09 10:54:37 PDT 2015 version=1.0.3 groupId=com.cisco.xmp.scheduler artifactId=xmp_task_scheduler
+#Generated by org.apache.felix.bundleplugin #Fri Mar 10 01:29:17 PST 2017 version=13.0.2 groupId=com.cisco.xmp.datacenter artifactId=xmp_datacenter_eventcorrelation
+#Generated by Maven #Tue Feb 03 09:25:54 PST 2015 version=10.0.2 groupId=com.cisco.xmp.xmpruntime artifactId=xmp_hot_deploy
+#Created by Apache Maven 3.3.3 #Wed Mar 22 11:56:12 PDT 2017 version=11.1.17 groupId=com.cisco.xmp artifactId=xmp_device_package_loader
+#Generated by Maven #Fri Mar 03 10:12:36 PST 2017 version=13.0.3 groupId=com.cisco.xmp.decap artifactId=xmp_syslog
+#Generated by Maven #Thu Dec 05 15:30:49 PST 2013 version=1.0.5 groupId=com.cisco.xmp.datacenter artifactId=xmp_ana_integrator
+caution: filename not matched:  META-INF/maven/*.properties
+
+#Generated by Maven #Mon Mar 04 13:10:13 PST 2013 version=8.0.29 groupId=com.cisco.xmp artifactId=xmp_metrics
+#Generated by org.apache.felix.bundleplugin #Mon Mar 13 22:27:43 PDT 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_nice_intf
+#Generated by Maven #Wed Feb 15 23:02:44 PST 2017 version=13.0.5 groupId=com.cisco.xmp.common artifactId=xmp_common
+#Generated by Maven #Thu Mar 02 08:21:46 PST 2017 version=13.0.1 groupId=com.cisco.xmp.decap artifactId=xmp.decap.processor.default
+#Generated by Maven #Thu Feb 25 01:29:41 PST 2016 version=11.0.5 groupId=com.cisco.xmp artifactId=xmp_messaging
+#Generated by org.apache.felix.bundleplugin #Wed Dec 02 10:37:27 PST 2015 version=8.0.23 groupId=com.cisco.xmp artifactId=xmp_mib_library_mibble
+#Generated by org.apache.felix.bundleplugin #Thu Aug 23 15:50:58 PDT 2012 version=6.1.29 groupId=com.cisco.xmp artifactId=xmp_i18nl10n_exception_handler
+#Generated by org.apache.felix.bundleplugin #Fri Jun 19 14:51:50 PDT 2015 version=6.1.36 groupId=com.cisco.xmp artifactId=xmp_datasource
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:53 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_log4j_dynamic_slf4j
+#Generated by Maven #Wed Mar 22 15:29:17 PDT 2017 version=13.0.27 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_notifications
+#Generated by org.apache.felix.bundleplugin #Wed Mar 08 00:53:37 PST 2017 version=13.0.12 groupId=com.cisco.xmp artifactId=xmp_jobscheduler_intf
+#Generated by org.apache.felix.bundleplugin #Mon Feb 27 13:17:44 PST 2017 version=13.0.4 groupId=com.cisco.xmp.decap artifactId=decap.processor
+#Generated by Maven #Tue Oct 30 12:21:04 PDT 2012 version=1.0.8 groupId=com.cisco.xmp artifactId=xmp_credential_service_nbi
+#Generated by Maven #Fri May 29 16:28:57 PDT 2015 version=1.0.3 groupId=com.cisco.xmp artifactId=vsphere_ova_pal_handler
+#Generated by org.apache.felix.bundleplugin #Fri Sep 11 04:18:04 PDT 2015 version=2.0.0 groupId=com.cisco.xmp artifactId=xmp_threadmanager
+#Created by Apache Maven 3.0.5 #Thu Mar 16 10:37:50 PDT 2017 version=3.200.27 groupId=com.cisco.xmp artifactId=xmp_update_config
+#Generated by org.apache.felix.bundleplugin #Mon Feb 27 07:59:17 PST 2017 version=13.0.4 groupId=com.cisco.xmp.decap artifactId=decap.event
+#Generated by Maven #Mon Nov 16 15:00:01 PST 2015 version=8.0.3 groupId=com.cisco.xmp.xmpruntime artifactId=XMPMain_intf
+#Generated by org.apache.felix.bundleplugin #Fri Jan 29 04:31:42 PST 2016 version=6.1.39 groupId=com.cisco.xmp artifactId=xmp_rbac
+#Generated by org.apache.felix.bundleplugin #Mon Mar 13 22:27:56 PDT 2017 version=13.0.5 groupId=com.cisco.xmp artifactId=xmp_nice_impl
+#Generated by org.apache.felix.bundleplugin #Wed Mar 15 06:38:09 PDT 2017 version=13.0.8 groupId=com.cisco.xmp artifactId=xmp_grouping_spring
+#Generated by Maven #Tue Mar 22 06:28:44 PDT 2016 version=8.2.8 groupId=com.cisco.xmp artifactId=xmp_existence_discovery
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:45 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_log4j_dynamic
+#Generated by org.apache.felix.bundleplugin #Fri Aug 24 18:41:01 PDT 2012 version=6.1.29 groupId=com.cisco.xmp artifactId=xmp_i18nl10n_exception
+#Created by Apache Maven 3.0.5 #Thu Mar 16 10:36:38 PDT 2017 version=3.200.27 groupId=com.cisco.xmp artifactId=xmp_update_common
+#Generated by Maven #Wed Mar 08 00:53:28 PST 2017 version=13.0.12 groupId=com.cisco.xmp artifactId=xmp_jobmodel
+#Generated by org.apache.felix.bundleplugin #Tue Mar 29 00:11:53 PDT 2016 version=11.0.3 groupId=com.cisco.xmp.audit artifactId=xmp_audit_framework_impl
+#Generated by Maven #Fri Mar 10 01:24:17 PST 2017 version=13.0.2 groupId=com.cisco.xmp.datacenter artifactId=xmp_datacenter_pal_handler
+#Generated by org.apache.felix.bundleplugin #Fri May 27 03:38:12 PDT 2016 version=6.1.45 groupId=com.cisco.xmp artifactId=xmp_dbCredential_mgmt
+#Generated by org.apache.felix.bundleplugin #Fri Jun 03 01:34:25 PDT 2016 version=6.1.31 groupId=com.cisco.xmp artifactId=xmp_ciscolog
+#Generated by Maven #Sat Nov 08 16:22:21 PST 2014 version=0.0.15 groupId=com.cisco.xmp.xmpruntime artifactId=xmp_webcontainer_filters
+#Generated by org.apache.felix.bundleplugin #Thu Dec 03 16:52:37 PST 2015 version=8.0.67 groupId=com.cisco.xmp artifactId=xmp_snmp_sessionmgr_pal
+ artifactId=maven-artifact2011
+#Generated by Maven #Thu Mar 23 16:47:44 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_networkservices_technologies_trustsec
+#Generated by Maven #Sun Mar 19 07:13:21 PDT 2017 version=3.200.29 groupId=com.cisco.srtg.model artifactId=srtg-routing-module-ext
+#Generated by Maven #Thu Mar 09 09:13:28 PST 2017 version=3.200.103-SNAPSHOT groupId=com.cisco.wnbu artifactId=wcs_ts_model_bundle
+#Generated by Apache Maven #Thu Mar 09 10:59:42 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-iccp-module
+#Generated by Apache Maven #Mon Mar 20 22:52:45 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-av-module
+#Generated by Maven #Thu Mar 23 16:46:59 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_config_archive_model
+#Generated by Maven #Thu Mar 23 16:49:10 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm-im-connectivity-ext-module
+#Generated by Apache Maven #Fri Mar 24 02:43:19 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_dashlets_api
+#Generated by Apache Maven #Thu Mar 09 10:57:47 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-bridge-module
+#Generated by Apache Maven #Mon Mar 20 22:53:58 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-av-view-module
+#Generated by Apache Maven #Thu Mar 09 11:00:38 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-sensor-module
+#Generated by Maven #Thu Mar 23 16:46:40 PDT 2017 version=3.200.49 groupId=com.cisco.ifm.inventory.api artifactId=ifm_inventory_api
+#Generated by Apache Maven #Thu Mar 09 10:58:21 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-cda-check-module
+#Generated by Maven #Thu Mar 23 16:50:43 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_datacenter_inventory_view
+#Generated by Apache Maven #Mon Jan 30 11:56:39 PST 2017 version=1.1.17 groupId=com.cisco.xmp.model artifactId=dpl_rest
+#Generated by org.apache.felix.bundleplugin #Fri Oct 14 08:10:15 PDT 2016 version=5.3.102 groupId=com.cisco.xmp.model artifactId=xmp_modelFramework
+#Generated by Maven #Thu Mar 23 16:53:17 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_system_monitor_model
+#Generated by Maven #Tue Jan 17 23:05:11 PST 2017 version=3.200.24 groupId=com.cisco.ifm artifactId=meraki-module
+#Generated by Apache Maven #Mon Mar 20 22:53:42 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-abstract-nat-module
+#Generated by Maven #Fri Feb 24 10:47:55 PST 2017 version=0.0.16 groupId=com.cisco.xmp artifactId=dpl_rest_impl
+#Generated by Apache Maven #Fri Mar 24 02:44:30 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_servers_api
+#Generated by Apache Maven #Thu Mar 09 10:59:12 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-res-mgr-module
+#Generated by Maven #Thu Mar 23 16:51:59 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=Compliance_sh_commands
+#Generated by Maven #Wed Oct 26 21:21:59 PDT 2016 version=3.200.6 groupId=com.cisco.nm.sam.config.model.nam artifactId=sam_namconfig_model
+#Generated by Maven #Sun Mar 19 07:12:12 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=ezvpn-server-model
+#Generated by Apache Maven #Mon Mar 20 22:55:35 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-av-net-view-module
+#Generated by Maven #Thu Mar 23 16:52:35 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_lifecycle_reports
+#Generated by Maven #Sun Mar 19 07:09:16 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=getvpnreport
+#Generated by Maven #Thu Mar 23 16:54:11 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=nbi_api_vnfprovisioning_model
+#Generated by Maven #Thu Mar 23 16:52:18 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_compliance_reports
+#Generated by Apache Maven #Fri Mar 24 08:03:49 PDT 2017 version=3.200.69 groupId=com.cisco.rfm.model artifactId=ncs_nbi_api
+#Generated by Maven #Sun Mar 19 07:09:55 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=dmvpn
+#Generated by Maven #Thu Mar 23 16:49:27 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm-im-logical-resource-ext-module
+#Generated by Maven #Wed Nov 13 13:29:44 PST 2013 version=0.0.22 groupId=com.cisco.xmp.model.app artifactId=discovery-module
+#Generated by Apache Maven #Thu Mar 09 10:58:14 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-routing-module
+#Generated by Maven #Sun Mar 19 07:11:50 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.common.ipsec artifactId=ipsec_model
+#Generated by Apache Maven #Thu Mar 09 11:00:26 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-satellite-module
+#Generated by Maven #Thu Mar 23 16:51:00 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_dwc_view
+#Generated by Apache Maven #Thu Mar 09 10:58:38 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-software
+#Generated by Maven #Thu Mar 23 16:53:01 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_eventbased_model
+#Generated by Maven #Tue Feb 28 04:29:35 PST 2017 version=13.0.4 groupId=com.cisco.xmp.audit.model.build artifactId=xmp_audit_model
+#Generated by Apache Maven #Thu Mar 09 10:57:13 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-physical-resource-module
+#Generated by Apache Maven #Thu Mar 09 11:00:01 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-mlacp-module
+#Generated by Maven #Thu Mar 23 16:48:16 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_config_model
+#Generated by Maven #Tue Nov 26 19:22:43 PST 2013 version=1.0.0 groupId=com.cisco.xmp.model artifactId=xmp-threadmanager-module
+#Generated by Maven #Thu Mar 23 16:46:43 PDT 2017 version=13.0.31 groupId=com.cisco.lumos.fault artifactId=fault_policy_model
+#Generated by Maven #Fri Aug 21 18:56:53 PDT 2015 version=3.0.67 groupId=com.cisco.wnbu artifactId=license_interface_model
+#Generated by Apache Maven #Thu Mar 09 10:58:44 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-events-alarms
+#Generated by Maven #Sun Mar 19 07:08:59 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.getvpn.model artifactId=getvpn-model
+#Generated by Apache Maven #Mon Mar 20 22:55:18 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-policy-applications-ext-module
+#Generated by Apache Maven #Thu Mar 09 10:58:41 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-process
+#Generated by Maven #Thu Mar 23 16:51:18 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_compliance_model
+#Generated by Maven #Sun Mar 19 07:10:30 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.dmvpnmonitor artifactId=dmvpnmonitor
+#Generated by Apache Maven #Mon Mar 20 22:54:36 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-abstract-interface-assignment-module
+#Generated by org.apache.felix.bundleplugin #Tue May 26 12:49:00 PDT 2015 version=3.0.4 groupId=com.cisco.ifm artifactId=ifm_discovery_model
+#Generated by Maven #Thu Dec 18 21:05:23 PST 2014 version=3.0.1 groupId=com.cisco.license.rest artifactId=license-rest
+#Generated by Maven #Thu Mar 23 16:52:46 PDT 2017 version=3.200.49 groupId=com.cisco.prime.search artifactId=prime-search-model
+#Generated by Apache Maven #Mon Mar 20 22:55:58 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=apic-qos-ui-module
+#Generated by Maven #Sun Mar 19 07:14:27 PDT 2017 version=3.200.29 groupId=com.cisco.security.pki artifactId=pki-nbi
+#Generated by Apache Maven #Thu Mar 09 10:58:26 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-clock-module
+#Generated by Maven #Thu Mar 23 16:49:53 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_template_model
+#Generated by Apache Maven #Fri Sep 02 04:58:22 PDT 2016 version=10.0.16 groupId=com.cisco.xmp.topology.model.build artifactId=xmp_topology_model
+#Generated by org.apache.felix.bundleplugin #Wed May 27 12:41:29 PDT 2015 version=3.0.5 groupId=com.cisco.ifm artifactId=ifm_user_model
+#Generated by Maven #Fri Feb 08 11:08:52 PST 2013 version=8.0.1 groupId=com.cisco.xmp.duplicatedevice.model.build artifactId=xmp_duplicate_device_detection_model
+#Generated by Maven #Tue Feb 02 12:22:02 PST 2016 version=0.0.9 groupId=com.cisco.xmp.model artifactId=xmp_configuration_profile_model
+#Generated by Maven #Sun Mar 19 07:11:06 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.ezvpn artifactId=bproxy
+#Generated by Maven #Thu Mar 23 16:45:53 PDT 2017 version=3.200.49 groupId=com.cisco.ifm.smartlicense artifactId=smartlicense-model
+#Generated by org.apache.felix.bundleplugin #Wed Jan 27 05:36:27 PST 2016 version=6.1.43 groupId=com.cisco.xmp artifactId=xmp_usermgmt_model
+#Generated by org.apache.felix.bundleplugin #Wed Mar 15 06:37:29 PDT 2017 version=13.0.8 groupId=com.cisco.xmp artifactId=xmp_grouping_model
+#Generated by Apache Maven #Thu Mar 09 10:56:57 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-location-module
+#Generated by Maven #Thu Mar 23 16:46:22 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_swim_model
+#Generated by Apache Maven #Fri Mar 24 09:23:40 PDT 2017 version=3.200.55 groupId=com.cisco.rfm.model artifactId=jobmanagement
+#Generated by Apache Maven #Thu Mar 09 11:00:34 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-security-module
+#Generated by Apache Maven #Fri Mar 24 11:03:03 PDT 2017 version=3.200.52 groupId=com.cisco.rfm.model artifactId=udfmanagement_model
+#Generated by Maven #Sun Mar 19 07:08:13 PDT 2017 version=3.200.29 groupId=com.cisco.licensing.model artifactId=license
+#Generated by Apache Maven #Fri Mar 24 09:20:05 PDT 2017 version=3.200.58 groupId=com.cisco.rfm.model artifactId=nbi_api_wlanprovisioning_model
+#Generated by Apache Maven #Fri Mar 24 02:45:13 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_reporting_api
+#Generated by Maven #Sun Mar 19 07:12:32 PDT 2017 version=3.200.29 groupId=com.cisco.appnav artifactId=appnav-model
+#Generated by Maven #Sun Mar 19 07:10:49 PDT 2017 version=3.200.29 groupId=com.cisco.security.scansafe artifactId=scansafe-model
+#Generated by Apache Maven #Fri Mar 24 09:07:31 PDT 2017 version=3.200.52 groupId=com.cisco.rfm.model artifactId=AccessPointManagement
+#Generated by org.apache.felix.bundleplugin #Tue Jan 24 23:35:15 PST 2017 version=13.0.2 groupId=com.cisco.xmp.sso artifactId=xmp_cas_model
+#Generated by Maven #Fri Jul 29 12:06:39 IST 2016 version=8.2.16 groupId=com.cisco.xmp.config.model.build artifactId=xmp_config_model
+#Generated by Maven #Wed Mar 01 06:56:45 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-model
+#Generated by Maven #Wed Oct 26 21:22:32 PDT 2016 version=3.200.6 groupId=com.cisco.nm.sam.system.model artifactId=sam_appsvc_model
+#Generated by Apache Maven #Mon Mar 20 22:55:48 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-av-wlan-net-view-module
+#Generated by Apache Maven #Mon Mar 20 22:54:51 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-utils-module
+#Generated by Apache Maven #Mon Mar 20 22:52:23 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=services-module
+#Generated by Maven #Sun Mar 19 07:12:56 PDT 2017 version=3.200.29 groupId=com.cisco.srtg.model artifactId=cellular-model
+#Generated by Apache Maven #Thu Mar 09 10:57:23 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-connectivity-module
+#Generated by Apache Maven #Fri Mar 24 02:44:52 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_vd_model
+#Generated by Maven #Thu Mar 23 17:39:53 PDT 2017 version=3.200.28 groupId=com.cisco.rfm.model artifactId=rfm-im-module
+#Generated by Apache Maven #Thu Mar 09 10:58:34 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-file-system-module
+#Generated by Apache Maven #Thu Mar 09 10:57:37 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-policy-applications-module
+#Generated by org.apache.felix.bundleplugin #Wed Aug 28 15:33:45 PDT 2013 version=8.0.16 groupId=com.cisco.xmp artifactId=xmp_prefs_model
+#Generated by Maven #Fri Jun 08 03:19:05 PDT 2012 version=1.0.3 groupId=com.cisco.xmpim.interface artifactId=xmp-im-credential-service
+#Generated by Apache Maven #Thu Mar 09 10:59:50 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-job-module
+#Generated by Maven #Sun Mar 19 07:14:07 PDT 2017 version=3.200.29 groupId=com.cisco.security.pki artifactId=pki-model
+#Generated by Maven #Thu Mar 23 16:46:04 PDT 2017 version=3.200.49 groupId=com.cisco.ifm.inventory.metadata artifactId=ifm_inventory_ui_metadata_model
+#Generated by Apache Maven #Mon Mar 20 22:52:04 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-zbfw-module
+#Generated by Maven #Thu Mar 23 16:53:54 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_nfvos_model
+#Generated by Apache Maven #Thu Mar 09 10:57:05 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-party-module
+#Generated by Maven #Sun Mar 19 07:10:11 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=dmvpnreport
+#Generated by Maven #Thu Mar 23 16:53:45 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ImageRepoModel
+#Generated by Apache Maven #Mon Mar 20 22:53:28 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-abstract-fw-module
+#Generated by Maven #Thu Mar 23 16:53:34 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=SmartInventoryDetail
+#Generated by Maven #Thu Mar 23 16:47:58 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_auditing_model
+#Generated by Maven #Sun Mar 19 07:09:33 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.common.isakmp artifactId=isakmp_model
+#Generated by Apache Maven #Thu Mar 09 10:57:32 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-policy-module
+#Generated by Maven #Sun Mar 19 07:11:27 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=ezvpn-remote
+#Generated by Maven #Sun Mar 22 22:37:44 PDT 2015 version=10.0.3 groupId=com.cisco.xmp.nice.model.build artifactId=xmp_nice_model
+#Generated by Maven #Sun Mar 19 07:08:31 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn.common.pki.model artifactId=pki_model
+#Generated by Apache Maven #Thu Mar 09 10:59:16 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-link-aggregation-module
+#Generated by Maven #Mon Feb 10 02:32:34 PST 2014 version=9.1.44 groupId=com.cisco.xmp.mni artifactId=xmp_nbi_rateservice
+#Generated by Maven #Thu Mar 23 16:49:44 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_pnp_model
+#Generated by Apache Maven #Thu Mar 09 11:00:19 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-qos-module
+#Generated by Maven #Thu Mar 23 19:50:08 PDT 2017 version=3.2.0.0.131 groupId=com.cisco.wnbu artifactId=wcs_model_bundle
+#Generated by Maven #Wed Mar 01 06:56:00 PST 2017 version=5.0.67 groupId=com.cisco.nms.topology artifactId=nms-topology-geo-model
+#Generated by Apache Maven #Thu Mar 09 10:57:40 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-vrf-module
+#Generated by Apache Maven #Mon Mar 20 22:54:17 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-abstract-qos-module
+#Generated by Apache Maven #Fri Mar 24 02:44:15 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_alarms_api
+#Generated by Apache Maven #Thu Mar 09 10:57:28 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-logical-resource-module
+#Generated by Maven #Thu Mar 23 16:50:14 PDT 2017 version=3.200.49 groupId=com.cisco.ifm.config artifactId=com.cisco.ifm.config.controllers
+#Generated by Maven #Thu Mar 23 16:51:42 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_compute_extension
+#Generated by Maven #Fri Aug 21 18:51:58 PDT 2015 version=3.0.128 groupId=com.cisco.ifm artifactId=ifm_guided_workflow_model
+#Generated by Apache Maven #Thu Mar 09 10:56:42 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-foundation-module
+#Generated by Maven #Fri Aug 21 19:06:20 PDT 2015 version=3.0.61 groupId=com.cisco.rfm.model artifactId=ncs_securitylog_archive_nbi
+#Generated by Apache Maven #Fri Mar 24 02:43:58 PDT 2017 version=3.200.72 groupId=com.cisco.prime.solutions artifactId=ps_cluster_enablement_api
+#Generated by Apache Maven #Mon Mar 20 22:52:59 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-nat-module
+#Generated by Apache Maven #Mon Mar 20 22:51:48 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-zone-module
+#Generated by Maven #Sun Mar 19 07:13:43 PDT 2017 version=3.200.29 groupId=com.cisco.srtg.model artifactId=srtg-ipsla-model
+#Generated by Apache Maven #Mon Mar 20 22:53:11 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-interface-assignment-module
+#Generated by Maven #Sun Mar 19 07:07:55 PDT 2017 version=3.200.29 groupId=com.cisco.security.vpn artifactId=feature_discovery_model
+#Generated by Apache Maven #Thu Mar 09 10:59:33 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-discovery-module
+#Generated by Apache Maven #Fri Mar 24 08:13:50 PDT 2017 version=3.200.65 groupId=com.cisco.rfm.model artifactId=nbi_ops_model
+#Generated by Maven #Thu Mar 23 16:47:15 PDT 2017 version=3.200.49 groupId=com.cisco.ifm.sam.model artifactId=ifm_sam_model
+#Generated by Apache Maven #Thu Mar 09 10:57:51 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-vlan-module
+#Generated by Apache Maven #Thu Mar 09 11:00:46 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-switch-module
+#Generated by Maven #Thu Mar 23 16:51:10 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=snmp_timeout_model
+#Generated by Maven #Thu Mar 23 16:47:26 PDT 2017 version=3.200.49 groupId=com.cisco.ifm artifactId=ifm_technology_capability_model
+#Generated by Apache Maven #Thu Mar 09 10:58:30 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-cluster-module
+#Generated by Apache Maven #Mon Mar 20 22:55:03 PDT 2017 version=3.200.0.44 groupId=com.cisco.aems.model artifactId=aems-im-global-zone-module
+#Generated by org.apache.felix.bundleplugin #Thu Aug 23 16:03:14 PDT 2012 version=8.0.7 groupId=com.cisco.xmp artifactId=xmp_poller_model
+#Generated by Apache Maven #Thu Mar 09 10:59:26 PST 2017 version=3.200.24 groupId=com.cisco.xmpim.common artifactId=xmp-im-compute-module
+#Generated by Maven #Wed Feb 22 07:34:22 PST 2017 version=3.200.3 groupId=com.cisco.security.vpn.getvpn artifactId=getvpnks-rest
+#Generated by Maven #Sun Nov 27 22:53:52 PST 2016 version=3.200.2 groupId=com.cisco.security.vpn.ezvpn.server artifactId=ezvpn-server-rest
+#Generated by Maven #Wed Feb 22 07:35:10 PST 2017 version=3.200.3 groupId=com.cisco.security.vpn.getvpn artifactId=getvpngm-rest
+#Generated by Maven #Fri Dec 02 04:29:36 PST 2016 version=3.200.2 groupId=com.cisco.srtg.monitor.security.dmvpn artifactId=dmvpn-monitor-rest
+#Generated by Maven #Sun Nov 27 22:52:08 PST 2016 version=3.200.2 groupId=com.cisco.security.vpn.common.rest artifactId=vpncommon-rest
+#Generated by Maven #Sun Nov 27 22:49:21 PST 2016 version=3.200.2 groupId=com.cisco.security.vpn.ezvpn artifactId=ezvpn-rest
+#Generated by Maven #Sun Mar 19 06:48:46 PDT 2017 version=3.200.37 groupId=com.cisco.security.pki artifactId=pki-service
+#Generated by org.apache.felix.bundleplugin #Mon May 18 10:00:29 PDT 2015 version=3.0.2 groupId=com.cisco.srtg artifactId=srtg_ice
+#Generated by Maven #Thu Feb 13 21:03:44 PST 2014 version=2.1.39 groupId=com.cisco.security.pki artifactId=pki-rest
+#Generated by Maven #Thu Dec 18 21:05:23 PST 2014 version=3.0.1 groupId=com.cisco.license.rest artifactId=license-rest
+#Generated by Maven #Wed Feb 22 07:33:34 PST 2017 version=3.200.3 groupId=com.cisco.security.scansafe artifactId=scansafe-rest
+#Generated by Maven #Sun Nov 27 22:53:00 PST 2016 version=3.200.2 groupId=com.cisco.security.vpn.dmvpn artifactId=dmvpnconfig-rest
+#Generated by Maven #Wed Feb 22 07:32:45 PST 2017 version=3.200.3 groupId=com.cisco.security.vpn.ezvpn artifactId=bproxy-rest
+#Generated by Maven #Tue Nov 15 19:47:02 PST 2016 version=3.200.3 groupId=com.cisco.appnav artifactId=appnav-rest
+#Generated by Maven #Fri Dec 19 17:16:24 PST 2014 version=3.0.1 groupId=com.cisco.appnav artifactId=appnav-container
+#Generated by Maven #Tue Nov 15 19:48:25 PST 2016 version=3.200.2 groupId=com.cisco.srtg.cellular artifactId=cellular-rest
+#Generated by Maven #Thu Dec 18 21:04:37 PST 2014 version=3.0.1 groupId=com.cisco.utils.rest artifactId=utils
+#Generated by Maven #Tue Mar 21 01:27:41 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_xmp_api_intf
+#Generated by Maven #Tue Mar 21 01:27:42 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_xmp_api_impl
+#Generated by Maven #Tue Mar 21 00:17:27 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_common_utils
+#Generated by Maven #Tue Mar 21 00:47:33 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_config_wlan
+#Generated by Maven #Tue Mar 21 00:17:46 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=avc-utils
+#Generated by Maven #Tue Mar 21 00:47:57 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=config
+#Generated by org.apache.felix.bundleplugin #Tue Mar 21 00:48:25 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=config_access_layer
+#Generated by Maven #Tue Mar 21 00:48:18 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_ppm_rest
+#Generated by org.apache.felix.bundleplugin #Tue Mar 21 01:27:40 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=asr_ice_post_processor
+#Generated by Maven #Tue Mar 21 00:17:48 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_avc_intf
+#Generated by Maven #Tue Mar 21 00:48:15 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_ppm_service
+#Generated by Maven #Tue Mar 21 00:17:51 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=zbfw-utils
+#Generated by Maven #Tue Mar 21 00:18:09 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems artifactId=aems_config_intf
+#Generated by org.apache.felix.bundleplugin #Tue Mar 21 01:27:39 PDT 2017 version=3.200.0-31 groupId=com.cisco.aems.zbfwIcePostProcessors artifactId=zbfw_ice_post_processors
+#Generated by Maven #Tue May 21 20:34:12 BST 2013 version=2.0.2 groupId=com.google.code.jscep artifactId=jscep
+caution: filename not matched:  META-INF/maven/*.properties
+
+ artifactId=commons-ioEDT 2012
+-bash-4.1#

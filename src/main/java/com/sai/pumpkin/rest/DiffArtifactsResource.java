@@ -132,7 +132,7 @@ public class DiffArtifactsResource {
 
     @ApiOperation("Gets a diff between snapshot 1 and snapshot 2")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
-    @RequestMapping(value = "/release-diff", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/snapshot-diff", method = RequestMethod.GET, produces = "application/json")
     public ReleaseDiffResponse snapshotDiff(@ApiParam("name:version") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
                                             @ApiParam("name:version") @RequestParam("releaseCoordinates2") String releaseCoordinates2,
                                             @ApiParam("snapshotGoBackUpToMinutes") @RequestParam(name = "snapshotGoBackUpToMinutes", required = false, defaultValue = "120") int snapshotGoBackUpToMinutes) {
