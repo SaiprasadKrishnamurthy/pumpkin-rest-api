@@ -62,7 +62,7 @@ public class DiffArtifactsResource {
         if (c1.length < 3 || c2.length < 3) {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
         }
-        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "");
+        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "", 0L);
     }
 
     @Cacheable(cacheNames = "releaseDiffCache", key = "#p0.concat('releaseDiffCache').concat(#p1)")
@@ -115,7 +115,7 @@ public class DiffArtifactsResource {
             MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw);
 
             if (fromAndTo.length == 2) {
-                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "");
+                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "", 0L);
                 if (s != null) {
                     summaries.add(s);
                 }
@@ -141,7 +141,7 @@ public class DiffArtifactsResource {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version:timestamp'");
         }
 
-        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c1[3], c2[0], c2[1], c2[2], c2[3]);
+        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c1[3], c2[0], c2[1], c2[2], c2[3], 0L);
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(Arrays.asList(diffResponse));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);
