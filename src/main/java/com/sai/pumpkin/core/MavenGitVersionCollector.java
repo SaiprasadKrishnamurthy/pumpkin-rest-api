@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -245,8 +246,8 @@ public class MavenGitVersionCollector {
 
     }
 
-    @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7)")
-    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
+    @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7).concat(#p8)")
+    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2, final long snapshotWindowFromNow) {
         GitLogSummaryResponse summaryResponse = null;
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
@@ -274,9 +275,17 @@ public class MavenGitVersionCollector {
             summaryResponse.setTo(m2);
             Set<String> defectids = new LinkedHashSet<>();
             GitLogSummaryResponse _summaryResponse = summaryResponse;
+            final boolean isSameSnapshotComparison = g1.equals(g2) && a1.equals(a2) && v1.equals(v2) && v1.contains("SNAPSHOT");
 
+            List<GitLogEntry> filteredGitLogEntries = gitLogResponse.getGitLogEntries();
 
-            gitLogResponse.getGitLogEntries().forEach(gle -> {
+            if (isSameSnapshotComparison) {
+                filteredGitLogEntries = gitLogResponse.getGitLogEntries().stream()
+                        .filter(gle -> (System.currentTimeMillis() - snapshotWindowFromNow) >= gle.getTimestamp())
+                        .collect(Collectors.toList());
+            }
+
+            filteredGitLogEntries.forEach(gle -> {
                 String author = gle.getAuthor().trim();
                 Matcher matcher = defectIdRegexPattern.matcher(gle.getCommitMessage());
 
@@ -297,7 +306,8 @@ public class MavenGitVersionCollector {
                     });
                 });
             });
-            List<PullRequest> pullRequests = gitLogResponse.getGitLogEntries().stream()
+
+            List<PullRequest> pullRequests = filteredGitLogEntries.stream()
                     .map(gle -> gle.getRevision().replace("\"", "").trim())
                     .peek(c -> LOGGER.info(" \t\t Commit revision got pull request: {}", c))
                     .flatMap(c -> pullRequestRepository.findPullRequestsMergedIntoCommit(c).stream())
