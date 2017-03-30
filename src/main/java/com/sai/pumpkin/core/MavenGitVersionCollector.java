@@ -247,7 +247,7 @@ public class MavenGitVersionCollector {
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7).concat(#p8)")
-    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2, final long snapshotWindowFromNow) {
+    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2, final long snapshotSinceTimestamp) {
         GitLogSummaryResponse summaryResponse = null;
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
@@ -281,7 +281,7 @@ public class MavenGitVersionCollector {
 
             if (isSameSnapshotComparison) {
                 filteredGitLogEntries = gitLogResponse.getGitLogEntries().stream()
-                        .filter(gle -> (System.currentTimeMillis() - snapshotWindowFromNow) >= gle.getTimestamp())
+                        .filter(gle -> gle.getTimestamp() >= snapshotSinceTimestamp)
                         .collect(Collectors.toList());
             }
 

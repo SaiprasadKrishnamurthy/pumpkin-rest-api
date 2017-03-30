@@ -130,6 +130,71 @@ public class DiffArtifactsResource {
         return releaseDiffResponse;
     }
 
+    @ApiOperation("Gets a diff between snapshot 1 and snapshot 2")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/release-diff", method = RequestMethod.GET, produces = "application/json")
+    public ReleaseDiffResponse snapshotDiff(@ApiParam("name:version") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
+                                            @ApiParam("name:version") @RequestParam("releaseCoordinates2") String releaseCoordinates2,
+                                            @ApiParam("snapshotGoBackUpToMinutes") @RequestParam(name = "snapshotGoBackUpToMinutes", required = false, defaultValue = "120") int snapshotGoBackUpToMinutes) {
+        String[] c1 = releaseCoordinates1.split(":");
+        String[] c2 = releaseCoordinates2.split(":");
+        if (c1.length < 2 || c2.length < 2) {
+            throw new IllegalArgumentException("Release coordinates must be in the format: 'releaseName:version'");
+        }
+
+        ReleaseArtifact artifact1 = releaseArtifactRepository.findRelease(c1[0].trim(), c1[1].trim());
+        ReleaseArtifact artifact2 = releaseArtifactRepository.findRelease(c2[0].trim(), c2[1].trim());
+
+        if (artifact1 == null || artifact2 == null) {
+            throw new IllegalArgumentException("Not found");
+
+        }
+        List<MavenCoordinates> removed = artifact1.getMavenArtifacts().stream().filter(old -> !artifact2.getMavenArtifacts().contains(old)).collect(toList());
+        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
+        List<GitLogSummaryResponse> summaries = new ArrayList<>();
+
+        List<MavenCoordinates> diffs = new ArrayList<>();
+        List<MavenCoordinates> bigger = artifact1.getMavenArtifacts();
+        List<MavenCoordinates> smaller = artifact2.getMavenArtifacts();
+
+        if (bigger.size() < smaller.size()) {
+            List<MavenCoordinates> temp = bigger;
+            bigger = smaller;
+            smaller = temp;
+        }
+        for (MavenCoordinates m : bigger) {
+            Optional<MavenCoordinates> _m = smaller.stream().filter(s -> s.equals(m)).findFirst();
+            if (_m.isPresent() && !_m.get().getVersion().equals(m.getVersion())) {
+                diffs.add(m);
+            } else if (_m.isPresent() && _m.get().getVersion().equals(m.getVersion()) && _m.get().getVersion().contains("SNAPSHOT")) {
+                // 2 snapshots same version.
+                diffs.add(m);
+            }
+        }
+
+        for (MavenCoordinates diff : diffs) {
+            MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
+            MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
+
+            // Get the from and to.
+            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw);
+
+            if (fromAndTo.length == 2) {
+                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "", (System.currentTimeMillis() - (snapshotGoBackUpToMinutes * 60 * 1000)));
+                if (s != null) {
+                    summaries.add(s);
+                }
+            } else {
+                LOGGER.warn("No Log Summary found for: {}, {}", old, nw);
+            }
+        }
+        ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
+        releaseDiffResponse.setDiffs(summaries);
+        releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(toList()));
+        releaseDiffResponse.setRemoved(removed.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(toList()));
+        return releaseDiffResponse;
+    }
+
     @ApiOperation("Gets a diff between artifact 1 and artifact 2")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/artifact-diff", method = RequestMethod.GET, produces = "application/json")
