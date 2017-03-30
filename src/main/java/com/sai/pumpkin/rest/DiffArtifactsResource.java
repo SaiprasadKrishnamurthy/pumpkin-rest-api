@@ -282,7 +282,7 @@ public class DiffArtifactsResource {
 
     @ApiOperation("Refreshes all the cache")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.DELETE, RequestMethod.GET})
-    @RequestMapping(value = "/cache-refresh", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/cache-refresh", method = RequestMethod.GET, produces = "application/json")
     @CacheEvict(cacheNames = {"detailedDiffCache", "summaryDiffCache", "releaseMetaCache", "releaseDiffCache"})
     public ResponseEntity<?> refreshCache() {
         return new ResponseEntity<>(HttpStatus.OK);
