@@ -236,6 +236,17 @@ public class MavenGitVersionCollector {
             List<MavenGitVersionMapping> timeFiltered = m1List.stream().filter(m -> m.getTimestamp() >= lowerBoundsTimeInMillis).collect(Collectors.toList());
             if (!timeFiltered.isEmpty()) {
                 mm1 = timeFiltered.get(0);
+                // take the penultimate git revision as a starting point.
+                int index = 0;
+                for (int i = 0; i < m1List.size(); i++) {
+                    if (m1List.get(i).getGitRevision().equals(mm1.getGitRevision())) {
+                        index = i;
+                        break;
+                    }
+                    index++;
+                }
+                index = (index - 1) < 0 ? 0 : index - 1;
+                mm1 = m1List.get(index);
                 mm2 = timeFiltered.get(timeFiltered.size() - 1);
             } else {
                 return new MavenGitVersionMapping[]{mm1, mm2};
