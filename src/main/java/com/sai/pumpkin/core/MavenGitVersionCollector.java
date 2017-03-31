@@ -236,7 +236,7 @@ public class MavenGitVersionCollector {
             List<MavenGitVersionMapping> timeFiltered = m1List.stream().filter(m -> m.getTimestamp() >= lowerBoundsTimeInMillis).collect(Collectors.toList());
             if (!timeFiltered.isEmpty()) {
                 mm1 = timeFiltered.get(0);
-                mm2 = timeFiltered.get(m2List.size() - 1);
+                mm2 = timeFiltered.get(timeFiltered.size() - 1);
             } else {
                 return new MavenGitVersionMapping[]{mm1, mm2};
             }
