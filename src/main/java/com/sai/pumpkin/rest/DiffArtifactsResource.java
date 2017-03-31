@@ -182,7 +182,7 @@ public class DiffArtifactsResource {
 
             if (fromAndTo.length == 2) {
                 GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "");
-                if (s != null) {
+                if (s != null && !s.getAuthorsToChangeSet().isEmpty()) {
                     summaries.add(s);
                 }
             } else {
