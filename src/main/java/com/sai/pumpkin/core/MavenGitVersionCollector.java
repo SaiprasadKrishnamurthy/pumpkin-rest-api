@@ -234,8 +234,12 @@ public class MavenGitVersionCollector {
         // if same versions but a different snapshot.
         if (m1.getGroupId().equals(m2.getGroupId()) && m1.getArtifactId().equals(m2.getArtifactId()) && m1.getVersion().equals(m2.getVersion())) {
             List<MavenGitVersionMapping> timeFiltered = m1List.stream().filter(m -> m.getTimestamp() >= lowerBoundsTimeInMillis).collect(Collectors.toList());
-            mm1 = timeFiltered.get(0);
-            mm2 = timeFiltered.get(m2List.size() - 1);
+            if (!timeFiltered.isEmpty()) {
+                mm1 = timeFiltered.get(0);
+                mm2 = timeFiltered.get(m2List.size() - 1);
+            } else {
+                return new MavenGitVersionMapping[]{mm1, mm2};
+            }
         }
 
         if (m1List.size() != m2List.size()) {
