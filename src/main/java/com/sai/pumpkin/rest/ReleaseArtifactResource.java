@@ -137,7 +137,7 @@ public class ReleaseArtifactResource {
         currRelease.setMavenArtifacts(allMavenCoordinates);
         currRelease.setSnapshot(isSnapshot);
         if (StringUtils.hasText(timestamp)) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S Z");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh_mm_ss.S_Z");
             currRelease.setBuiltTimestamp(sdf.parse(timestamp).getTime());
 
         }
