@@ -284,7 +284,7 @@ public class MavenGitVersionCollector {
                 filteredGitLogEntries = gitLogResponse.getGitLogEntries().stream()
                         .filter(gle -> gle.getTimestamp() >= snapshotSinceTimestamp)
                         .collect(Collectors.toList());
-                LOGGER.info("[AFTER Time WINDOW FiLTERING] {}:{} --> {}:{}  [{}]", a1, v1, a2, v2, filteredGitLogEntries.size());
+                LOGGER.info("[AFTER Time WINDOW FiLTERING] {}:{} --> {}:{}  [{}],  Timestamp: {}", a1, v1, a2, v2, filteredGitLogEntries.size(), snapshotSinceTimestamp);
             }
 
             filteredGitLogEntries.forEach(gle -> {
