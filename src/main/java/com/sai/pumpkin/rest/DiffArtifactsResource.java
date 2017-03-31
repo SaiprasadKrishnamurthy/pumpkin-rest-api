@@ -62,7 +62,7 @@ public class DiffArtifactsResource {
         if (c1.length < 3 || c2.length < 3) {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version'");
         }
-        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "", 0L);
+        return mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], "", c2[0], c2[1], c2[2], "");
     }
 
     @Cacheable(cacheNames = "releaseDiffCache", key = "#p0.concat('releaseDiffCache').concat(#p1)")
@@ -112,10 +112,10 @@ public class DiffArtifactsResource {
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
 
             // Get the from and to.
-            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw);
+            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw, 0);
 
             if (fromAndTo.length == 2) {
-                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "", 0L);
+                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "");
                 if (s != null) {
                     summaries.add(s);
                 }
@@ -172,15 +172,16 @@ public class DiffArtifactsResource {
             }
         }
 
+        long timeLowerBounds = (System.currentTimeMillis() - (snapshotGoBackUpToMinutes * 60 * 1000));
         for (MavenCoordinates diff : diffs) {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
 
             // Get the from and to.
-            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw);
+            MavenGitVersionMapping[] fromAndTo = mavenGitVersionCollector.fromAndTo(old, nw, timeLowerBounds);
 
             if (fromAndTo.length == 2) {
-                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "", (System.currentTimeMillis() - (snapshotGoBackUpToMinutes * 60 * 1000)));
+                GitLogSummaryResponse s = mavenGitVersionCollector.summarize(old.getGroupId(), old.getArtifactId(), old.getVersion(), fromAndTo[0].getTimestamp() + "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), fromAndTo[1].getTimestamp() + "");
                 if (s != null) {
                     summaries.add(s);
                 }
@@ -206,7 +207,7 @@ public class DiffArtifactsResource {
             throw new IllegalArgumentException("Maven coordinates must be in the format: 'groupId:artifactId:version:timestamp'");
         }
 
-        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c1[3], c2[0], c2[1], c2[2], c2[3], 0L);
+        GitLogSummaryResponse diffResponse = mavenGitVersionCollector.summarize(c1[0], c1[1], c1[2], c1[3], c2[0], c2[1], c2[2], c2[3]);
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(Arrays.asList(diffResponse));
         return new ResponseEntity<>(releaseDiffResponse, HttpStatus.OK);

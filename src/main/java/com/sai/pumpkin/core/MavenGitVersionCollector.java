@@ -221,7 +221,7 @@ public class MavenGitVersionCollector {
         mongoTemplate.remove(gitLogResponse);
     }
 
-    public MavenGitVersionMapping[] fromAndTo(final MavenCoordinates m1, final MavenCoordinates m2) {
+    public MavenGitVersionMapping[] fromAndTo(final MavenCoordinates m1, final MavenCoordinates m2, final long lowerBoundsTimeInMillis) {
         List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(m1.getGroupId(), m1.getArtifactId(), m1.getVersion());
         List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(m2.getGroupId(), m2.getArtifactId(), m2.getVersion());
         if (m1List.isEmpty() || m2List.isEmpty()) {
@@ -233,8 +233,9 @@ public class MavenGitVersionCollector {
 
         // if same versions but a different snapshot.
         if (m1.getGroupId().equals(m2.getGroupId()) && m1.getArtifactId().equals(m2.getArtifactId()) && m1.getVersion().equals(m2.getVersion())) {
-            mm1 = m1List.get(0);
-            mm2 = m2List.get(m2List.size() - 1);
+            List<MavenGitVersionMapping> timeFiltered = m1List.stream().filter(m -> m.getTimestamp() >= lowerBoundsTimeInMillis).collect(Collectors.toList());
+            mm1 = timeFiltered.get(0);
+            mm2 = timeFiltered.get(m2List.size() - 1);
         }
 
         if (m1List.size() != m2List.size()) {
@@ -247,7 +248,7 @@ public class MavenGitVersionCollector {
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1).concat(#p2).concat(#p3).concat(#p4).concat(#p5).concat(#p6).concat(#p7).concat(#p8)")
-    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2, final long snapshotSinceTimestamp) {
+    public GitLogSummaryResponse summarize(final String g1, final String a1, final String v1, final String t1, final String g2, final String a2, final String v2, final String t2) {
         GitLogSummaryResponse summaryResponse = null;
         List<MavenGitVersionMapping> m1List = null;
         List<MavenGitVersionMapping> m2List = null;
@@ -275,17 +276,9 @@ public class MavenGitVersionCollector {
             summaryResponse.setTo(m2);
             Set<String> defectids = new LinkedHashSet<>();
             GitLogSummaryResponse _summaryResponse = summaryResponse;
-            final boolean isSameSnapshotComparison = g1.equals(g2) && a1.equals(a2) && v1.equals(v2) && v1.contains("SNAPSHOT");
 
             List<GitLogEntry> filteredGitLogEntries = gitLogResponse.getGitLogEntries();
 
-            if (isSameSnapshotComparison) {
-                LOGGER.info("[BEFORE Time WINDOW FiLTERING] {}:{} --> {}:{}  [{}]", a1, v1, a2, v2, filteredGitLogEntries.size());
-                filteredGitLogEntries = gitLogResponse.getGitLogEntries().stream()
-                        .filter(gle -> gle.getTimestamp() >= snapshotSinceTimestamp)
-                        .collect(Collectors.toList());
-                LOGGER.info("[AFTER Time WINDOW FiLTERING] {}:{} --> {}:{}  [{}],  Timestamp: {}", a1, v1, a2, v2, filteredGitLogEntries.size(), snapshotSinceTimestamp);
-            }
 
             filteredGitLogEntries.forEach(gle -> {
                 String author = gle.getAuthor().trim();
