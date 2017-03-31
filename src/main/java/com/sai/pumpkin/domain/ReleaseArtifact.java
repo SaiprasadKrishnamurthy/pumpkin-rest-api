@@ -17,4 +17,5 @@ public class ReleaseArtifact implements Serializable {
     private String version;
     private Boolean snapshot;
     private List<MavenCoordinates> mavenArtifacts;
+    private Long builtTimestamp;
 }

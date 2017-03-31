@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -62,14 +63,16 @@ public class ReleaseArtifactResource {
     @ApiOperation("Saves a release artifact from a dump")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
-    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) {
+    public ResponseEntity<?> saveReleaseFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName,
+                                                 @RequestParam(value = "timestamp", required = false, defaultValue = "") String timestamp,
+                                                 @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) throws Exception {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
         List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
         allReleases.sort((a, b) -> a.getVersion().compareTo(b.getVersion()));
         allReleases = allReleases.stream().filter(r -> r.getSnapshot() == null || !r.getSnapshot()).collect(Collectors.toList());
 
-        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, false);
+        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, "", false);
         Map<String, String> json = new HashMap<>();
         json.put("status", "success");
 
@@ -86,14 +89,16 @@ public class ReleaseArtifactResource {
     @ApiOperation("Saves a snapshot artifact from a dump")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/snapshot-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
-    public ResponseEntity<?> saveSnapshotFromDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) {
+    public ResponseEntity<?> saveSnapshotFromDump(@RequestParam("version") String version,
+                                                  @RequestParam(value = "timestamp", required = false, defaultValue = "") String timestamp,
+                                                  @RequestParam("name") String releaseName, @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) throws Exception {
         LOGGER.info("Saving the release dump for: {}", version);
         LOGGER.info("Dump is \n {} \n\n", releaseDump);
         List<ReleaseArtifact> allReleases = releaseArtifactRepository.findAll();
         allReleases.sort((a, b) -> a.getVersion().compareTo(b.getVersion()));
         allReleases = allReleases.stream().filter(r -> r.getSnapshot() != null && r.getSnapshot()).collect(Collectors.toList());
 
-        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, true);
+        ReleaseArtifact currRelease = processDump(version, releaseName, releaseDump, timestamp, true);
         Map<String, String> json = new HashMap<>();
         json.put("status", "success");
 
@@ -103,7 +108,7 @@ public class ReleaseArtifactResource {
         return new ResponseEntity<>(json, HttpStatus.CREATED);
     }
 
-    private ReleaseArtifact processDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump, boolean isSnapshot) {
+    private ReleaseArtifact processDump(@RequestParam("version") String version, @RequestParam("name") String releaseName, @RequestBody String releaseDump, String timestamp, boolean isSnapshot) throws Exception {
         List<MavenCoordinates> allMavenCoordinates = Stream.of(releaseDump.split("\n"))
                 .filter(l -> l.trim().length() > 0)
                 .map(s -> {
@@ -131,6 +136,11 @@ public class ReleaseArtifactResource {
         currRelease.setVersion(version);
         currRelease.setMavenArtifacts(allMavenCoordinates);
         currRelease.setSnapshot(isSnapshot);
+        if (StringUtils.hasText(timestamp)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S Z");
+            currRelease.setBuiltTimestamp(sdf.parse(timestamp).getTime());
+
+        }
         Criteria c = Criteria.where("name").is(currRelease.getName()).and("version").is(currRelease.getVersion());
         mongoTemplate.remove(Query.query(c), ReleaseArtifact.class);
         mongoTemplate.save(currRelease);
