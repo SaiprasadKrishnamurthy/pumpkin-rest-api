@@ -104,6 +104,7 @@ public class ReleaseArtifactResource {
             List<String> lines = Arrays.asList(releaseDump.split("\n"));
             List<MavenCoordinates> dependencies = lines.stream()
                     .map(s -> {
+                        LOGGER.info("Sai: {} ", s);
                         String[] tokens = s.trim().split(":");
                         String groupId = tokens[0];
                         String artifactId = tokens[1];
