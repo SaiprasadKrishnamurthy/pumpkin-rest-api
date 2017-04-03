@@ -108,7 +108,7 @@ public class ReleaseArtifactResource {
                         String groupId = tokens[0];
                         String artifactId = tokens[1];
                         String aVersion = tokens[tokens.length - 1];
-                        return new MavenCoordinates(groupId, artifactId, aVersion, release.getBuiltTimestamp());
+                        return new MavenCoordinates(groupId, artifactId, aVersion, release.getBuiltTimestamp() == null ? -1 : release.getBuiltTimestamp());
                     }).collect(toList());
 
             release.getMavenArtifacts().addAll(dependencies);
