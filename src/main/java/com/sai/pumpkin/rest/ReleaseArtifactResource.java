@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -84,6 +85,40 @@ public class ReleaseArtifactResource {
             notificationService.sendReleaseNotification();
         }
         return new ResponseEntity<>(json, HttpStatus.CREATED);
+    }
+
+    @ApiOperation("Appends a dependency dump to a release. This should be of the format of the output from the maven dependency plugin from resolve goal.")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/dependency-dump", method = RequestMethod.PUT, produces = "application/json", consumes = "text/plain")
+    public ResponseEntity<?> saveDependencyDumpForRelease(@RequestParam("version") String version, @RequestParam("name") String releaseName,
+                                                          @RequestParam(value = "timestamp", required = false, defaultValue = "") String timestamp,
+                                                          @RequestParam(value = "shouldNotify", required = false, defaultValue = "true") boolean shouldNotify, @RequestBody String releaseDump) throws Exception {
+        LOGGER.info("Saving the dependency dump for: {}", version);
+        LOGGER.info("Dump is \n {} \n\n", releaseDump);
+        ReleaseArtifact release = releaseArtifactRepository.findRelease(releaseName, version);
+        if (release == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<String> lines = Arrays.asList(releaseDump.split("\n"));
+        List<MavenCoordinates> dependencies = lines.stream()
+                .map(s -> {
+                    String[] tokens = s.trim().split(":");
+                    String groupId = tokens[0];
+                    String artifactId = tokens[1];
+                    String aVersion = tokens[tokens.length - 1];
+                    return new MavenCoordinates(groupId, artifactId, aVersion, release.getBuiltTimestamp());
+                }).collect(toList());
+
+        release.getMavenArtifacts().addAll(dependencies);
+
+        // Update it.
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(release.getName()).and("version").is(release.getVersion()));
+        Update update = new Update();
+        update.set("mavenArtifacts", release.getMavenArtifacts());
+        mongoTemplate.updateFirst(query, update, ReleaseArtifact.class);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @ApiOperation("Saves a snapshot artifact from a dump")
