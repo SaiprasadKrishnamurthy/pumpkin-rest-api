@@ -28,7 +28,7 @@ public class MessageListener {
         this.mongoTemplate = mongoTemplate;
     }
 
-    //@JmsListener(destination = "artifact.collection.queue", concurrency = "${collectorConcurrency}")
+    @JmsListener(destination = "artifact.collection.queue", concurrency = "${collectorConcurrency}")
     public void onMessage(String config) {
         try {
             ArtifactConfig config1 = OBJECT_MAPPER.readValue(config, ArtifactConfig.class);
