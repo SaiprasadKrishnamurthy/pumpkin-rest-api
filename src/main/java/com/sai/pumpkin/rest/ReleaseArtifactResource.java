@@ -210,7 +210,7 @@ public class ReleaseArtifactResource {
         return new ResponseEntity<>(releaseArtifactRepository.findAll(), HttpStatus.OK);
     }
 
-    @Cacheable(cacheNames = "releaseMetaCache", key = "#p0.concat('releaseMetaCache').concat(#p1)")
+    @Cacheable(cacheNames = "releaseMetaCache", key = "#p0.concat('releaseMetaCache').concat(#p1).concat(#p2)")
     @ApiOperation("Lists all release meta")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-meta", method = RequestMethod.GET, produces = "application/json")
