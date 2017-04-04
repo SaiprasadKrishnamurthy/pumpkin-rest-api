@@ -214,7 +214,7 @@ public class ReleaseArtifactResource {
     @ApiOperation("Lists all release meta")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/release-meta", method = RequestMethod.GET, produces = "application/json")
-    public ReleaseMetadata releasemeta(@RequestParam("version") String version, @RequestParam("name") String releaseName) {
+    public ReleaseMetadata releasemeta(@RequestParam("version") String version, @RequestParam("name") String releaseName, final @RequestParam(value = "status", required = false, defaultValue = "") String status) {
         Criteria c = Criteria.where("name").is(releaseName.trim()).and("version").is(version.trim());
         ReleaseArtifact release = mongoTemplate.findOne(Query.query(c), ReleaseArtifact.class);
         ReleaseMetadata meta = new ReleaseMetadata();
@@ -223,12 +223,16 @@ public class ReleaseArtifactResource {
         for (MavenCoordinates artifact : release.getMavenArtifacts()) {
             ArtifactCollection artifactCollection = new ArtifactCollection();
             artifactCollection.setMavenCoordinates(artifact);
-            meta.getArtifacts().add(artifactCollection);
             List<MavenGitVersionMapping> byMavenCoordinates = mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
             if (byMavenCoordinates != null && !byMavenCoordinates.isEmpty()) {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
             } else {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
+            }
+            if (StringUtils.hasText(status) && status.equalsIgnoreCase(artifactCollection.getStatus().toString())) {
+                meta.getArtifacts().add(artifactCollection);
+            } else if (status.trim().length() == 0) {
+                meta.getArtifacts().add(artifactCollection);
             }
         }
         return meta;
