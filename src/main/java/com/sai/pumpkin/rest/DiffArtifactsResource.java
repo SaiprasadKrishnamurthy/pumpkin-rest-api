@@ -107,7 +107,8 @@ public class DiffArtifactsResource {
             }
         }
 
-        for (MavenCoordinates diff : diffs) {
+        // Can we parallalize here?
+        diffs.parallelStream().forEach(diff -> {
             MavenCoordinates old = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
             MavenCoordinates nw = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst().get();
 
@@ -122,7 +123,7 @@ public class DiffArtifactsResource {
             } else {
                 LOGGER.warn("No Log Summary found for: {}, {}", old, nw);
             }
-        }
+        });
         ReleaseDiffResponse releaseDiffResponse = new ReleaseDiffResponse();
         releaseDiffResponse.setDiffs(summaries);
         releaseDiffResponse.setNewlyAdded(added.stream().flatMap(mc -> mavenGitVersionMappingRepository.findByMavenCoordinates(mc.getGroupId(), mc.getArtifactId(), mc.getVersion()).stream()).collect(toList()));
