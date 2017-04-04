@@ -1,6 +1,7 @@
 package com.sai.pumpkin.utils;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,6 +28,9 @@ public class PomUtils {
             Document doc = builder.parse(input);
             XPath xPath = XPathFactory.newInstance().newXPath();
             String gid = (String) xPath.compile("project/groupId").evaluate(doc, XPathConstants.STRING);
+            if (StringUtils.isBlank(gid)) {
+                gid = (String) xPath.compile("project/parent/groupId").evaluate(doc, XPathConstants.STRING);
+            }
             String aid = (String) xPath.compile("project/artifactId").evaluate(doc, XPathConstants.STRING);
             String version = (String) xPath.compile("project/version").evaluate(doc, XPathConstants.STRING);
             return new String[]{gid, aid, version};
@@ -35,7 +39,7 @@ public class PomUtils {
         }
     }
 
-    public static void mains(String[] args) throws Exception{
+    public static void mains(String[] args) throws Exception {
         String pomContents = FileUtils.readFileToString(new File("/Users/saipkri/pumpkin_ws/wireless/rfm/pom.xml"));
         System.out.println(Arrays.deepToString(gidAidVersionArray(pomContents)));
     }
