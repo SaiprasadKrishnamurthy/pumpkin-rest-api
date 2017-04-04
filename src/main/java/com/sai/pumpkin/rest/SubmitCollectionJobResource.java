@@ -26,7 +26,7 @@ public class SubmitCollectionJobResource {
         this.jmsTemplate = jmsTemplate;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 15)
+    //    @Scheduled(fixedRate = 1000 * 60 * 15)
     @ApiOperation("Submits collection job request for all configs")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/collectall", method = RequestMethod.PUT, produces = "application/json")
