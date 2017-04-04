@@ -1,6 +1,5 @@
 package com.sai.pumpkin.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sai.pumpkin.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,25 +19,7 @@ import java.util.stream.Collectors;
  * Created by saipkri on 07/03/17.
  */
 public class GitUtils {
-    private static final String WORKSPACE = System.getProperty("user.home") + File.separator + "pumpkin_ws";
     private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
-
-    public static void mains(String[] args) throws Exception {
-        String repoName = "wireless";
-        String repoPath = "ssh://git@bitbucket-eng-sjc1.cisco.com:7999/cvgpi/wireless.git";
-        String pomPath = "rfm/pom.xml";
-        String branch = "PI_MAUI";
-
-        ArtifactConfig artifactConfig = new ArtifactConfig();
-        artifactConfig.setName("RFM");
-        artifactConfig.setRepoName("wireless");
-        artifactConfig.setRepoUrl("ssh://git@bitbucket-eng-sjc1.cisco.com:7999/cvgpi/wireless.git");
-        artifactConfig.setPomPath("rfm/pom.xml");
-        artifactConfig.setBranch("PI_MAUI");
-
-        System.out.println(new ObjectMapper().writeValueAsString(artifactConfig));
-
-    }
 
     public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer, final Predicate<String> processRevisioFCheck) throws Exception {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
@@ -57,10 +38,10 @@ public class GitUtils {
                     long commitDateTime = fmt.parse(tokens[1].trim()).getTime();
 
                     String pom = gitShowFile(localRepo, artifactConfig.getPomPath(), rev);
-                    LOGGER.info("\t Pom retrieved successfully");
+                    LOGGER.debug("\t Pom retrieved successfully");
 
                     String[] gav = PomUtils.gidAidVersionArray(pom);
-                    LOGGER.info("{} --> {} ", Arrays.deepToString(gav), rev);
+                    LOGGER.debug("{} --> {} ", Arrays.deepToString(gav), rev);
 //                if (!gav[2].contains("SNAPSHOT")) {
                     MavenCoordinates mavenCoordinates = new MavenCoordinates(gav[0], gav[1], gav[2], commitDateTime);
                     MavenGitVersionMapping mavenGitVersionMapping = new MavenGitVersionMapping();
@@ -90,7 +71,7 @@ public class GitUtils {
         StringTokenizer tokenizer = new StringTokenizer(output, "\n");
         while (tokenizer.hasMoreTokens()) {
             String line = tokenizer.nextToken();
-            LOGGER.info("Line: {}", line);
+            LOGGER.debug("Line: {}", line);
             if (line.contains("###") && line.indexOf("###") != line.lastIndexOf("###")) {
                 String[] tokens = line.split("###");
                 if (tokens.length == 4) {
@@ -108,7 +89,7 @@ public class GitUtils {
                     entries.add(curr);
                 }
             } else if ((line.startsWith(" ") || line.startsWith("A") || line.startsWith("M") || line.startsWith("D")) && currEntries != null) {
-                LOGGER.info("Line starts with whitespace: {}", line);
+                LOGGER.debug("Line starts with whitespace: {}", line);
                 ChangeSetEntry entry = new ChangeSetEntry();
                 entry.setChangeType(line.charAt(0) + "");
                 entry.setFilePath(line.substring(1).trim());

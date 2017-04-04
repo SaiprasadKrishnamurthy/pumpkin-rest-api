@@ -2,6 +2,7 @@ package com.sai.pumpkin.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sai.pumpkin.domain.ArtifactConfig;
 import com.sai.pumpkin.repository.ArtifactConfigRepository;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.jms.core.JmsTemplate;
@@ -9,6 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by saipkri on 07/03/17.
@@ -31,7 +34,12 @@ public class SubmitCollectionJobResource {
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/collectall", method = RequestMethod.PUT, produces = "application/json")
     public void collectAll() {
-        artifactConfigRepository.findAll().forEach(c -> jmsTemplate.send(session -> {
+        List<ArtifactConfig> all = artifactConfigRepository.findAll();
+
+        // Randomize the order for git command crashes (probabilistic).
+        Collections.shuffle(all);
+
+        all.forEach(c -> jmsTemplate.send(session -> {
             try {
                 return session.createTextMessage(OBJECT_MAPPER.writeValueAsString(c));
             } catch (JsonProcessingException e) {

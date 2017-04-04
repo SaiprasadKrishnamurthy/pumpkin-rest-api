@@ -75,7 +75,7 @@ public class MavenGitVersionCollector {
                         .and("timestamp").is(mapping.getTimestamp());
                 mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
                 mongoTemplate.save(mapping);
-                LOGGER.info("Saved: " + mapping);
+                LOGGER.debug("Saved: " + mapping);
             };
             Predicate<String> revisionAlreadyCollected = (rev) -> {
                 MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev, config.getName());
@@ -94,14 +94,14 @@ public class MavenGitVersionCollector {
             EXECUTORS.submit(() -> {
                 try {
                     String url = String.format(bitbucketPullReqUrl, config.getRepoName(), index * 100);
-                    LOGGER.info("\t\t Pull Req URL: " + url);
+                    LOGGER.debug("\t\t Pull Req URL: " + url);
                     String rawJson = BitBucketUtils.pullRequests(url, bitbucketAuth);
                     List<PullRequest> pullRequests = JsonUtils.pullRequest(rawJson);
                     for (PullRequest pullRequest : pullRequests) {
                         Criteria criteria = Criteria.where("mergedInto").is(pullRequest.getMergedInto().trim());
                         mongoTemplate.remove(Query.query(criteria), PullRequest.class);
                         mongoTemplate.save(pullRequest);
-                        LOGGER.info("\t\t Collecting pull requests for repo {}, Pull req id: {}", config.getRepoName(), pullRequest.getTitle());
+                        LOGGER.debug("\t\t Collecting pull requests for repo {}, Pull req id: {}", config.getRepoName(), pullRequest.getTitle());
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -124,8 +124,8 @@ public class MavenGitVersionCollector {
         } else {
             m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(g2, a2, v2);
         }
-        LOGGER.info("From coordinates: " + m1List);
-        LOGGER.info("To coordinates: " + m2List);
+        LOGGER.debug("From coordinates: " + m1List);
+        LOGGER.debug("To coordinates: " + m2List);
 
         StopWatch clock = new StopWatch();
         GitLogResponse gitLogResponse = null;
@@ -390,7 +390,7 @@ public class MavenGitVersionCollector {
             String author = e.getAuthor().toLowerCase().trim().replace(" ", "").replace("\t", "");
             List<String> committersTokens = Arrays.asList(committersCsv.split(","));
 
-            LOGGER.info("Committers: {}, Author: {} ", committersCsv, author);
+            LOGGER.debug("Committers: {}, Author: {} ", committersCsv, author);
 
             if (matched(committersTokens, author)) {
                 e.setMavenCoordinates(s.getTo());
