@@ -33,6 +33,9 @@ public class PomUtils {
             }
             String aid = (String) xPath.compile("project/artifactId").evaluate(doc, XPathConstants.STRING);
             String version = (String) xPath.compile("project/version").evaluate(doc, XPathConstants.STRING);
+            if (StringUtils.isBlank(version)) {
+                version = (String) xPath.compile("project/parent/version").evaluate(doc, XPathConstants.STRING);
+            }
             return new String[]{gid, aid, version};
         } catch (Exception ex) {
             return new String[]{"", "", ""};
