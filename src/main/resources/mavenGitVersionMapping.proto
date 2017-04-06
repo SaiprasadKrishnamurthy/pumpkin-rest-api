@@ -1,0 +1,29 @@
+option java_package = "com.sai.pumpkin.domain";
+option java_outer_classname = "MavenGitVersionMappingProto";
+
+message MavenGitVersionMappings {
+    repeated MavenGitVersionMapping mavenGitVersionMapping = 1;
+}
+message MavenGitVersionMapping {
+    optional string id = 1;
+    required string gitRevision = 2;
+    required int64 timestamp = 3;
+    required ArtifactConfig artifactConfig = 4;
+    required MavenCoordinates mavenCoordinates = 5;
+}
+
+message ArtifactConfig {
+    optional string id = 1;
+    required string name = 2;
+    required string repoName = 3;
+    required string repoUrl = 4;
+    required string pomPath = 5;
+    required string branch = 6;
+}
+
+message MavenCoordinates {
+    required string groupId = 1;
+    required string artifactId = 2;
+    required string version = 3;
+    required int64 builtTimestamp = 4;
+}
