@@ -38,4 +38,10 @@ public class ArtifactConfigResource {
         artifactConfigRepositoryCustom.save(artifactConfig);
     }
 
+    @ApiOperation("Saves config")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/all-configs", method = RequestMethod.PUT, produces = "application/json")
+    public void saveAll(@RequestBody List<ArtifactConfig> artifactConfigs) {
+        artifactConfigs.forEach(artifactConfigRepository::save);
+    }
 }
