@@ -224,9 +224,9 @@ public class ReleaseArtifactResource {
             ArtifactCollection artifactCollection = new ArtifactCollection();
             artifactCollection.setMavenCoordinates(artifact);
             List<MavenGitVersionMapping> byMavenCoordinates = mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
-            if (byMavenCoordinates != null && !byMavenCoordinates.isEmpty()) {
-                artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
-            } else {
+            artifactCollection.setStatus(ArtifactCollectionStatusType.COLLECTED);
+            List<MavenGitVersionMapping> byGidAid = mavenGitVersionMappingRepository.findByMavenCoordinates(artifact.getGroupId(), artifact.getArtifactId());
+            if (byGidAid == null || byGidAid.isEmpty()) {
                 artifactCollection.setStatus(ArtifactCollectionStatusType.NOT_REGISTERED);
             }
             if (StringUtils.hasText(status) && status.equalsIgnoreCase(artifactCollection.getStatus().toString())) {
