@@ -369,7 +369,7 @@ public class DiffArtifactsResource {
         if (!teamOptional.isPresent()) {
             return new ResponseEntity<>("No Team found for name: " + teamName, HttpStatus.NOT_FOUND);
         }
-        String committersCsv = teamOptional.get().getMembers().stream().map(tm -> tm.getCommitName().trim()).collect(joining());
+        String committersCsv = teamOptional.get().getMembers().stream().map(tm -> tm.getCommitName().trim()).collect(joining(","));
 
         List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
 
