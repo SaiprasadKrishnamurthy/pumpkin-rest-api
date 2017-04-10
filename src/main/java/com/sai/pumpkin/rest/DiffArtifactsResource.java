@@ -2,10 +2,7 @@ package com.sai.pumpkin.rest;
 
 import com.sai.pumpkin.core.MavenGitVersionCollector;
 import com.sai.pumpkin.domain.*;
-import com.sai.pumpkin.repository.GitLogResponseRepository;
-import com.sai.pumpkin.repository.MavenGitVersionMappingRepository;
-import com.sai.pumpkin.repository.PullRequestRepository;
-import com.sai.pumpkin.repository.ReleaseArtifactRepository;
+import com.sai.pumpkin.repository.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
@@ -24,6 +21,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -40,15 +38,17 @@ public class DiffArtifactsResource {
     private final ReleaseArtifactRepository releaseArtifactRepository;
     private final PullRequestRepository pullRequestRepository;
     private final MongoTemplate mongoTemplate;
+    private final TeamRepository teamRepository;
 
     @Inject
-    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository, final PullRequestRepository pullRequestRepository, MongoTemplate mongoTemplate) {
+    public DiffArtifactsResource(final GitLogResponseRepository gitLogResponseRepository, final MavenGitVersionMappingRepository mavenGitVersionMappingRepository, final MavenGitVersionCollector mavenGitVersionCollector, ReleaseArtifactRepository releaseArtifactRepository, final PullRequestRepository pullRequestRepository, MongoTemplate mongoTemplate, TeamRepository teamRepository) {
         this.gitLogResponseRepository = gitLogResponseRepository;
         this.mavenGitVersionMappingRepository = mavenGitVersionMappingRepository;
         this.mavenGitVersionCollector = mavenGitVersionCollector;
         this.releaseArtifactRepository = releaseArtifactRepository;
         this.pullRequestRepository = pullRequestRepository;
         this.mongoTemplate = mongoTemplate;
+        this.teamRepository = teamRepository;
     }
 
     @Cacheable(cacheNames = "summaryDiffCache", key = "#p0.concat('summaryDiffCache').concat(#p1)")
@@ -312,7 +312,66 @@ public class DiffArtifactsResource {
 
         }
         List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
-        List<GitLogSummaryResponse> summaries = new ArrayList<>();
+
+        List<MavenCoordinates> diffs = new ArrayList<>();
+        List<MavenCoordinates> bigger = artifact1.getMavenArtifacts();
+        List<MavenCoordinates> smaller = artifact2.getMavenArtifacts();
+
+        if (bigger.size() < smaller.size()) {
+            List<MavenCoordinates> temp = bigger;
+            bigger = smaller;
+            smaller = temp;
+        }
+        for (MavenCoordinates m : bigger) {
+            Optional<MavenCoordinates> _m = smaller.stream().filter(s -> s.equals(m)).findFirst();
+            if (_m.isPresent() && !_m.get().getVersion().equals(m.getVersion())) {
+                diffs.add(m);
+            }
+        }
+
+        diffs.addAll(added);
+        List<GitLogEntry> grand = new ArrayList<>();
+        for (MavenCoordinates diff : diffs) {
+            Optional<MavenCoordinates> first = artifact1.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst();
+            Optional<MavenCoordinates> first1 = artifact2.getMavenArtifacts().stream().filter(mc -> mc.getGroupId().equals(diff.getGroupId()) && mc.getArtifactId().equals(diff.getArtifactId())).findFirst();
+            if (first.isPresent() && first1.isPresent()) {
+                MavenCoordinates old = first.get();
+                MavenCoordinates nw = first1.get();
+                GitLogResponse s = mavenGitVersionCollector.diffLog(old.getGroupId(), old.getArtifactId(), old.getVersion(), "", nw.getGroupId(), nw.getArtifactId(), nw.getVersion(), "");
+                if (s != null) {
+                    grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+                }
+            }
+        }
+        return new ResponseEntity<>(grand, HttpStatus.OK);
+    }
+
+    @ApiOperation("Gets a detailed commits between release 1 and release 2 filtered by a csv of committers")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/teamstats", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> teamStats(@ApiParam("releaseCoordinates1") @RequestParam("releaseCoordinates1") String releaseCoordinates1,
+                                       @ApiParam("releaseCoordinates2") @RequestParam("releaseCoordinates2") String releaseCoordinates2,
+                                       @ApiParam("teamName") @RequestParam("teamName") String teamName) {
+        String[] c1 = releaseCoordinates1.split(":");
+        String[] c2 = releaseCoordinates2.split(":");
+        if (c1.length < 2 || c2.length < 2) {
+            throw new IllegalArgumentException("Release coordinates must be in the format: 'releaseName:version'");
+        }
+
+        ReleaseArtifact artifact1 = releaseArtifactRepository.findRelease(c1[0].trim(), c1[1].trim());
+        ReleaseArtifact artifact2 = releaseArtifactRepository.findRelease(c2[0].trim(), c2[1].trim());
+        Optional<Team> teamOptional = teamRepository.findAll().stream().filter(t -> t.getName().trim().equals(teamName.trim())).findFirst();
+
+        if (artifact1 == null || artifact2 == null) {
+            return new ResponseEntity<>("No release found for the given coordinates.", HttpStatus.NOT_FOUND);
+        }
+
+        if (!teamOptional.isPresent()) {
+            return new ResponseEntity<>("No Team found for name: " + teamName, HttpStatus.NOT_FOUND);
+        }
+        String committersCsv = teamOptional.get().getMembers().stream().map(tm -> tm.getCommitName().trim()).collect(joining());
+
+        List<MavenCoordinates> added = artifact2.getMavenArtifacts().stream().filter(nw -> !artifact1.getMavenArtifacts().contains(nw)).collect(toList());
 
         List<MavenCoordinates> diffs = new ArrayList<>();
         List<MavenCoordinates> bigger = artifact1.getMavenArtifacts();
