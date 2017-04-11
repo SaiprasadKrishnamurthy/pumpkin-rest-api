@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -26,7 +27,7 @@ public class ReleaseCheckStepDefs {
     @Given("^The latest Release Package$")
     public void aReleasePackage() throws Throwable {
         MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
-        List<ReleaseArtifact> all = mongoTemplate.findAll(ReleaseArtifact.class);
+        List<ReleaseArtifact> all = mongoTemplate.findAll(ReleaseArtifact.class).stream().filter(r -> !r.getName().contains("SNAPSHOT")).collect(Collectors.toList());
         latestRelease = all.get(all.size() - 1);
     }
 
