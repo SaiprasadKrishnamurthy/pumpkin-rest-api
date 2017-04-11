@@ -85,6 +85,20 @@ public class ActivityResource {
         return res;
     }
 
+    @ApiOperation("Finds the number of commits per repository")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/commit-counts-per-repo", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Long> commitCountPerRepo(@RequestParam("sinceTimestamp") long sinceTimestamp) {
+        MatchOperation matchStage = Aggregation.match(new Criteria("timestamp").gte(sinceTimestamp));
+        GroupOperation groupOperation = group("artifactConfig.repoName").count().as("count");
+        Aggregation aggregation = newAggregation(
+                matchStage, groupOperation);
+        AggregationResults<Map> results = mongoTemplate.aggregate(aggregation, MavenGitVersionMapping.class, Map.class);
+        Map<String, Long> res = new TreeMap<>();
+        results.forEach(m -> res.put(m.get("_id").toString(), Long.parseLong(m.get("count").toString())));
+        return res;
+    }
+
     @ApiOperation("Finds all activities (based on number of commits by a committer) since the specified timestamp.")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/collection-job-stats", method = RequestMethod.GET, produces = "application/json")
