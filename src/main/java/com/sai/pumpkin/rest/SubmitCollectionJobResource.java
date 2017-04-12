@@ -36,7 +36,7 @@ public class SubmitCollectionJobResource {
         this.mavenGitVersionCollector = mavenGitVersionCollector;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 20)
+    @Scheduled(initialDelay = 1000 * 60 * 5, fixedRate = 1000 * 60 * 20)
     @ApiOperation("Submits collection job request for all configs")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/collectall", method = RequestMethod.PUT, produces = "application/json")
