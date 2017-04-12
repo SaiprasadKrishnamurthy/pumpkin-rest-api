@@ -7,6 +7,7 @@ import com.sai.pumpkin.domain.ArtifactConfig;
 import com.sai.pumpkin.repository.ArtifactConfigRepository;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -35,7 +36,7 @@ public class SubmitCollectionJobResource {
         this.mavenGitVersionCollector = mavenGitVersionCollector;
     }
 
-    //@Scheduled(fixedRate = 1000 * 60 * 20)
+    @Scheduled(fixedRate = 1000 * 60 * 20)
     @ApiOperation("Submits collection job request for all configs")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/collectall", method = RequestMethod.PUT, produces = "application/json")
