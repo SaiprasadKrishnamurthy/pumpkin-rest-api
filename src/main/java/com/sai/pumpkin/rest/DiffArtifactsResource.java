@@ -407,6 +407,39 @@ public class DiffArtifactsResource {
         return new ResponseEntity<>(grand, HttpStatus.OK);
     }
 
+    @ApiOperation("Gets the team stats since the latest release.")
+    @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
+    @RequestMapping(value = "/team-latest-stats", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> teamStats(@ApiParam("teamName") @RequestParam("teamName") String teamName) {
+
+        List<ReleaseArtifact> collect = releaseArtifactRepository.findAll()
+                .stream()
+                .filter(r -> !r.getSnapshot())
+                .sorted((r1, r2) -> r1.getVersion().compareTo(r2.getVersion()))
+                .collect(toList());
+        ReleaseArtifact artifact1 = collect.get(collect.size() - 1);
+
+        Optional<Team> teamOptional = teamRepository.findAll().stream().filter(t -> t.getName().trim().equals(teamName.trim())).findFirst();
+
+        if (!teamOptional.isPresent()) {
+            return new ResponseEntity<>("No Team found for name: " + teamName, HttpStatus.NOT_FOUND);
+        }
+        String committersCsv = teamOptional.get().getMembers().stream().map(tm -> tm.getCommitName().trim()).collect(joining(","));
+
+        List<GitLogEntry> grand = new ArrayList<>();
+        artifact1.getMavenArtifacts().parallelStream().forEach(mavenArtifact -> {
+            Optional<MavenGitVersionMapping> mavenCoords = mavenGitVersionCollector.latestSince(mavenArtifact);
+            LOGGER.info("Diff between {} and {}", mavenArtifact, mavenCoords);
+            if (mavenCoords.isPresent()) {
+                GitLogResponse s = mavenGitVersionCollector.diffLog(mavenArtifact.getGroupId(), mavenArtifact.getArtifactId(), mavenArtifact.getVersion(), "", mavenCoords.get().getMavenCoordinates().getGroupId(), mavenCoords.get().getMavenCoordinates().getArtifactId(), mavenCoords.get().getMavenCoordinates().getVersion(), "");
+                if (s != null) {
+                    grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
+                }
+            }
+        });
+        return new ResponseEntity<>(grand, HttpStatus.OK);
+    }
+
     @ApiOperation("Refreshes all the cache")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.DELETE, RequestMethod.GET})
     @RequestMapping(value = "/cache-refresh", method = RequestMethod.GET, produces = "application/json")

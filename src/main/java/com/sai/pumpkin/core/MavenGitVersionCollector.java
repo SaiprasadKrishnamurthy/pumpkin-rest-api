@@ -243,6 +243,14 @@ public class MavenGitVersionCollector {
         mongoTemplate.remove(gitLogResponse);
     }
 
+    public Optional<MavenGitVersionMapping> latestSince(final MavenCoordinates mavenCoordinates) {
+        Query query = Query.query(Criteria.where("mavenCoordinates.groupId").is(mavenCoordinates.getGroupId())
+                .and("mavenCoordinates.artifactId")
+                .is(mavenCoordinates.getArtifactId()).and("timestamp").gte(mavenCoordinates.getBuiltTimestamp()));
+        List<MavenGitVersionMapping> all = mongoTemplate.find(query, MavenGitVersionMapping.class);
+        return all.isEmpty() ? Optional.empty() : Optional.of(all.get(all.size() - 1));
+    }
+
     public MavenGitVersionMapping[] fromAndTo(final MavenCoordinates m1, final MavenCoordinates m2, final long lowerBoundsTimeInMillis) {
         List<MavenGitVersionMapping> m1List = mavenGitVersionMappingRepository.findByMavenCoordinates(m1.getGroupId(), m1.getArtifactId(), m1.getVersion());
         List<MavenGitVersionMapping> m2List = mavenGitVersionMappingRepository.findByMavenCoordinates(m2.getGroupId(), m2.getArtifactId(), m2.getVersion());
