@@ -260,13 +260,14 @@ public class DiffArtifactsResource {
             });
         });
 
-        for (Map.Entry<String, List<MavenGitVersionMapping>> afterEntry : afterMap.entrySet()) {
+        final long _fromTimestamp = fromTimestamp;
+        afterMap.entrySet().parallelStream().forEach(afterEntry -> {
             if (!afterEntry.getValue().isEmpty()) {
                 MavenGitVersionMapping nw = afterEntry.getValue().get(afterEntry.getValue().size() - 1);
                 // Get the last version just lesser than the timestamp.
-                query = Query.query(Criteria.where("timestamp").lt(fromTimestamp).and("artifactConfig.name").is(nw.getArtifactConfig().getName())).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
-                List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query, MavenGitVersionMapping.class);
-                LOGGER.info("Start Revision: {}", startingRev);
+                Query query1 = Query.query(Criteria.where("timestamp").lt(_fromTimestamp).and("artifactConfig.name").is(nw.getArtifactConfig().getName())).with(new Sort(Sort.Direction.DESC, "timestamp")).limit(1);
+                List<MavenGitVersionMapping> startingRev = mongoTemplate.find(query1, MavenGitVersionMapping.class);
+                LOGGER.info("Start Revision: {}, {}", nw.getMavenCoordinates(), startingRev);
                 MavenGitVersionMapping old = startingRev.get(0);
 
                 if (old != null && nw != null) {
@@ -288,7 +289,7 @@ public class DiffArtifactsResource {
                     }
                 }
             }
-        }
+        });
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
