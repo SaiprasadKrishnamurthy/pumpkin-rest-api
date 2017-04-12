@@ -81,7 +81,29 @@ public class MavenGitVersionCollector {
                 MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev, config.getName());
                 return (existing == null);
             };
-            GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected);
+            GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected, false);
+            collectPullRequests(config);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void collectOneOff(final ArtifactConfig config) {
+        try {
+            Consumer<MavenGitVersionMapping> saveOrUpdateFunction = (mapping) -> {
+                Criteria criteria = Criteria.where("mavenCoordinates.groupId").is(mapping.getMavenCoordinates().getGroupId())
+                        .and("mavenCoordinates.artifactId").is(mapping.getMavenCoordinates().getArtifactId())
+                        .and("mavenCoordinates.version").is(mapping.getMavenCoordinates().getVersion())
+                        .and("timestamp").is(mapping.getTimestamp());
+                mongoTemplate.remove(Query.query(criteria), MavenGitVersionMapping.class);
+                mongoTemplate.save(mapping);
+                LOGGER.debug("Saved: " + mapping);
+            };
+            Predicate<String> revisionAlreadyCollected = (rev) -> {
+                MavenGitVersionMapping existing = mavenGitVersionMappingRepository.findByGitRevision(rev, config.getName());
+                return (existing == null);
+            };
+            GitUtils.collectFromLog(localGitWorkspace, config, saveOrUpdateFunction, revisionAlreadyCollected, true);
             collectPullRequests(config);
         } catch (Exception ex) {
             ex.printStackTrace();

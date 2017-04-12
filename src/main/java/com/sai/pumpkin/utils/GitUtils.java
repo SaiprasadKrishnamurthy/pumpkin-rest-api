@@ -21,13 +21,18 @@ import java.util.stream.Collectors;
 public class GitUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
 
-    public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer, final Predicate<String> processRevisioFCheck) throws Exception {
+    public static void collectFromLog(final String localGitWorkspace, final ArtifactConfig artifactConfig, final Consumer<MavenGitVersionMapping> consumer, final Predicate<String> processRevisioFCheck, final boolean sweepOtherIncomingBranches) throws Exception {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
         String localRepo = localGitWorkspace + File.separator + artifactConfig.getRepoName() + File.separator;
         new File(localRepo).mkdirs();
         gitClone(artifactConfig.getRepoUrl(), localRepo, artifactConfig.getBranch().trim());
         LOGGER.info(" Before commit sha:  {}, {}" + localRepo, artifactConfig.getPomPath());
-        Set<String> revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
+        Set<String> revisions = null;
+        if (!sweepOtherIncomingBranches) {
+            revisions = gitLogCommitSHAs(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
+        } else {
+            revisions = gitLogCommitSHAsAll(localRepo, artifactConfig.getPomPath(), artifactConfig.getBranch());
+        }
         LOGGER.info(" After commit sha " + revisions);
 
         for (String rev : revisions) {
@@ -127,6 +132,16 @@ public class GitUtils {
         String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
         LOGGER.info("Base dir: " + baseDir);
         return new LinkedHashSet<>(Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--first-parent", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--", baseDir)
+                .readOutput(true)
+                .execute()
+                .outputString()
+                .split("\n")));
+    }
+
+    private static Set<String> gitLogCommitSHAsAll(String localRepo, String filePath, String branch) throws Exception {
+        String baseDir = filePath.substring(0, filePath.lastIndexOf("/"));
+        LOGGER.info("Base dir: " + baseDir);
+        return new LinkedHashSet<>(Arrays.asList(new ProcessExecutor().command("git", "--git-dir=" + localRepo + File.separator + ".git", "log", "-m", "--date=iso", "--reverse", "--format=format:%H|%ad", branch, "--", baseDir)
                 .readOutput(true)
                 .execute()
                 .outputString()
