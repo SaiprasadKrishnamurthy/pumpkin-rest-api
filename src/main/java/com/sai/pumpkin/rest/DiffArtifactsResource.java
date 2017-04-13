@@ -410,11 +410,11 @@ public class DiffArtifactsResource {
     @ApiOperation("Gets the team stats since the latest release.")
     @CrossOrigin(methods = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
     @RequestMapping(value = "/team-latest-stats", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> teamStats(@ApiParam("teamName") @RequestParam("teamName") String teamName) {
+    public ResponseEntity<?> teamLatestStats(@ApiParam("teamName") @RequestParam("teamName") String teamName) {
 
         List<ReleaseArtifact> collect = releaseArtifactRepository.findAll()
                 .stream()
-                .filter(r -> !r.getSnapshot())
+                .filter(r -> r.getSnapshot() != null && !r.getSnapshot())
                 .sorted((r1, r2) -> r1.getVersion().compareTo(r2.getVersion()))
                 .collect(toList());
         ReleaseArtifact artifact1 = collect.get(collect.size() - 1);
