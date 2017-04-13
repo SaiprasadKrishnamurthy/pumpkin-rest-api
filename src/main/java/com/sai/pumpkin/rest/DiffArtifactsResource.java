@@ -431,7 +431,7 @@ public class DiffArtifactsResource {
             Optional<MavenGitVersionMapping> mavenCoords = mavenGitVersionCollector.latestSince(mavenArtifact);
             LOGGER.info("Diff between {} and {}", mavenArtifact, mavenCoords);
             if (mavenCoords.isPresent()) {
-                GitLogResponse s = mavenGitVersionCollector.diffLog(mavenArtifact.getGroupId(), mavenArtifact.getArtifactId(), mavenArtifact.getVersion(), "", mavenCoords.get().getMavenCoordinates().getGroupId(), mavenCoords.get().getMavenCoordinates().getArtifactId(), mavenCoords.get().getMavenCoordinates().getVersion(), "");
+                GitLogResponse s = mavenGitVersionCollector.diffLog(mavenArtifact.getGroupId(), mavenArtifact.getArtifactId(), mavenArtifact.getVersion(), "", mavenCoords.get().getMavenCoordinates().getGroupId(), mavenCoords.get().getMavenCoordinates().getArtifactId(), mavenCoords.get().getMavenCoordinates().getVersion(), mavenCoords.get().getTimestamp() + "");
                 if (s != null) {
                     grand.addAll(mavenGitVersionCollector.filterByCommitters(s, committersCsv));
                 }
